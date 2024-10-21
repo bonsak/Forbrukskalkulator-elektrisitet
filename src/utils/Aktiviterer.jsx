@@ -8,7 +8,7 @@ import oppvaskmaskin from '../assets/aktiviteter/oppvaskmaskin.svg'
 import stekeovn from '../assets/aktiviteter/stekeovn-plate.svg'
 import vaskemaskin from '../assets/aktiviteter/vaskemaskin.svg'
 
-export default function Icon() {
+export default function Icons() {
   const icons = [
     dusj,
     elbil,
@@ -20,11 +20,13 @@ export default function Icon() {
     vaskemaskin,
   ]
 
+  // console.log(icons)
+
   return (
     <div className='akrivitetsgrid'>
-      {icons.map((item) => (
+      {icons.map((item, index) => (
         <img
-          key={crypto.randomUUID()}
+          key={index}
           className='aktivitet'
           src={item}
         />

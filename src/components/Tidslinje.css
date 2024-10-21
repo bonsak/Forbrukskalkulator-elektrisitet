@@ -1,0 +1,107 @@
+.tid{
+/* Style Sources */
+font-size: 12px;
+margin-bottom: 1rem;
+margin-top: 1rem;
+opacity: 0.5;
+width: 885px;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}
+
+.tid-wrapper{
+    /* Style Sources */
+align-items: center;
+border-bottom-left-radius: 8px;
+border-bottom-right-radius: 8px;
+border-top-left-radius: 8px;
+border-top-right-radius: 8px;
+display: flex;
+justify-content: center;
+overflow-x: hidden;
+overflow-y: hidden;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+font-size: 12px;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}
+
+.natt{
+    /* Style Sources */
+align-items: center;
+background-color: rgba(166, 166, 166, 1);
+color: rgba(255, 255, 255, 1);
+display: flex;
+height: 25px;
+justify-content: center;
+width: 16.66666%;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+font-size: 12px;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}
+
+.morgen-kveld{
+    /* Style Sources */
+align-items: center;
+background-color: rgba(228, 228, 228, 1);
+color: rgba(144, 144, 144, 1);
+display: flex;
+height: 25px;
+justify-content: center;
+width: 16.66666%;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+font-size: 12px;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}
+.dag{
+    /* Style Sources */
+align-items: center;
+background-color: rgba(248, 248, 248, 1);
+color: rgba(52, 52, 52, 1);
+display: flex;
+height: 25px;
+justify-content: center;
+width: 33.3333333%;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+font-size: 12px;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}

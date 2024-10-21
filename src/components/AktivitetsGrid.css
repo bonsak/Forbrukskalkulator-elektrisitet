@@ -1,0 +1,42 @@
+.aktivitets-wrapper{
+    /* Style Sources */
+align-items: start;
+column-gap: 15px;
+display: flex;
+flex-wrap: wrap;
+justify-content: start;
+margin-bottom: 1rem;
+margin-top: 1rem;
+row-gap: 15px;
+width: 435px;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}
+.aktivitets-slot{
+    /* Style Sources */
+border-bottom-left-radius: 8px;
+border-bottom-right-radius: 8px;
+border-top-left-radius: 8px;
+border-top-right-radius: 8px;
+height: 60px;
+width: 60px;
+box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
+/* Inherited */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+/* Preset */
+border-bottom-width: 1px;
+border-left-width: 1px;
+border-right-width: 1px;
+border-top-width: 1px;
+box-sizing: border-box;
+outline-width: 1px;
+}

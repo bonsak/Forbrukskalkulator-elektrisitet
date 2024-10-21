@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke: #afafae;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+
+      .cls-3 {
+        fill: #c8202f;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g id="kroner">
+      <rect class="cls-1" width="80" height="80" rx="8" ry="8"/>
+      <circle class="cls-2" cx="40" cy="40" r="28.38"/>
+      <g>
+        <path class="cls-3" d="M27.38,49.96v-19.91h2.64v9.88l9.89-9.88h3.57l-8.35,8.07,8.72,11.85h-3.48l-7.09-10.08-3.26,3.18v6.9h-2.64Z"/>
+        <path class="cls-3" d="M45.71,49.96v-14.43h2.2v2.19c.56-1.02,1.08-1.7,1.56-2.02s1-.49,1.57-.49c.82,0,1.66.26,2.51.79l-.84,2.27c-.6-.35-1.2-.53-1.79-.53-.53,0-1.01.16-1.44.48s-.73.77-.91,1.34c-.27.87-.41,1.82-.41,2.85v7.55h-2.45Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

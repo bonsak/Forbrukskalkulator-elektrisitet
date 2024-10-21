@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 80 80">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        mix-blend-mode: multiply;
+      }
+
+      .cls-1, .cls-3 {
+        fill: #b2b2b2;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-5 {
+        fill: none;
+      }
+
+      .cls-6 {
+        isolation: isolate;
+      }
+
+      .cls-2 {
+        fill: #c8202f;
+      }
+
+      .cls-7 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-5" x="17.89" y="22.79" width="43.13" height="18.52"/>
+    </clipPath>
+  </defs>
+  <g class="cls-6">
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+        <g id="mast">
+          <rect class="cls-4" width="80" height="80" rx="8" ry="8"/>
+          <g>
+            <rect class="cls-3" x="32.13" y="13.77" width="2.73" height="55.49"/>
+            <rect class="cls-3" x="43.91" y="13.77" width="2.73" height="55.49"/>
+            <rect class="cls-2" x="17.89" y="22.79" width="43.13" height="2.73"/>
+            <g class="cls-7">
+              <polygon class="cls-1" points="25.98 29.72 11.64 18.71 13.3 16.55 25.98 26.28 38.55 16.55 40.22 18.71 25.98 29.72"/>
+              <polygon class="cls-1" points="52.86 29.72 38.51 18.71 40.18 16.55 52.85 26.28 65.43 16.55 67.1 18.71 52.86 29.72"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
