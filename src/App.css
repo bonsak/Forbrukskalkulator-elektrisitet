@@ -1,0 +1,33 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.aktivitet {
+  /* Style Sources */
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  height: 60px;
+  width: 60px;
+  /* Inherited */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Preset */
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  box-sizing: border-box;
+  outline-width: 1px;
+
+  box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
+}
+
+canvas {
+  width: 800px;
+  /* height: 600px; */
+}
