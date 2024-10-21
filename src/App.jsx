@@ -1,165 +1,281 @@
+// install (please try to align the version of installed @nivo packages)
+// yarn add @nivo/line
+import { ResponsiveLine } from '@nivo/line'
 import './App.css'
-// import LineChart from './components/LineChart'
-// import Icon from './utils/Aktiviterer'
-import { AreaChart } from 'recharts'
-import { XAxis } from 'recharts'
-import { YAxis } from 'recharts'
-import { CartesianGrid } from 'recharts'
-import { Tooltip } from 'chart.js'
-import { Area } from 'recharts'
+// import { linearGradientDef } from '@nivo/core'
+
+// make sure parent container have a defined height when using
+// responsive component, otherwise height will be 0 and
+// no chart will be rendered.
+// website examples showcase many properties,
+// you'll often use just a few of them.
 
 function App() {
-  const data = [
+
+const data = [
     {
-      name: 'Page A',
-      pris: 4000,
-      nettleie: 2400,
-      forbruk: 1600,
-      amt: 2400,
+      "id": "Forbruk",
+      "color": "rgb(180, 20, 128)",
+      "data": [
+        {
+          "x": "00 - 02",
+          "y": 276
+        },
+        {
+          "x": "02 - 04",
+          "y": 290
+        },
+        {
+          "x": "04 - 06",
+          "y": 291
+        },
+        {
+          "x": "06 - 08",
+          "y": 76
+        },
+        {
+          "x": "08 - 10",
+          "y": 187
+        },
+        {
+          "x": "10 - 12",
+          "y": 280
+        },
+        {
+          "x": "12 - 14",
+          "y": 247
+        },
+        {
+          "x": "14 - 16",
+          "y": 149
+        },
+        {
+          "x": "16 - 18",
+          "y": 126
+        },
+        {
+          "x": "18 - 20",
+          "y": 259
+        },
+        {
+          "x": "20 - 22",
+          "y": 64
+        },
+        {
+          "x": "22 - 24",
+          "y": 124
+        }
+      ]
     },
     {
-      name: 'Page B',
-      pris: 3000,
-      nettleie: 1398,
-      forbruk: 1200,
-      amt: 2210,
+      "id": "Nettleie",
+      "color": "hsl(157, 70%, 50%)",
+      "data": [
+        {
+          "x": "00 - 02",
+          "y": 154
+        },
+        {
+          "x": "02 - 04",
+          "y": 248
+        },
+        {
+          "x": "04 - 06",
+          "y": 213
+        },
+        {
+          "x": "06 - 08",
+          "y": 99
+        },
+        {
+          "x": "08 - 10",
+          "y": 106
+        },
+        {
+          "x": "10 - 12",
+          "y": 9
+        },
+        {
+          "x": "12 - 14",
+          "y": 193
+        },
+        {
+          "x": "14 - 16",
+          "y": 61
+        },
+        {
+          "x": "16 - 18",
+          "y": 41
+        },
+        {
+          "x": "18 - 20",
+          "y": 6
+        },
+        {
+          "x": "20 - 22",
+          "y": 170
+        },
+        {
+          "x": "22 - 24",
+          "y": 111
+        }
+      ]
     },
     {
-      name: 'Page C',
-      pris: 2000,
-      nettleie: 9800,
-      forbruk: 2200,
-      amt: 2290,
-    },
-    {
-      name: 'Page D',
-      pris: 2780,
-      nettleie: 3908,
-      forbruk: 3500,
-      amt: 2000,
-    },
-    {
-      name: 'Page E',
-      pris: 1890,
-      nettleie: 4800,
-      forbruk: 900,
-      amt: 2181,
-    },
-    {
-      name: 'Page F',
-      pris: 2390,
-      nettleie: 3800,
-      forbruk: 3100,
-      amt: 2500,
-    },
-    {
-      name: 'Page G',
-      pris: 3490,
-      nettleie: 4300,
-      forbruk: 1100,
-      amt: 2100,
+      "id": "Pris",
+      "color": "hsl(94, 70%, 50%)",
+      "data": [
+        {
+          "x": "00 - 02",
+          "y": 109
+        },
+        {
+          "x": "02 - 04",
+          "y": 239
+        },
+        {
+          "x": "04 - 06",
+          "y": 189
+        },
+        {
+          "x": "06 - 08",
+          "y": 257
+        },
+        {
+          "x": "08 - 10",
+          "y": 58
+        },
+        {
+          "x": "10 - 12",
+          "y": 195
+        },
+        {
+          "x": "12 - 14",
+          "y": 119
+        },
+        {
+          "x": "14 - 16",
+          "y": 78
+        },
+        {
+          "x": "16 - 18",
+          "y": 4
+        },
+        {
+          "x": "18 - 20",
+          "y": 241
+        },
+        {
+          "x": "20 - 22",
+          "y": 99
+        },
+        {
+          "x": "22 - 24",
+          "y": 219
+        }
+      ]
     },
   ]
 
-  return (
-    <>
-      {/* <div>
-        <LineChart></LineChart>
-        <Icon icon={'Dusj'} />
-      </div> */}
-      <AreaChart
-        width={730}
-        height={250}
-        data={data}
-        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-      >
-        <defs>
-          <linearGradient
-            id='colorForbruk'
-            x1='0'
-            y1='0'
-            x2='0'
-            y2='1'
-          >
-            <stop
-              offset='5%'
-              stopColor='#c29bde'
-              stopOpacity={0.8}
-            />
-            <stop
-              offset='95%'
-              stopColor='#c29bde'
-              stopOpacity={0}
-            />
-          </linearGradient>
-          <linearGradient
-            id='colorNettleie'
-            x1='0'
-            y1='0'
-            x2='0'
-            y2='1'
-          >
-            <stop
-              offset='5%'
-              stopColor='#ee4590'
-              stopOpacity={0.8}
-            />
-            <stop
-              offset='95%'
-              stopColor='#ee4590'
-              stopOpacity={0}
-            />
-          </linearGradient>
-          <linearGradient
-            id='colorPris'
-            x1='0'
-            y1='0'
-            x2='0'
-            y2='1'
-          >
-            <stop
-              offset='5%'
-              stopColor='#c29bde'
-              stopOpacity={0.8}
-            />
-            <stop
-              offset='95%'
-              stopColor='#c29bde'
-              stopOpacity={0}
-            />
-          </linearGradient>
-        </defs>
-        <XAxis dataKey='name' />
-        <YAxis />
-        <CartesianGrid strokeDasharray='3 3' />
-        <Tooltip />
-        <Area
-          type='monotone'
-          dataKey='forbruk'
-          stroke='#8884d8'
-          fillOpacity={1}
-          fill='url(#colorForbruk)'
-          animationEasing='ease-in-out'
+    return (
+      <div className='graphContainer'>
+        <ResponsiveLine
+            data={data}
+            margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+            xScale={{ type: 'point' }}
+            yScale={{
+                type: 'linear',
+                min: 'auto',
+                max: 'auto',
+                stacked: true,
+                reverse: false
+            }}
+            yFormat=" >-.2f"
+            curve="basis"
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Tidsrom',
+                legendOffset: 36,
+                legendPosition: 'middle',
+                truncateTickAt: 0
+            }}
+            axisLeft={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Verdi',
+                legendOffset: -40,
+                legendPosition: 'middle',
+                truncateTickAt: 0
+            }}
+            enableGridX={false}
+            enableGridY={false}
+            enablePoints={false}
+            pointSize={10}
+            pointColor={{ theme: 'background' }}
+            pointBorderWidth={2}
+            pointBorderColor={{ from: 'serieColor' }}
+            pointLabel="data.yFormatted"
+            pointLabelYOffset={-12}
+            enableArea={true}
+            enableCrosshair={false}
+            useMesh={true}
+            legends={[
+                {
+                    anchor: 'right',
+                    direction: 'column',
+                    justify: false,
+                    translateX: 100,
+                    translateY: 0,
+                    itemsSpacing: 0,
+                    itemDirection: 'left-to-right',
+                    itemWidth: 80,
+                    itemHeight: 20,
+                    itemOpacity: 0.75,
+                    symbolSize: 12,
+                    symbolShape: 'circle',
+                    symbolBorderColor: 'rgba(0, 0, 0, .5)',
+                    effects: [
+                        {
+                            on: 'hover',
+                            style: {
+                                itemBackground: 'rgba(0, 0, 0, .03)',
+                                itemOpacity: 1
+                            }
+                        }
+                    ]
+                }
+            ]}
+            defs={[
+                {
+                  colors: [
+                    {
+                      color: 'red',
+                      offset: 0
+                    },
+                    {
+                      color: 'inherit',
+                      offset: 100,
+                      opacity: 0
+                    }
+                  ],
+                  id: 'gradientA',
+                  type: 'linearGradient'
+                }
+              ]}
+              fill={[
+                {
+                  id: 'gradientA',
+                  match: '*'
+                }
+              ]}
         />
-        <Area
-          type='monotone'
-          dataKey='nettleie'
-          stroke='#82ca9d'
-          fillOpacity={1}
-          fill='url(#colorNettleie)'
-          animationEasing='ease-in-out'
-        />
-        <Area
-          type='monotone'
-          dataKey='pris'
-          stroke='#82ca9d'
-          fillOpacity={1}
-          fill='url(#colorPris)'
-          animationEasing='ease-in-out'
-        />
-      </AreaChart>
-    </>
-  )
-}
+</div>
+    )
+  }
 
-export default App
+  export default App
