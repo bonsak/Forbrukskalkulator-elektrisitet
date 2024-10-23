@@ -20,7 +20,7 @@ const TidContainer = styled.div`
   margin-bottom: 1rem;
   margin-top: 1rem;
   opacity: 0.5;
-  width: 100%;
+  width: 885px;
 `
 const TidWrapper = styled.div`
   align-items: center;

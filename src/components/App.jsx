@@ -1,17 +1,14 @@
-// import './App.css'
-// import { Immer } from 'immer'
 import ForbruksGraf from './ForbruksGrapf'
 import Tidslinje from './Tidslinje'
 import ForbruksGrid from './ForbuksGrid'
 import AktivitetsGrid from './AktivitetsGrid'
-// import { useState } from 'react'
 import { useState } from 'react'
 import useForbukStore from '../stores/useForbruk'
 import styled from 'styled-components'
 
 function App() {
-  const { forbruk, updateYvalue } = useForbukStore()
-  // console.log('store', forbruk)
+  const { forbruk, addSomething, updateValue } = useForbukStore()
+  console.log('I app: ', forbruk)
   // const [forbruksData, setForbruksData] = useImmer([
   //   {
   //     id: 'Forbruk',
@@ -302,19 +299,19 @@ function App() {
 
   // console.log(forbruk)
 
-  console.log(forbruk)
+  // console.log(forbruk)
   function handleClick(e) {
-    console.log(forbruk)
-    updateYvalue(0, 50)
-    console.log(forbruk)
+    // console.log('Før: ', forbruk)
+    updateValue(2, 2000)
+    console.log('Etter: ', forbruk)
   }
 
   return (
     <>
-      <button onClick={handleClick}>Testknapp</button>
       {/* <div className={'main-wrapper'}>
        */}
       <Wrapper>
+        <button onClick={handleClick}>Testknapp</button>
         <ForbruksGraf isForbruk={isForbruk} />
         <Tidslinje />
         <ForbruksGrid

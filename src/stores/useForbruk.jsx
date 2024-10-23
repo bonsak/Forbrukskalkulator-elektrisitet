@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { produce } from 'immer'
 
 // eslint-disable-next-line no-unused-vars
 const useForbukStore = create((set) => ({
@@ -55,13 +56,24 @@ const useForbukStore = create((set) => ({
       },
     ],
   },
-  updateYvalue: (index, nyYverdi) =>
-    set((state) => ({
-      forbruk: {
-        ...state.forbruk.data,
-        y: { ...state.forbruk.data[0], ...nyYverdi },
-      },
-    })),
+  addSomething: (index, payload) =>
+    set(
+      produce((draft) => {
+        console.log(index, payload)
+        draft.forbruk.data.push({
+          test: 'ttt',
+          name: payload,
+        })
+      })
+    ),
+  updateValue: (index, value) =>
+    set(
+      produce((draft) => {
+        const dataPunkt = draft.forbruk.data.find((el) => el.x === index)
+        console.log('Datapunkt', dataPunkt)
+        dataPunkt.y = value
+      })
+    ),
 }))
 
 export default useForbukStore
