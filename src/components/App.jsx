@@ -1,13 +1,13 @@
-import './App.css'
+// import './App.css'
 // import { Immer } from 'immer'
 import ForbruksGraf from './ForbruksGrapf'
 import Tidslinje from './Tidslinje'
 import ForbruksGrid from './ForbuksGrid'
 import AktivitetsGrid from './AktivitetsGrid'
 // import { useState } from 'react'
-import { useImmer } from 'use-immer'
 import { useState } from 'react'
 import useForbukStore from '../stores/useForbruk'
+import styled from 'styled-components'
 
 function App() {
   const { forbruk, updateYvalue } = useForbukStore()
@@ -312,7 +312,9 @@ function App() {
   return (
     <>
       <button onClick={handleClick}>Testknapp</button>
-      <div className={'main-wrapper'}>
+      {/* <div className={'main-wrapper'}>
+       */}
+      <Wrapper>
         <ForbruksGraf isForbruk={isForbruk} />
         <Tidslinje />
         <ForbruksGrid
@@ -320,9 +322,16 @@ function App() {
           setForbruk={setForbruk}
         />
         <AktivitetsGrid />
-      </div>
+      </Wrapper>
+      {/* </div> */}
     </>
   )
 }
 
+const Wrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
 export default App

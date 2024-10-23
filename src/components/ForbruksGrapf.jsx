@@ -1,6 +1,7 @@
 import { ResponsiveLine } from '@nivo/line'
-import './ForbruksGraf.css'
+// import './ForbruksGraf.css'
 import { linearGradientDef } from '@nivo/core'
+import styled from 'styled-components'
 
 function ForbruksGraf(isForbruk) {
   // const data = [forbruksData]
@@ -177,7 +178,7 @@ function ForbruksGraf(isForbruk) {
   // console.log(forbruksData)
 
   return (
-    <div className='graphContainer'>
+    <GrafWrapper>
       <ResponsiveLine
         data={kombinerteData}
         lineWidth={1}
@@ -259,8 +260,17 @@ function ForbruksGraf(isForbruk) {
           },
         ]}
       />
-    </div>
+    </GrafWrapper>
   )
 }
+
+const GrafWrapper = styled.div`
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
+  height: 400px;
+  width: 885px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+`
 
 export default ForbruksGraf

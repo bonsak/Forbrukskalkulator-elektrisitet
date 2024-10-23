@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import './ForbruksGrid.css'
+import styled from 'styled-components'
+// import './ForbruksGrid.css'
 
 function ForbruksGrid(isForbruk, setForbruk) {
   // ...['data'][0] er første data serie
@@ -38,29 +39,57 @@ function ForbruksGrid(isForbruk, setForbruk) {
   // }
 
   return (
-    <div className={'forbruksgrid-wrapper'}>
+    <ForbruksgridWrapper className={'forbruksgrid-wrapper'}>
       {kolonner.map((item, colIndex) => {
         // console.log(item)
         return (
-          <div
+          <ForbruksKolonne
             key={colIndex}
-            className={'forbruks-kolonne'}
+            // className={'forbruks-kolonne'}
             data-col={colIndex}
           >
             {rader.map((rad, slotIndex) => (
-              <div
+              <ForbruksSlot
                 key={rad}
-                className={'forbruks-slot'}
+                // className={'forbruks-slot'}
                 // onClick={handleClick}
                 data-col={colIndex}
                 data-slot={slotIndex}
                 data-value={generateRnd()}
-              ></div>
+              ></ForbruksSlot>
             ))}
-          </div>
+          </ForbruksKolonne>
         )
       })}
-    </div>
+    </ForbruksgridWrapper>
   )
 }
+
+const ForbruksgridWrapper = styled.div`
+  align-items: center;
+  column-gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  row-gap: 15px;
+  width: 885px;
+`
+
+const ForbruksKolonne = styled.div`
+  column-gap: 15px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+`
+
+const ForbruksSlot = styled.div`
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
+  height: 60px;
+  width: 60px;
+  outline: 3px solid rgba(224, 224, 224, 1);
+`
 export default ForbruksGrid

@@ -13,5 +13,14 @@ export default defineConfig({
       '@domains': path.resolve(__dirname, './src/domains'),
     },
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['styled-components', { displayName: true }]],
+      },
+    }),
+  ],
+  define: {
+    SC_DISABLE_SPEEDY: 'true', // needed to enable vendor prefixing using 'vite build'
+  },
 })
