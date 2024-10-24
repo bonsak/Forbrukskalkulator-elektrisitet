@@ -3,33 +3,37 @@ import { ICONS } from '../utils/icons'
 import styled from 'styled-components'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Draggable } from 'gsap/Draggable'
-import { Flip } from 'gsap/Flip'
+import useTargetSlotStore from '../stores/useTargetSlot'
+import { create } from 'zustand'
 
 gsap.registerPlugin(Draggable)
-gsap.registerPlugin(Flip)
 
 function AktivitetsGrid(bounds, ...delegated) {
   const aktiviteter = useRef()
   const aktivitet = useRef([])
   const forbruksSlotRef = useRef([])
 
+  const [targetSlot, setTargetSlot] = useState()
+  // const { targetSlot, setTargetSlot, resetTargetSlot } = useTargetSlotStore()
+
   // const { contextSafe } = useGSAP({ scope: aktiviteter })
 
-  useGSAP((context, contextSafe) => {
+  useGSAP(() => {
     const drag = Draggable.create(aktivitet.current, {
       bounds: window,
-      // onPress: (e) => {
-      //   // console.log('Press on click')
-      //   // gsap.to(e.target, {
-      //   //   scale: 1.1,
-      //   // })
-      //   // gsap.to(e.target, {
-      //   //   duration: 0.1,
-      //   //   rotate: 0,
-      //   // })
-      // },
+      onPress: (e) => {
+        // setTargetSlot(e.target)
+        // console.log('on Press: ', e.target)
+        //   // gsap.to(e.target, {
+        //   //   scale: 1.1,
+        //   // })
+        //   // gsap.to(e.target, {
+        //   //   duration: 0.1,
+        //   //   rotate: 0,
+        //   // })
+      },
       onDrag: (e) => {
         // console.log(
         //   'refs: ',
@@ -40,24 +44,32 @@ function AktivitetsGrid(bounds, ...delegated) {
         // console.log('Slots lengde', forbruksSlotRef.current.length)
 
         var i = forbruksSlotRef.current.length
-        while (--i > 1) {
+        while (--i >= 0) {
           if (Draggable.hitTest(e.target, forbruksSlotRef.current[i], 12)) {
             // gsap.to(e.target, {
             //   rotate: -10,
             // })
             // let aktivitetsBB = e.target.getBoundingClientRect()
             // let forbruksBB = forbruksSlotRef.current.getBoundingClientRect()
-
+            setTargetSlot(forbruksSlotRef.current[i])
             // x = '+=' + (forbruksBB.left - aktivitetsBB.left)
             // y = '+=' + (forbruksBB.top - aktivitetsBB.top)
-            console.log('hit ref: ', e.target, forbruksSlotRef.current[i])
+            // useTargetSlotStore((state) => state.bears)
+            // const ttt = setTargetSlot(forbruksSlotRef.current[i])
+            console.log('Loop Hit target object', targetSlot)
+            // setTargetSlot(forbruksSlotRef.current[i])
+
+            // }))
+            // return
           } else {
+            // resetTargetSlot()
+            // setTargetSlot(null)
             // gsap.to(e.target, {
             //   duration: 0.1,
             //   x: 0,
             //   y: 0,
             // })
-            console.log('No hit')
+            console.log('No hit', targetSlot)
           }
         }
       },
@@ -76,9 +88,16 @@ function AktivitetsGrid(bounds, ...delegated) {
         //   x: x,
         //   y: y,
         // })
+        // console.log('Targetslot: ', targetSlot)
       },
     })
-  })
+    // const increasePopulation = useStore((state) => state.increasePopulation)
+    // const updateTarget = useTargetSlotStore((forbruksSlotRef.current[i]) => set({targetSlot: forbruksSlotRef.current[i]}));
+  }, [])
+  // function updateTargetSlot(target) {
+  //   setTargetSlot(target)
+  //   console.log('Her', targetSlot)
+  // }
   function handleEnter(e) {
     gsap.to(e.target, {
       duration: 0.1,
@@ -91,13 +110,19 @@ function AktivitetsGrid(bounds, ...delegated) {
       rotation: 0,
     })
   }
-
+  // const handleClick = useEffect((e) => {
+  function onClickHandle(e) {
+    setTargetSlot(e.target)
+    console.log('on click target slot: ', targetSlot)
+  }
+  // }, [])
+  //
   return (
     <Wrapper ref={aktiviteter}>
       {ICONS.map((item, index) => (
         <Slot
-          // onClick={onClickHandle}
-          // onClick={handleClick}
+          onClick={onClickHandle}
+          // onClick={onClickEvent}
           // onMouseEnter={handleEnter}
           // onMouseLeave={handleLeave}
           ref={(el) => (aktivitet.current[index] = el)}
