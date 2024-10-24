@@ -3,8 +3,20 @@ import { linearGradientDef } from '@nivo/core'
 import styled from 'styled-components'
 import useForbukStore from '../stores/useForbruk'
 
-function ForbruksGraf(isForbruk) {
+function ForbruksGraf() {
   const { forbruk, pris, nettleie, updateValue } = useForbukStore()
+
+  const AreaLayer = ({ innerWidth, innerHeight }) => {
+    return (
+      <>
+        <path
+          d={`M${innerWidth} 0 L${innerWidth} ${innerHeight} L0 ${innerHeight} L0 0 Z`}
+          fill='#e9e9e9'
+          fillOpacity={1}
+        />
+      </>
+    )
+  }
 
   return (
     <GrafWrapper>
@@ -68,7 +80,17 @@ function ForbruksGraf(isForbruk) {
         //         ]
         //     }
         // ]}
-
+        layers={[
+          AreaLayer,
+          'grid',
+          'markers',
+          'areas',
+          'lines',
+          'slices',
+          'axes',
+          'points',
+          'legends',
+        ]}
         defs={[
           linearGradientDef('gradientA', [
             { offset: 0, color: 'inherit' },
@@ -95,12 +117,12 @@ function ForbruksGraf(isForbruk) {
 }
 
 const GrafWrapper = styled.div`
-  /* border-radius: 8px; */
+  border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
   height: 400px;
   width: 885px;
-  /* overflow-x: hidden;
-  overflow-y: hidden; */
+  overflow-x: hidden;
+  overflow-y: hidden;
   margin-top: 2rem;
 `
 
