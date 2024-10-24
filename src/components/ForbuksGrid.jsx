@@ -1,11 +1,8 @@
-import { useCallback } from 'react'
+import useForbukStore from '../stores/useForbruk'
 import styled from 'styled-components'
-// import './ForbruksGrid.css'
 
-function ForbruksGrid(isForbruk, setForbruk) {
-  // ...['data'][0] er første data serie
-  // ...['data'][0]['data'][0][('x', 'y')] er første verdi
-  // console.log(forbruksData['forbruksData'][0]['data'][0][('x', 'y')])
+function ForbruksGrid(i) {
+  const { forbruk, updateValue } = useForbukStore()
 
   const kolonner = []
   for (var i = 0; i <= 11; i++) {
@@ -14,45 +11,28 @@ function ForbruksGrid(isForbruk, setForbruk) {
   const rader = [0, 1]
 
   function generateRnd() {
-    // console.log(tmpValue)
-    return String(Math.random() * 5 + 5)
+    return String(Math.random() * 10 + 5)
   }
 
-  // const handleClick = useCallback((e) => {
-  //   let kolonne = e.target.getAttribute('data-col')
-  //   let verdi = e.target.getAttribute('data-value')
-  //   //
-  //   // console.log(e.target)
-  //   setForbruk((draft) => {
-  //     const forbruk = draft.find((forbruk) => forbruk.id === kolonne)
-  //     console.log(forbruk)
-  //     forbruk.y = verdi
-  //   })
-  // }, [])
+  function handleClick(e) {
+    let kolonne = parseFloat(e.target.getAttribute('data-col'))
+    let verdi = parseFloat(e.target.getAttribute('data-value'))
 
-  // function handleClick(e) {
-  //   let kolonne = e.target.getAttribute('data-col')
-  //   let verdi = e.target.getAttribute('data-value')
-  //   console.log(kolonne, verdi)
-
-  // setForbruk([...forbruk, { id: kolonne, y: verdi }])
-  // }
+    updateValue(kolonne, verdi)
+  }
 
   return (
     <ForbruksgridWrapper className={'forbruksgrid-wrapper'}>
       {kolonner.map((item, colIndex) => {
-        // console.log(item)
         return (
           <ForbruksKolonne
             key={colIndex}
-            // className={'forbruks-kolonne'}
             data-col={colIndex}
           >
             {rader.map((rad, slotIndex) => (
               <ForbruksSlot
                 key={rad}
-                // className={'forbruks-slot'}
-                // onClick={handleClick}
+                onClick={handleClick}
                 data-col={colIndex}
                 data-slot={slotIndex}
                 data-value={generateRnd()}

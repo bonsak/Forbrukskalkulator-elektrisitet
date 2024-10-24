@@ -6,9 +6,11 @@ import { useState } from 'react'
 import useForbukStore from '../stores/useForbruk'
 import styled from 'styled-components'
 
+import { FORBRUKSDATA } from '../utils/startdata'
+
 function App() {
-  const { forbruk, addSomething, updateValue } = useForbukStore()
-  console.log('I app: ', forbruk)
+  const { forbruk, updateValue } = useForbukStore()
+  console.log('I app: ', FORBRUKSDATA)
   // const [forbruksData, setForbruksData] = useImmer([
   //   {
   //     id: 'Forbruk',
@@ -311,7 +313,7 @@ function App() {
       {/* <div className={'main-wrapper'}>
        */}
       <Wrapper>
-        <button onClick={handleClick}>Testknapp</button>
+        {/* <button onClick={handleClick}>Testknapp</button> */}
         <ForbruksGraf isForbruk={isForbruk} />
         <Tidslinje />
         <ForbruksGrid
