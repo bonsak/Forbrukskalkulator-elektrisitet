@@ -8,6 +8,10 @@ import { Draggable } from 'gsap/Draggable'
 import useTargetSlotStore from '../stores/useTargetSlot'
 import { create } from 'zustand'
 
+// NB
+// Forbrukergrid må være kunne holde en array av iconer. Hver kolonne må kunne oppdateres med nytt innhold.
+// Starte med 12 blanke iconer. Eller 12 tomme kolonner som hver kan holde iconer.
+
 gsap.registerPlugin(Draggable)
 
 function AktivitetsGrid() {
