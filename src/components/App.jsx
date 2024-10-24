@@ -7,7 +7,7 @@ import KontrollPanel from './KontrollPanel'
 function App() {
   return (
     <Wrapper>
-      <ForbruksGraf />
+      {/* <ForbruksGraf /> */}
       {/* <Tidslinje /> */}
       <KontrollPanel />
     </Wrapper>
