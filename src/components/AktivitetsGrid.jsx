@@ -34,7 +34,7 @@ function AktivitetsGrid() {
             // )
             // setTargetSlot(forbruksSlotRef.current[y])
             console.log(
-              'targetSlot rect',
+              'targetSlot',
               forbruksSlotRef.current[y].getBoundingClientRect()
             )
             break
