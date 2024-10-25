@@ -18,36 +18,73 @@ function AktivitetsGrid() {
   const aktiviteter = useRef()
   const aktivitet = useRef([])
   const forbruksSlotRef = useRef([])
+  // const testSlot = useRef()
 
   const [targetSlot, setTargetSlot] = useState()
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [parent, setParent] = useState()
 
   // const { contextSafe } = useGSAP({ scope: aktiviteter })
 
   useGSAP(() => {
+    var newParent = undefined
     Draggable.create(aktivitet.current, {
       bounds: window,
       // onPress: (e) => {
       // },
-      onDrag: (e) => {
+      onDrag: function () {
+        // Check for collision
         for (let y = 0; y < forbruksSlotRef.current.length; y++) {
-          if (Draggable.hitTest(e.target, forbruksSlotRef.current[y])) {
-            // let targetPos = gsap.getProperty(
-            //   forbruksSlotRef.current[y],
-            //   'x',
-            //   'px'
-            // )
-            // setTargetSlot(forbruksSlotRef.current[y])
-            console.log(
-              'targetSlot',
-              forbruksSlotRef.current[y].getBoundingClientRect()
-            )
-            break
+          if (Draggable.hitTest(this.target, forbruksSlotRef.current[y])) {
+            setPosition({ x: this.target.x, y: this.target.y })
+            newParent = forbruksSlotRef.current[y]
+
+            return
           }
+          // Hvis vi ikke treffer noe set newParent til null
+          newParent = null
         }
       },
-      onDragEnd: (e) => {},
+      onDragEnd: function () {
+        let x = 0
+        let y = 0
+
+        if (newParent) {
+          const draggedRect = this.target.getBoundingClientRect()
+          const newParentRect = newParent.getBoundingClientRect()
+
+          x = '+=' + (newParentRect.left - draggedRect.left)
+          y = '+=' + (newParentRect.top - draggedRect.top)
+        }
+        gsap.to(this.target, {
+          duration: 0.1,
+          x: x,
+          y: y,
+        })
+      },
     })
   }, [])
+
+  // function onDrag() {
+  //   for (let y = 0; y < forbruksSlotRef.current.length; y++) {
+  //     // testSlot = forbruksSlotRef.current[y]
+  //     if (Draggable.hitTest(this.target, forbruksSlotRef.current[y])) {
+  //       // setTargetSlot(forbruksSlotRef.current[y])
+  //       // console.log('Parent', forbruksSlotRef.current[y].parentElement)
+  //       // setPosition({ x: this.target.x, y: this.target.y })
+  //       // newParent = forbruksSlotRef.current[y].parentElement
+  //       // console.log('Drag', newParent)
+  //       // console.log('This hit', this)
+
+  //       return
+  //     }
+  //   }
+  //   // console.log('ON DRAG this target', this.target)
+  // }
+
+  // function onDragEnd() {
+  //   console.log('DRAG END', this.target)
+  // }
 
   function handleEnter(e) {
     gsap.to(e.target, {
