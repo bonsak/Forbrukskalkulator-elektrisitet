@@ -7,10 +7,11 @@ import styled from 'styled-components'
 
 import { FORBRUKSDATA } from '../utils/startdata'
 import { useRef } from 'react'
+import KontrollPanel from './KontrollPanel'
 
 function App() {
   const wrapperRef = useRef()
-  console.log(wrapperRef)
+  // console.log(wrapperRef)
 
   const { forbruk, updateValue } = useForbukStore()
 
@@ -27,9 +28,10 @@ function App() {
         <Wrapper>
           {/* <button onClick={handleClick}>Testknapp</button> */}
           <ForbruksGraf />
-          <Tidslinje />
-          <ForbruksGrid />
-          <AktivitetsGrid bounds={wrapperRef} />
+          {/* <Tidslinje /> */}
+          <KontrollPanel />
+          {/* <ForbruksGrid /> */}
+          {/* <AktivitetsGrid bounds={wrapperRef} /> */}
         </Wrapper>
       </div>
     </>

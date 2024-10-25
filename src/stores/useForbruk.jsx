@@ -30,12 +30,36 @@ const useForbukStore = create((set) => ({
   updateValue: (index, value) =>
     set(
       produce((draft) => {
+        const forbruksData = draft.forbruk.data.find(
+          (el) => el.x === parseFloat(index)
+        )
+        forbruksData.y = parseFloat(value)
+        // const prisData = draft.pris.data.find((el) => el.x === index)
+        // prisData.y = value + 4
+        // const nettData = draft.nettleie.data.find((el) => el.x === index)
+        // nettData.y = value + 2
+      })
+    ),
+  addValue: (index, value) =>
+    set(
+      produce((draft) => {
         const forbruksData = draft.forbruk.data.find((el) => el.x === index)
-        forbruksData.y = value
-        const prisData = draft.pris.data.find((el) => el.x === index)
-        prisData.y = value + 4
-        const nettData = draft.nettleie.data.find((el) => el.x === index)
-        nettData.y = value + 2
+        forbruksData.y += parseFloat(value)
+        // const prisData = draft.pris.data.find((el) => el.x === index)
+        // prisData.y = value + 4
+        // const nettData = draft.nettleie.data.find((el) => el.x === index)
+        // nettData.y = value + 2
+      })
+    ),
+  subtractValue: (index, value) =>
+    set(
+      produce((draft) => {
+        const forbruksData = draft.forbruk.data.find((el) => el.x === index)
+        forbruksData.y -= parseFloat(value)
+        // const prisData = draft.pris.data.find((el) => el.x === index)
+        // prisData.y = value + 4
+        // const nettData = draft.nettleie.data.find((el) => el.x === index)
+        // nettData.y = value + 2
       })
     ),
 }))

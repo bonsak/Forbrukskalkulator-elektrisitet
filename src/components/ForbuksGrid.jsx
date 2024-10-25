@@ -1,25 +1,14 @@
 import useForbukStore from '../stores/useForbruk'
 import styled from 'styled-components'
 
-function ForbruksGrid(i) {
-  const { forbruk, updateValue } = useForbukStore()
+function ForbruksGrid() {
+  const { forbruk, updateValue, addValue, subtractValue } = useForbukStore()
 
   const kolonner = []
   for (var i = 0; i <= 11; i++) {
     kolonner.push(i * 2)
   }
   const rader = [0, 1]
-
-  function generateRnd() {
-    return String(Math.random() * 10 + 5)
-  }
-
-  function handleClick(e) {
-    let kolonne = parseFloat(e.target.getAttribute('data-col'))
-    let verdi = parseFloat(e.target.getAttribute('data-value'))
-
-    updateValue(kolonne, verdi)
-  }
 
   return (
     <ForbruksgridWrapper className={'forbruksgrid-wrapper'}>
@@ -32,10 +21,10 @@ function ForbruksGrid(i) {
             {rader.map((rad, slotIndex) => (
               <ForbruksSlot
                 key={rad}
-                onClick={handleClick}
+                // onClick={handleClick}
                 data-col={colIndex}
                 data-slot={slotIndex}
-                data-value={generateRnd()}
+                // data-value={generateRnd()}
               ></ForbruksSlot>
             ))}
           </ForbruksKolonne>
