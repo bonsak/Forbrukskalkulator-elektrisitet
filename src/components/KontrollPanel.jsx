@@ -3,25 +3,26 @@ import styled from 'styled-components'
 import { ICONS } from '../utils/icons'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Draggable } from 'gsap/Draggable'
 
+gsap.registerPlugin(Draggable)
+
 export default function KontrollPanel() {
-  const { forbruk, updateValue, addValue, subtractValue } = useForbukStore()
+  const { updateValue } = useForbukStore() // Fjernet ubrukte variabler
   const aktivitet = useRef([])
   // const [targetSlot, setTargetSlot] = useState()
+  const forbruksKolonne = useRef([])
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [parent, setParent] = useState()
-  const forbruksSlotRef = useRef([])
   //   const [forbruksKolonne, setForbruksKolonne] = useState(0)
 
+  const dragInstance = useRef(null)
+
   const FobruksGrid = () => {
-    var refIndex = 0
     const kolonner = []
     for (var i = 0; i <= 11; i++) {
       kolonner.push(i * 2)
     }
-    const rader = [0, 1]
 
     return (
       <ForbruksgridWrapper className={'forbruksgrid-wrapper'}>
@@ -29,106 +30,125 @@ export default function KontrollPanel() {
           return (
             <ForbruksKolonne
               key={colIndex}
+              ref={(el) => (forbruksKolonne.current[colIndex] = el)}
               data-col={colIndex}
-            >
-              {rader.map((rad, slotIndex) => (
-                <ForbruksSlot
-                  key={rad}
-                  //   ref={(el) => (forbruksSlotRef.current[colIndex] = el)}
-                  ref={(el) => {
-                    // Opprett en nested array for refs hvis den ikke eksisterer
-                    if (!forbruksSlotRef.current[slotIndex]) {
-                      forbruksSlotRef.current[slotIndex] = []
-                    }
-                    forbruksSlotRef.current[slotIndex][colIndex] = el // Lagre referansen
-                  }}
-                  data-col={colIndex}
-                  data-slot={slotIndex}
-                ></ForbruksSlot>
-              ))}
-            </ForbruksKolonne>
+            ></ForbruksKolonne>
           )
-          refIndex += 1
-          console.log(refIndex)
         })}
       </ForbruksgridWrapper>
     )
   }
   const AktivitetsGrid = () => {
-    // const aktiviteter = useRef()
-    gsap.registerPlugin(Draggable)
-    useGSAP(() => {
-      var newParent = undefined
-      var forbruksKolonne = 0
-      Draggable.create(aktivitet.current, {
-        bounds: window,
-        onDrag: function () {
-          // Check for collision
-
-          forbruksSlotRef.current.map((kolonne, colIndex) => {
-            kolonne.map((rad, radIndex) => {
+    useGSAP((context) => {
+      dragInstance.current = Draggable.create(
+        '.forbruksenhet',
+        {
+          bounds: window,
+          onDrag: function () {
+            this.lastX = this.x
+            this.lastY = this.y
+            console.log(this.lastX, this.lastY)
+            forbruksKolonne.current.map((kolonne, colIndex) => {
               if (
                 Draggable.hitTest(
                   this.target,
-                  forbruksSlotRef.current[colIndex][radIndex]
+                  forbruksKolonne.current[colIndex]
                 )
               ) {
-                newParent = forbruksSlotRef.current[colIndex][radIndex]
-                forbruksKolonne =
-                  forbruksSlotRef.current[colIndex][radIndex].getAttribute(
-                    'data-col'
-                  )
-                // console.log('Hit', newParent, forbruksKolonne)
-                // setParent(forbruksSlotRef.current[colIndex][radIndex])
-
+                this.newParent = forbruksKolonne.current[colIndex]
+                // newParent = forbruksKolonne.current[colIndex][radIndex]
+                // forbruksKolonne =
+                //   forbruksKolonne.current[colIndex][radIndex].getAttribute(
+                //     'data-col'
+                //   )
                 return
               }
-              // Hvis vi ikke treffer noe set newParent til null
-              //   newParent = null
-              //   console.log(rad)
+              // })
             })
-          })
+          },
+          onDragEnd: function () {
+            console.log('Target', this.target, 'Slot: ', this.newParent)
+            let x = 0
+            let y = 0
+            if (this.newParent) {
+              const draggedRect = this.target.getBoundingClientRect()
+              const newParentRect = this.newParent.getBoundingClientRect()
+              x = '+=' + (newParentRect.left - draggedRect.left)
+              y = '+=' + (newParentRect.top - draggedRect.top)
+              // updateValue(
+              //   forbruksKolonne,
+              //   this.target.getAttribute('data-forbruk')
+              // )
+              gsap.to(this.target, {
+                duration: 0.1,
+                x: x,
+                y: y,
+              })
+            }
+            //   newParent = null
+          },
         },
-        onDragEnd: function () {
-          //   console.log('Target', this.target, 'Slot: ', newParent)
-          let x = 0
-          let y = 0
+        []
+      )
 
-          if (newParent) {
-            const draggedRect = this.target.getBoundingClientRect()
-            const newParentRect = newParent.getBoundingClientRect()
+      // useGSAP(() => {
+      //   var droppables = aktivitet.current
+      //   var dropZones = forbruksKolonne.current
 
-            x = '+=' + (newParentRect.left - draggedRect.left)
-            y = '+=' + (newParentRect.top - draggedRect.top)
+      //   var overlapThreshold = '80%'
 
-            updateValue(
-              forbruksKolonne,
-              this.target.getAttribute('data-forbruk')
-            )
+      //   // droppables.each(initDroppable)
+      //   droppables.map((item, index) => {
+      //     initDroppable(index, item)
+      //   })
 
-            // console.log('Target: ', this.target, 'New parent: ', newParent)
-            // console.log('Position: ', position)
-            gsap.to(this.target, {
-              duration: 0.1,
-              x: x,
-              y: y,
-            })
-          }
-          //   newParent = null
-        },
-      })
-    }, [])
+      //   function initDroppable(i, element) {
+      //     var insideZone = false
 
+      //     var highlightAnimation = gsap.to(element, 0.3, {
+      //       backgroundColor: 'green',
+      //       paused: true,
+      //     })
+
+      //     Draggable.create(element, {
+      //       onDrag: function () {
+      //         insideZone = false
+
+      //         for (var i = 0; i < dropZones.length; i++) {
+      //           if (this.hitTest(dropZones[i], overlapThreshold)) {
+      //             insideZone = true
+      //             break
+      //           }
+      //         }
+
+      //         if (insideZone) {
+      //           highlightAnimation.play()
+      //         } else {
+      //           highlightAnimation.reverse()
+      //         }
+      //       },
+      //       onDragEnd: function () {
+      //         if (!insideZone) {
+      //           gsap.to(this.target, 0.2, {
+      //             x: 0,
+      //             y: 0,
+      //           })
+      //         }
+      //       },
+      //     })
+      //   }
+      // })
+    })
     return (
       <Wrapper>
         {ICONS.map((item, index) => (
-          <Slot
+          <Forbruksenhet
             ref={(el) => (aktivitet.current[index] = el)}
             key={index}
             src={item['src']}
-            className={'aktivitets-slot'}
+            className={'forbruksenhet'}
             data-forbruk={item['forbruk']}
-          ></Slot>
+          ></Forbruksenhet>
         ))}
       </Wrapper>
     )
@@ -159,17 +179,24 @@ const ForbruksKolonne = styled.div`
   column-gap: 15px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   row-gap: 15px;
-`
-
-const ForbruksSlot = styled.div`
   background-color: rgba(255, 255, 255, 1);
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
-  height: 60px;
+  min-height: 60px;
   width: 60px;
   outline: 3px solid rgba(224, 224, 224, 1);
 `
+
+// const ForbruksSlot = styled.div`
+//   background-color: rgba(255, 255, 255, 1);
+//   border-radius: 8px;
+//   box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
+//   height: 60px;
+//   width: 60px;
+//   outline: 3px solid rgba(224, 224, 224, 1);
+// `
 // Aktiviteter
 const Wrapper = styled.div`
   align-items: start;
@@ -183,7 +210,7 @@ const Wrapper = styled.div`
   width: 435px;
 `
 
-const Slot = styled.img`
+const Forbruksenhet = styled.img`
   border-radius: 8px;
   height: 60px;
   width: 60px;
