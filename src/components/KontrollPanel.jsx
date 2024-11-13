@@ -39,7 +39,7 @@ export default function KontrollPanel() {
     )
   }
   const AktivitetsGrid = () => {
-    useGSAP((context) => {
+    useGSAP(() => {
       dragInstance.current = Draggable.create(
         '.forbruksenhet',
         {
@@ -184,7 +184,7 @@ const ForbruksKolonne = styled.div`
   background-color: rgba(255, 255, 255, 1);
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
-  min-height: 60px;
+  min-height: 80px;
   width: 60px;
   outline: 3px solid rgba(224, 224, 224, 1);
 `
