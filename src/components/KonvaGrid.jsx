@@ -1,8 +1,24 @@
-import { Stage, Layer, Rect, Line, Group, Text } from 'react-konva'
+import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState } from 'react'
 import styled from 'styled-components'
+import useImage from 'use-image'
 
 const KonvaGrid = () => {
+
+  // const LionImage = () => {
+    const [dusj] = useImage('/icons/dusj.png');
+    const [elbil] = useImage('/icons/elbil.png');
+    const [forbruk] = useImage('/icons/forbruk.png');
+    const [kaffetrakter] = useImage('/icons/kaffetrakter.png');
+    const [oppvarming] = useImage('/icons/oppvarming.png');
+    const [oppvaskmaskin] = useImage('/icons/oppvaskmaskin.png');
+    const [stekeovnplate] = useImage('/icons/stekeovn-plate.png');
+    const [vaskemaskin] = useImage('/icons/vaskemaskin.png');
+    
+    const images = [dusj, elbil, forbruk, kaffetrakter, oppvarming, oppvaskmaskin, stekeovnplate, vaskemaskin];
+
+  // };
+
   const [rectangles, setRectangles] = useState([])
   const [isDrawing, setIsDrawing] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
@@ -189,14 +205,24 @@ const KonvaGrid = () => {
         dragDistance <= 30 ? startPos.x : Math.min(startPos.x, endPos.x),
         dragDistance <= 30 ? columnWidth * 2 : dragDistance
       )
-      console.log('snapped',snapped,'columnWidth',columnWidth,'dragDistance',dragDistance)
+      // console.log('image',image.src)
 
       const newRectangle = {
         x: snapped.x,
         y: startPos.y,
         width: snapped.width,
         height: rowHeight,
-        fill: '#b1afa9',
+        stroke: '#ebe7e0',
+        strokeWidth: 5,
+        // offsetX: -2.5, // Halvparten av strokeWidth
+        // offsetY: -2.5, // Halvparten av strokeWidth
+        strokeScaleEnabled: false,
+        // fillAfterStrokeEnabled: true,  
+        // fillPatternImage: image,
+        // fillPatternRepeat: 'no-repeat',
+        // fillPatternScale: { x: 0.5, y: 0.5 },
+        fill: '#C8E4D3',
+        // globalCompositeOperation: 'destination-out',
         onDragMove: (e) => handleDragMove(e),
         onDragEnd: (e) => handleDragEnd(e),
         // onDragStart: (e) => console.log('Starte drag:', e.target.id()),
@@ -204,7 +230,9 @@ const KonvaGrid = () => {
         id: `rect${crypto.randomUUID()}`,
         draggable: true,
         kwt: 100,
+        image: Math.floor(Math.random() * images.length),
       }
+      console.log('newRectangle',newRectangle.image)
 
       setRectangles([...rectangles, newRectangle])
     } else if (isResizing && selectedRect && previewRect) {
@@ -307,11 +335,12 @@ const KonvaGrid = () => {
               >
                 <Text
                   text='×'
-                  fill='#fff'
+                  fill='#007B50'
                   fontSize={14}
                   x={3}
                   y={-1}
                 />
+                <Image image={images[rect.image]} x={-(rect.width / 2)} y={-5}/>
               </Group>
             </Group>
           ))}
