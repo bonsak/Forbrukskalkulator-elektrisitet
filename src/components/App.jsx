@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import DagensPris from './DagensPris'
 import Tidslinje from './Tidslinje'
 import LoadingSpinner from './LoadingSpinner'
+import KonvaGrid from './KonvaGrid'
 
 // Lazy-laster tunge komponenter
 const ForbruksGraf = lazy(() => import('./ForbruksGrapf'))
@@ -13,16 +14,17 @@ function App() {
     <>
       <div className={'main-wrapper'}>
         <Wrapper>
-          <Suspense fallback={<LoadingSpinner />}>
+          {/* <Suspense fallback={<LoadingSpinner />}>
             <ForbruksGraf />
-          </Suspense>
+          </Suspense> */}
 
           <Tidslinje />
           <DagensPris />
+          <KonvaGrid />
 
-          <Suspense fallback={<LoadingSpinner />}>
+          {/* <Suspense fallback={<LoadingSpinner />}>
             <GanttTidslinje />
-          </Suspense>
+          </Suspense> */}
         </Wrapper>
       </div>
     </>
