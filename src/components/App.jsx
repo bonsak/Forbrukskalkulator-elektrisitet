@@ -14,9 +14,9 @@ function App() {
     <>
       <div className={'main-wrapper'}>
         <Wrapper>
-          {/* <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <ForbruksGraf />
-          </Suspense> */}
+          </Suspense>
 
           <Tidslinje />
           <DagensPris />
