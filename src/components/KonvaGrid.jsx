@@ -214,17 +214,11 @@ const KonvaGrid = () => {
         height: rowHeight,
         stroke: '#ebe7e0',
         strokeWidth: 5,
-        // offsetX: -2.5, // Halvparten av strokeWidth
-        // offsetY: -2.5, // Halvparten av strokeWidth
         strokeScaleEnabled: false,
-        // fillAfterStrokeEnabled: true,  
-        // fillPatternImage: image,
-        // fillPatternRepeat: 'no-repeat',
-        // fillPatternScale: { x: 0.5, y: 0.5 },
         fill: '#C8E4D3',
-        // globalCompositeOperation: 'destination-out',
         onDragMove: (e) => handleDragMove(e),
         onDragEnd: (e) => handleDragEnd(e),
+        onDblclick: (e) => console.log('dblclick',e.target),
         // onDragStart: (e) => console.log('Starte drag:', e.target.id()),
         // id: `rect${rectangles.length + 1}`,
         id: `rect${crypto.randomUUID()}`,
@@ -340,7 +334,7 @@ const KonvaGrid = () => {
                   x={3}
                   y={-1}
                 />
-                <Image image={images[rect.image]} x={-(rect.width / 2)} y={-5}/>
+                <Image image={images[rect.image]} x={-(rect.width / 2)} y={-5} listening={false}/>
               </Group>
             </Group>
           ))}
