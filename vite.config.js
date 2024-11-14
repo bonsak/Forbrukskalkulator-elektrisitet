@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
@@ -13,14 +13,23 @@ export default defineConfig({
       '@domains': path.resolve(__dirname, './src/domains'),
     },
   },
-  plugins: [
-    react({
-      babel: {
-        plugins: [['styled-components', { displayName: true }]],
-      },
-    }),
-  ],
+  plugins: [react()],
   define: {
     SC_DISABLE_SPEEDY: 'true', // needed to enable vendor prefixing using 'vite build'
+  },
+  build: {
+    chunkSizeWarningLimit: 1000, // øker størrelsesbegrensningen (i KB)
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'styled-components'],
+          charts: [
+            './src/components/ForbruksGrapf.jsx',
+            './src/components/GanttTidslinje.jsx',
+          ],
+          utils: ['./src/utils/startdata.js', './src/utils/ganttConfig.js'],
+        },
+      },
+    },
   },
 })

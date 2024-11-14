@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { gantt } from 'dhtmlx-gantt'
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
 import styled from 'styled-components'
+import '../style/gantt.css'
 
 const GanttTidslinje = () => {
   const ganttContainer = useRef(null)
@@ -12,133 +12,63 @@ const GanttTidslinje = () => {
       click_drag: true,
     })
 
-    gantt.config.click_drag = {
-      callback: onDragEnd,
-      // singleRow: true,
-    }
-
-    gantt.config.show_grid = false
-    gantt.config.show_task_cells = false
-    // gantt.config.show_task_row = false
-
-    gantt.config.drag_resize = true
-    gantt.config.drag_move = true
-    gantt.config.order_branch = true
-    gantt.config.order_branch_free = true
-    // gantt.config.order_branch_free = true
-    gantt.config.drag_progress = false
-
-    gantt.config.drag_timeline = {
-      move: true,
-      resize: true,
-      progress: false,
-    }
-    // gantt.config.drag_mode = {
-    //   move: true,
-    //   resize: true,
-    //   progress: false,
-    // }
-
-    // gantt.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
-    //   console.log('Drag started:', id, mode)
-    //   return true
-    // })
-
-    // gantt.attachEvent('onAfterTaskMove', function (id, parent, tindex) {
-    //   console.log('Task moved:', id, 'New index:', tindex)
-    // })
-    // gantt.config.drag_mode = {
-    //   move: true,
-    //   // resize: true,
-    //   // progress: true,
-    //   ignore: false,
-    // }
-
-    // gantt.attachEvent('onEmptyClick', (e) => {
-    //   const pos = gantt.getScrollState()
-    //   const posx = e.clientX - ganttContainer.current.offsetLeft + pos.x
-    //   const rawDate = gantt.dateFromPos(posx)
-    //   const roundedDate = new Date(rawDate)
-    //   roundedDate.setMinutes(30)
-    //   if (roundedDate < rawDate) {
-    //     roundedDate.setHours(roundedDate.getHours() + 1)
-    //   }
-    //   roundedDate.setMinutes(0)
-
-    //   const newTask = {
-    //     id: gantt.uid(),
-    //     text: 'Ny Oppgave',
-    //     start_date: roundedDate,
-    //     duration: 1,
-    //     watt: 200,
-    //     size: 1,
-    //   }
-    //   gantt.addTask(newTask)
-    //   return true
-    // })
-
-    // Konfigurer tidsskala
-    gantt.config.duration_unit = 'hour'
-    gantt.config.duration_step = 1
-
-    gantt.config.min_column_width = 25
-
-    // Sett start og slutt tid for visningen
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const endDate = new Date(today)
     endDate.setHours(24, 0, 0, 0)
 
-    gantt.config.start_date = today
-    gantt.config.end_date = endDate
-
-    // Konfigurer skala detaljer
-    gantt.config.scale_height = 50
-    gantt.config.scales = [{ unit: 'hour', step: 1, format: '%H' }]
-
-    // Aktiver dra-oppretting i timeline
-    gantt.config.show_chart = true
-    gantt.config.read_only = false
-    gantt.config.drag_links = false
-
-    // Tillat dobbeltklikk for å lage nye tasks
-    gantt.config.dblclick_create = true
-
-    // Default 24 timer for nye oppgaver
-    gantt.templates.task_time = function (start, end, task) {
-      if (!task.duration) {
-        task.duration = 1
-      }
-      return ''
+    const ganttConfig = {
+      lightbox: {
+        sections: [
+          {
+            name: 'description',
+            height: 38,
+            map_to: 'text',
+            type: 'textarea',
+            focus: true,
+          },
+          {
+            name: 'watt_size',
+            type: 'watt_size',
+            map_to: 'auto',
+            height: 45,
+            label: ' ',
+          },
+        ],
+      },
+      click_drag: {
+        callback: onDragEnd,
+        singleRow: false,
+      },
+      show_grid: false,
+      show_task_cells: false,
+      drag_resize: true,
+      drag_move: true,
+      order_branch: true,
+      order_branch_free: true,
+      drag_progress: false,
+      drag_timeline: {
+        move: true,
+        resize: true,
+        progress: false,
+      },
+      duration_unit: 'hour',
+      duration_step: 1,
+      min_column_width: 25,
+      start_date: today,
+      end_date: endDate,
+      row_height: 40,
+      scale_height: 50,
+      scales: [{ unit: 'hour', step: 1, format: '%H' }],
+      show_chart: true,
+      read_only: false,
+      drag_links: false,
+      dblclick_create: true,
+      open_split_tasks: true,
+      overlap_text: true,
     }
 
-    // Oppdatert lightbox
-    gantt.config.lightbox.sections = [
-      {
-        name: 'description',
-        height: 38,
-        map_to: 'text',
-        type: 'textarea',
-        focus: true,
-        label: 'Task name',
-      },
-      {
-        name: 'kwt',
-        height: 22,
-        map_to: 'kwt',
-        type: 'number',
-        min: 0,
-        label: 'Watt',
-      },
-      {
-        name: 'size',
-        height: 22,
-        map_to: 'size',
-        type: 'number',
-        min: 0,
-        label: 'Size',
-      },
-    ]
+    Object.assign(gantt.config, ganttConfig)
 
     // Hindre at tasks kan gå utenfor 24-timers perioden
     gantt.attachEvent('onTaskDrag', function (task) {
@@ -151,47 +81,31 @@ const GanttTidslinje = () => {
       return true
     })
 
+    gantt.attachEvent('onKeyDown', function (e) {
+      console.log(e.keyCode)
+      if (e.keyCode == 46) {
+        // Delete-tasten
+        const selectedId = gantt.getSelectedId()
+        if (selectedId) {
+          gantt.deleteTask(selectedId)
+        }
+        return true
+      }
+      return true
+    })
+
     // Initialiser med sample data
     const data = {
       data: [
-        {
-          id: 1,
-          text: 'Forbruk',
-          start_date: new Date(new Date().setHours(8, 0, 0)),
-          duration: 2,
-          kwt: 100,
-          size: 50,
-        },
+        createNewTask(
+          new Date(new Date().setHours(8, 0, 0)),
+          new Date(new Date().setHours(10, 0, 0))
+        ),
       ],
     }
 
     gantt.init(ganttContainer.current)
     gantt.parse(data)
-
-    // Konfigurer lightbox feltene
-    gantt.config.lightbox.sections = [
-      {
-        name: 'description',
-        height: 38,
-        map_to: 'text',
-        type: 'textarea',
-        focus: true,
-      },
-      {
-        name: 'watt',
-        height: 22,
-        map_to: 'watt',
-        type: 'textarea',
-        default_value: 200,
-      },
-      {
-        name: 'size',
-        height: 22,
-        map_to: 'size',
-        type: 'textarea',
-        default_value: 1,
-      },
-    ]
 
     // Sett labels for feltene
     gantt.locale.labels.section_description = 'Beskrivelse'
@@ -203,6 +117,8 @@ const GanttTidslinje = () => {
       const pos = gantt.getScrollState()
       const posx = e.clientX - ganttContainer.current.offsetLeft + pos.x
       const taskId = gantt.locate(e)
+      // const rowIndex = gantt.getTaskRowIndex(taskId) // Henter rad-indeksen
+      // console.log('Klikket:', ganttContainer.current) // Logger rad-nummeret
 
       if (!taskId) {
         // Klikk på tom område - lag ny task
@@ -215,15 +131,28 @@ const GanttTidslinje = () => {
         }
         roundedDate.setMinutes(0)
 
-        const task = {
-          id: gantt.uid(),
-          text: 'Forbruk',
-          start_date: roundedDate,
-          duration: 1,
-          watt: 200,
-          size: 1,
-        }
+        const task = createNewTask(
+          roundedDate,
+          new Date(roundedDate.getTime() + 60 * 60 * 1000)
+        )
+        task.id = gantt.uid()
+
+        // Legg til en lytter for lightbox_save før vi viser lightbox
+        const onSave = gantt.attachEvent('onLightboxSave', function (id, item) {
+          gantt.detachEvent(onSave) // Fjern lytteren etter bruk
+          return true
+        })
+
+        // Legg til oppgaven før vi viser lightbox
         gantt.addTask(task)
+
+        // Legg til en lytter for lightbox_cancel
+        const onCancel = gantt.attachEvent('onLightboxCancel', function (id) {
+          gantt.detachEvent(onCancel) // Fjern lytteren etter bruk
+          gantt.deleteTask(id) // Slett tasken hvis bruker avbryter
+          return true
+        })
+
         gantt.showLightbox(task.id)
       } else {
         // Klikk på eksisterende task - åpne for redigering
@@ -253,24 +182,6 @@ const GanttTidslinje = () => {
       },
     }
 
-    // Oppdater lightbox konfigurasjon
-    gantt.config.lightbox.sections = [
-      {
-        name: 'description',
-        height: 38,
-        map_to: 'text',
-        type: 'textarea',
-        focus: true,
-      },
-      {
-        name: 'watt_size',
-        type: 'watt_size',
-        map_to: 'auto',
-        height: 45,
-        label: ' ',
-      },
-    ]
-
     // Legg til styling
     const style = document.createElement('style')
     style.innerHTML = `
@@ -288,14 +199,46 @@ const GanttTidslinje = () => {
         width: 100%;
         padding: 5px;
       }
+        .gantt_task_row{
+        margin:0;
+        
+        
+        }
     `
     document.head.appendChild(style)
 
+    // Definer handleKeyDown-funksjonen inne i useEffect
+    const handleKeyDown = (e) => {
+      console.log('Keycode:', e.keyCode)
+      if (e.keyCode === 46 || e.keyCode === 8) {
+        const selectedId = gantt.getSelectedId()
+        if (selectedId) {
+          gantt.deleteTask(selectedId)
+        }
+      }
+    }
+
+    // Bruk den definerte handleKeyDown-funksjonen
+    ganttContainer.current.addEventListener('keydown', handleKeyDown)
+
+    // Legg til tabIndex for å gjøre containeren fokusbar
+    ganttContainer.current.tabIndex = 0
+
     return () => {
+      if (ganttContainer.current) {
+        ganttContainer.current.removeEventListener('keydown', handleKeyDown)
+      }
       gantt.clearAll()
-      // document.head.removeChild(style)
     }
   }, [])
+
+  const createNewTask = (startDate, endDate) => ({
+    text: 'Forbruk',
+    kwt: 100,
+    size: 1,
+    start_date: startDate,
+    end_date: endDate,
+  })
 
   const onDragEnd = (
     startPoint,
@@ -304,14 +247,15 @@ const GanttTidslinje = () => {
     endDate,
     tasksBetween
   ) => {
-    const newTask = {
-      text: 'Forbruk',
-      kwt: 100,
-      size: 1,
-      start_date: startDate,
-      end_date: endDate,
-      // progress: 0,
-    }
+    console.log(
+      'onDragEnd',
+      startPoint,
+      endPoint,
+      startDate,
+      endDate,
+      tasksBetween
+    )
+    const newTask = createNewTask(startDate, endDate)
     gantt.addTask(newTask)
   }
 
@@ -332,5 +276,5 @@ const GanttWrapper = styled.div`
   width: 885px;
   overflow-x: hidden;
   overflow-y: hidden;
-  margin-top: 2rem;
+  margin-top: 1rem;
 `

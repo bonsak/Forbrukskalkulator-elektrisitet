@@ -1,41 +1,28 @@
-import ForbruksGraf from './ForbruksGrapf'
-import Tidslinje from './Tidslinje'
-import ForbruksGrid from './ForbuksGrid'
-import AktivitetsGrid from './AktivitetsGrid'
-import useForbukStore from '../stores/useForbruk'
+import { Suspense, lazy } from 'react'
 import styled from 'styled-components'
+import DagensPris from './DagensPris'
+import Tidslinje from './Tidslinje'
+import LoadingSpinner from './LoadingSpinner'
 
-import { FORBRUKSDATA } from '../utils/startdata'
-import { useRef } from 'react'
-import KontrollPanel from './KontrollPanel'
-import GanttTidslinje from './GanttTidslinje'
-// import InteraktivGantt from './InteraktivGantt'
+// Lazy-laster tunge komponenter
+const ForbruksGraf = lazy(() => import('./ForbruksGrapf'))
+const GanttTidslinje = lazy(() => import('./GanttTidslinje'))
 
 function App() {
-  const wrapperRef = useRef()
-  // console.log(wrapperRef)
-
-  const { forbruk, updateValue } = useForbukStore()
-
-  function handleClick(e) {
-    updateValue(2, 2000)
-  }
-
   return (
     <>
-      <div
-        ref={wrapperRef}
-        className={'main-wrapper'}
-      >
+      <div className={'main-wrapper'}>
         <Wrapper>
-          {/* <button onClick={handleClick}>Testknapp</button> */}
-          <ForbruksGraf />
-          {/* <Tidslinje /> */}
-          {/* <KontrollPanel /> */}
-          <GanttTidslinje />
-          {/* <InteraktivGantt /> */}
-          {/* <ForbruksGrid /> */}
-          {/* <AktivitetsGrid bounds={wrapperRef} /> */}
+          <Suspense fallback={<LoadingSpinner />}>
+            <ForbruksGraf />
+          </Suspense>
+
+          <Tidslinje />
+          <DagensPris />
+
+          <Suspense fallback={<LoadingSpinner />}>
+            <GanttTidslinje />
+          </Suspense>
         </Wrapper>
       </div>
     </>

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pub": "surge dist --domain loadbalance.surge.sh"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
