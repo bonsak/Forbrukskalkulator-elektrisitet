@@ -50,14 +50,16 @@ const KonvaGrid = () => {
       setIsDrawing(true)
       const pos = e.target.getStage().getPointerPosition()
       const snapped = snapToGrid(pos.x, 0)
+      const yPos = Math.floor(pos.y / rowHeight) * rowHeight
+
       setStartPos({
         x: snapped.x,
-        y: Math.round(pos.y / rowHeight) * rowHeight,
+        y: yPos,
       })
 
       setPreviewRect({
         x: snapped.x,
-        y: Math.round((pos.y - rowHeight / 2) / rowHeight) * rowHeight,
+        y: yPos,
         width: 0,
         height: rowHeight,
         fill: 'transparent',
@@ -97,14 +99,19 @@ const KonvaGrid = () => {
     const snapped = snapToGrid(pos.x, rect.width())
 
     // Oppdater posisjonen med snapped verdier
-    setRectangles(
-      rectangles.map((r) =>
-        r.id === rect.attrs.id ? { ...r, x: snapped.x } : r
+    setRectangles((prevRectangles) =>
+      prevRectangles.map((r) =>
+        r.id === rect.attrs.id ? { ...r, x: snapped.x, y: Math.round(pos.y / rowHeight) * rowHeight } : r
       )
     )
 
-    // Sett den faktiske posisjonen på scenen
-    rect.position({ x: snapped.x, y: pos.y })
+    // Sett den faktiske posisjonen på scenen med snap til rad
+    rect.position({ x: snapped.x, y: Math.round(pos.y / rowHeight) * rowHeight })
+    // Vis rektangelet igjen ved å sette opacity tilbake til 1
+    rect.opacity(1)
+
+    // Fjern forhåndsvisningen
+    setPreviewRect(null)
   }
 
   const handleMouseMove = (e) => {
@@ -179,9 +186,10 @@ const KonvaGrid = () => {
       const dragDistance = Math.abs(endPos.x - startPos.x)
 
       const snapped = snapToGrid(
-        dragDistance <= 2 ? startPos.x : Math.min(startPos.x, endPos.x),
-        dragDistance <= 2 ? columnWidth * 2 : dragDistance
+        dragDistance <= 30 ? startPos.x : Math.min(startPos.x, endPos.x),
+        dragDistance <= 30 ? columnWidth * 2 : dragDistance
       )
+      console.log('snapped',snapped,'columnWidth',columnWidth,'dragDistance',dragDistance)
 
       const newRectangle = {
         x: snapped.x,
@@ -189,9 +197,9 @@ const KonvaGrid = () => {
         width: snapped.width,
         height: rowHeight,
         fill: '#b1afa9',
-        onDragMove: (e) => console.log('Drar element:', e.target.id()),
-        onDragEnd: (e) => console.log('Slapp element:', e.target.id()),
-        onDragStart: (e) => console.log('Starte drag:', e.target.id()),
+        onDragMove: (e) => handleDragMove(e),
+        onDragEnd: (e) => handleDragEnd(e),
+        // onDragStart: (e) => console.log('Starte drag:', e.target.id()),
         // id: `rect${rectangles.length + 1}`,
         id: `rect${crypto.randomUUID()}`,
         draggable: true,
@@ -224,11 +232,22 @@ const KonvaGrid = () => {
     const pos = rect.position()
     const snapped = snapToGrid(pos.x, rect.width())
 
-    // Oppdater posisjonen mens vi drar
-    rect.position({
+    // Oppdater forhåndsvisningen mens vi drar
+    setPreviewRect({
       x: snapped.x,
       y: Math.round(pos.y / rowHeight) * rowHeight,
+      width: rect.width(),
+      height: rowHeight,
+      fill: 'transparent',
+      stroke: '#b1afa9',
+      strokeWidth: 2,
+      dash: [5, 5],
     })
+
+
+
+    // Skjul det faktiske rektangelet ved å sette opacity til 0
+    rect.opacity(0)
   }
 
   const handleDeleteClick = (rectId) => {
@@ -276,8 +295,6 @@ const KonvaGrid = () => {
               <Rect
                 {...rect}
                 onMouseDown={(e) => handleRectMouseDown(e, rect)}
-                onDragMove={handleDragMove}
-                onDragEnd={handleDragEnd}
                 cornerRadius={8}
                 opacity={selectedRect?.id === rect.id ? 0 : 1}
               />
@@ -286,13 +303,8 @@ const KonvaGrid = () => {
                 y={rect.y + 5}
                 onClick={() => handleDeleteClick(rect.id)}
                 onTap={() => handleDeleteClick(rect.id)}
+                opacity={previewRect ? 0 : 1}
               >
-                {/* <Rect
-                  width={15}
-                  height={15}
-                  fill='#d4d2cc'
-                  cornerRadius={3}
-                /> */}
                 <Text
                   text='×'
                   fill='#fff'
@@ -303,7 +315,7 @@ const KonvaGrid = () => {
               </Group>
             </Group>
           ))}
-          {(isResizing || isDrawing) && previewRect && (
+          {(isResizing || isDrawing ||previewRect) && (
             <Rect
               {...previewRect}
               cornerRadius={8}

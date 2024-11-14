@@ -16,13 +16,12 @@ const DagensPris = () => {
         const dato = `${idag.getFullYear()}/${(idag.getMonth() + 1)
           .toString()
           .padStart(2, '0')}-${idag.getDate().toString().padStart(2, '0')}`
-        console.log(dato)
 
         const sone = 'NO1'
         // let url = `/strompris/${dato}_${sone}.json`
         let url = `https://www.hvakosterstrommen.no/api/v1/prices/${dato}_${sone}.json`
 
-        console.log(url)
+
         //https://www.hvakosterstrommen.no/api/v1/prices/2024/11-14_NO5.json
 
         const respons = await fetch(url)
