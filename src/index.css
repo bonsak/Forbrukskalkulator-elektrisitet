@@ -1,3 +1,7 @@
 /* svg g g line {
   stroke: green;
 } */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

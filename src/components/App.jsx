@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import { FORBRUKSDATA } from '../utils/startdata'
 import { useRef } from 'react'
 import KontrollPanel from './KontrollPanel'
+import GanttTidslinje from "./GanttTidslinje"
 
 function App() {
   const wrapperRef = useRef()
@@ -18,6 +19,7 @@ function App() {
   function handleClick(e) {
     updateValue(2, 2000)
   }
+
 
   return (
     <>
@@ -30,6 +32,7 @@ function App() {
           <ForbruksGraf />
           {/* <Tidslinje /> */}
           <KontrollPanel />
+          <GanttTidslinje />
           {/* <ForbruksGrid /> */}
           {/* <AktivitetsGrid bounds={wrapperRef} /> */}
         </Wrapper>
