@@ -8,7 +8,8 @@ import styled from 'styled-components'
 import { FORBRUKSDATA } from '../utils/startdata'
 import { useRef } from 'react'
 import KontrollPanel from './KontrollPanel'
-import GanttTidslinje from "./GanttTidslinje"
+import GanttTidslinje from './GanttTidslinje'
+// import InteraktivGantt from './InteraktivGantt'
 
 function App() {
   const wrapperRef = useRef()
@@ -20,7 +21,6 @@ function App() {
     updateValue(2, 2000)
   }
 
-
   return (
     <>
       <div
@@ -31,8 +31,9 @@ function App() {
           {/* <button onClick={handleClick}>Testknapp</button> */}
           <ForbruksGraf />
           {/* <Tidslinje /> */}
-          <KontrollPanel />
+          {/* <KontrollPanel /> */}
           <GanttTidslinje />
+          {/* <InteraktivGantt /> */}
           {/* <ForbruksGrid /> */}
           {/* <AktivitetsGrid bounds={wrapperRef} /> */}
         </Wrapper>
