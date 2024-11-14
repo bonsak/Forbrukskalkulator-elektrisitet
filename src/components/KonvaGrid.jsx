@@ -189,6 +189,9 @@ const KonvaGrid = () => {
         width: snapped.width,
         height: rowHeight,
         fill: '#b1afa9',
+        onDragMove: (e) => console.log('Drar element:', e.target.id()),
+        onDragEnd: (e) => console.log('Slapp element:', e.target.id()),
+        onDragStart: (e) => console.log('Starte drag:', e.target.id()),
         // id: `rect${rectangles.length + 1}`,
         id: `rect${crypto.randomUUID()}`,
         draggable: true,
@@ -284,12 +287,12 @@ const KonvaGrid = () => {
                 onClick={() => handleDeleteClick(rect.id)}
                 onTap={() => handleDeleteClick(rect.id)}
               >
-                <Rect
+                {/* <Rect
                   width={15}
                   height={15}
-                  fill='#b1afa9'
+                  fill='#d4d2cc'
                   cornerRadius={3}
-                />
+                /> */}
                 <Text
                   text='×'
                   fill='#fff'
