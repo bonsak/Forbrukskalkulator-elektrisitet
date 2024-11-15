@@ -2,11 +2,9 @@ import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import useImage from 'use-image'
+import { COLORS } from '../utils/constants'
 
-const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
-  // console.log('stroemForbruk', stroemForbruk)
-
-  // const LionImage = () => {
+const KonvaGrid = ({ setStroemForbruk }) => {
   const [dusj] = useImage('/icons/dusj.png')
   const [elbil] = useImage('/icons/elbil.png')
   const [forbruk] = useImage('/icons/forbruk.png')
@@ -229,10 +227,11 @@ const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
         y: startPos.y,
         width: snapped.width,
         height: rowHeight,
-        stroke: '#ebe7e0',
+        stroke: `${COLORS.clr_lightorange}`,
         strokeWidth: 5,
         strokeScaleEnabled: false,
-        fill: '#C8E4D3',
+        // fill: 'var(--clr_mintgreen)',
+        fill: COLORS.clr_mintgreen,
         onDragMove: (e) => handleDragMove(e),
         onDragEnd: (e) => handleDragEnd(e),
         onDblclick: (e) => console.log('dblclick', e.target),
@@ -243,7 +242,7 @@ const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
         kwt: 100,
         image: Math.floor(Math.random() * images.length),
       }
-      console.log('newRectangle', newRectangle.image)
+      // console.log('newRectangle', newRectangle.image)
 
       setRectangles([...rectangles, newRectangle])
       beregnStroemForbruk()
@@ -343,7 +342,7 @@ const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
 
   // La oss også legge til en useEffect for å se initialverdiene
   useEffect(() => {
-    console.log('Initial rectangles:', rectangles)
+    // console.log('Initial rectangles:', rectangles)
     beregnStroemForbruk()
   }, []) // Kjører én gang ved oppstart
 
@@ -352,19 +351,20 @@ const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
     beregnStroemForbruk()
   }, [rectangles]) // Kjører hver gang rectangles endres
 
-  useEffect(() => {
-    // Initialiser strømforbruk med nuller i nytt format
-    const initialData = {
-      id: 'stroemforbruk',
-      data: Array(gridColumns)
-        .fill(0)
-        .map((verdi, index) => ({
-          x: index,
-          y: verdi,
-        })),
-    }
-    setStroemForbruk(initialData)
-  }, []) // Kjør kun én gang ved oppstart
+  // useEffect(() => {
+  //   // Initialiser strømforbruk med nuller i nytt format
+  //   const initialData = {
+  //     id: 'stroemforbruk',
+  //     data: Array(gridColumns)
+  //       .fill(0)
+  //       .map((verdi, index) => ({
+  //         x: index,
+  //         y: verdi,
+  //       })),
+  //   }
+  //   setStroemForbruk(initialData)
+  // }, [])
+  // Kjør kun én gang ved oppstart
 
   // Oppdater useEffect for å laste fra localStorage
   // useEffect(() => {
@@ -435,10 +435,10 @@ const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
 }
 
 const Wrapper = styled.div`
-  background: #ebe7e0;
-  border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
-  margin-top: 1rem;
+  background: ${COLORS.clr_lightorange};
+  border-radius: 0 0 40px 40px;
+  /* box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px; */
+  /* margin-top: 1rem; */
   overflow: hidden;
 `
 

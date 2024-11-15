@@ -1,12 +1,13 @@
-import { Suspense, lazy, useState, useEffect } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import styled from 'styled-components'
 import DagensPris from './DagensPris'
 import Tidslinje from './Tidslinje'
 import LoadingSpinner from './LoadingSpinner'
 import KonvaGrid from './KonvaGrid'
+import GlobalStyles from './GlobalStyles'
 
 // Lazy-laster tunge komponenter
-const ForbruksGraf = lazy(() => import('./ForbruksGrapf'))
+const ForbruksBarGraf = lazy(() => import('./ForbruksBarGrapf'))
 
 function App() {
   const [stroemForbruk, setStroemForbruk] = useState({
@@ -23,12 +24,13 @@ function App() {
   return (
     <>
       <div className={'main-wrapper'}>
+        <GlobalStyles />
         <Wrapper>
           <Suspense fallback={<LoadingSpinner />}>
-            <ForbruksGraf stroemForbruk={stroemForbruk} />
+            <ForbruksBarGraf stroemForbruk={stroemForbruk} />
           </Suspense>
 
-          <Tidslinje />
+          {/* <Tidslinje /> */}
           <DagensPris />
           <KonvaGrid
             stroemForbruk={stroemForbruk}

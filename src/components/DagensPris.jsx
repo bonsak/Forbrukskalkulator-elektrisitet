@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { COLORS } from '../utils/constants'
 
 const DagensPris = () => {
   const [priser, setPriser] = useState([])
@@ -20,7 +21,6 @@ const DagensPris = () => {
         const sone = 'NO1'
         // let url = `/strompris/${dato}_${sone}.json`
         let url = `https://www.hvakosterstrommen.no/api/v1/prices/${dato}_${sone}.json`
-
 
         //https://www.hvakosterstrommen.no/api/v1/prices/2024/11-14_NO5.json
 
@@ -76,10 +76,10 @@ const DagensPris = () => {
 const Wrapper = styled.div`
   width: 885px;
   /* height: 400px; */
-  /* padding: 20px; */
-  /* background: white; */
-  border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px;
+  padding: 10px;
+  background: ${COLORS.clr_lightorange};
+  /* border-radius: 8px; */
+  /* box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px; */
 `
 
 const PrisGrid = styled.div`
@@ -105,6 +105,7 @@ const PrisKolonne = styled.div`
 
 const Pris = styled.span`
   /* font-weight: bold; */
+  color: ${COLORS.clr_darkgreen};
   font-size: 14px;
 `
 

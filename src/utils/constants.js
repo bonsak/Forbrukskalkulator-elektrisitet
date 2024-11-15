@@ -7,6 +7,12 @@ export const COLORS = {
   white_coffee: 'hsl(30 18% 87%)',
   snow: 'hsl(331 100% 98%)',
   white: 'hsl(0 0% 100%)',
+  clr_mintgreen: '#CAE3D2',
+  clr_mintlight: '#F0F6EF',
+  clr_red: '#98241F',
+  clr_lightred: '#F9CEB8',
+  clr_orange: '#FCD395',
+  clr_lightorange: '#FFF7EB',
 }
 export const WEIGHTS = {
   regular: 400,
