@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import DagensPris from './DagensPris'
 import Tidslinje from './Tidslinje'
@@ -7,24 +7,33 @@ import KonvaGrid from './KonvaGrid'
 
 // Lazy-laster tunge komponenter
 const ForbruksGraf = lazy(() => import('./ForbruksGrapf'))
-const GanttTidslinje = lazy(() => import('./GanttTidslinje'))
 
 function App() {
+  const [stroemForbruk, setStroemForbruk] = useState({
+    id: 'stroemforbruk',
+    data: Array(24)
+      .fill(0)
+      .map((_, x) => ({ x, y: 0 })),
+  })
+
+  // useEffect(() => {
+  //   localStorage.setItem('stroemForbruk', JSON.stringify(stroemForbruk))
+  // }, [stroemForbruk])
+
   return (
     <>
       <div className={'main-wrapper'}>
         <Wrapper>
           <Suspense fallback={<LoadingSpinner />}>
-            <ForbruksGraf />
+            <ForbruksGraf stroemForbruk={stroemForbruk} />
           </Suspense>
 
           <Tidslinje />
           <DagensPris />
-          <KonvaGrid />
-
-          {/* <Suspense fallback={<LoadingSpinner />}>
-            <GanttTidslinje />
-          </Suspense> */}
+          <KonvaGrid
+            stroemForbruk={stroemForbruk}
+            setStroemForbruk={setStroemForbruk}
+          />
         </Wrapper>
       </div>
     </>

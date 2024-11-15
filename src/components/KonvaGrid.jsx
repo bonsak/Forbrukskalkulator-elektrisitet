@@ -1,21 +1,31 @@
 import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import useImage from 'use-image'
 
-const KonvaGrid = () => {
+const KonvaGrid = ({ stroemForbruk, setStroemForbruk }) => {
+  // console.log('stroemForbruk', stroemForbruk)
 
   // const LionImage = () => {
-    const [dusj] = useImage('/icons/dusj.png');
-    const [elbil] = useImage('/icons/elbil.png');
-    const [forbruk] = useImage('/icons/forbruk.png');
-    const [kaffetrakter] = useImage('/icons/kaffetrakter.png');
-    const [oppvarming] = useImage('/icons/oppvarming.png');
-    const [oppvaskmaskin] = useImage('/icons/oppvaskmaskin.png');
-    const [stekeovnplate] = useImage('/icons/stekeovn-plate.png');
-    const [vaskemaskin] = useImage('/icons/vaskemaskin.png');
-    
-    const images = [dusj, elbil, forbruk, kaffetrakter, oppvarming, oppvaskmaskin, stekeovnplate, vaskemaskin];
+  const [dusj] = useImage('/icons/dusj.png')
+  const [elbil] = useImage('/icons/elbil.png')
+  const [forbruk] = useImage('/icons/forbruk.png')
+  const [kaffetrakter] = useImage('/icons/kaffetrakter.png')
+  const [oppvarming] = useImage('/icons/oppvarming.png')
+  const [oppvaskmaskin] = useImage('/icons/oppvaskmaskin.png')
+  const [stekeovnplate] = useImage('/icons/stekeovn-plate.png')
+  const [vaskemaskin] = useImage('/icons/vaskemaskin.png')
+
+  const images = [
+    dusj,
+    elbil,
+    forbruk,
+    kaffetrakter,
+    oppvarming,
+    oppvaskmaskin,
+    stekeovnplate,
+    vaskemaskin,
+  ]
 
   // };
 
@@ -117,17 +127,24 @@ const KonvaGrid = () => {
     // Oppdater posisjonen med snapped verdier
     setRectangles((prevRectangles) =>
       prevRectangles.map((r) =>
-        r.id === rect.attrs.id ? { ...r, x: snapped.x, y: Math.round(pos.y / rowHeight) * rowHeight } : r
+        r.id === rect.attrs.id
+          ? { ...r, x: snapped.x, y: Math.round(pos.y / rowHeight) * rowHeight }
+          : r
       )
     )
 
     // Sett den faktiske posisjonen på scenen med snap til rad
-    rect.position({ x: snapped.x, y: Math.round(pos.y / rowHeight) * rowHeight })
+    rect.position({
+      x: snapped.x,
+      y: Math.round(pos.y / rowHeight) * rowHeight,
+    })
     // Vis rektangelet igjen ved å sette opacity tilbake til 1
     rect.opacity(1)
 
     // Fjern forhåndsvisningen
     setPreviewRect(null)
+
+    beregnStroemForbruk()
   }
 
   const handleMouseMove = (e) => {
@@ -218,7 +235,7 @@ const KonvaGrid = () => {
         fill: '#C8E4D3',
         onDragMove: (e) => handleDragMove(e),
         onDragEnd: (e) => handleDragEnd(e),
-        onDblclick: (e) => console.log('dblclick',e.target),
+        onDblclick: (e) => console.log('dblclick', e.target),
         // onDragStart: (e) => console.log('Starte drag:', e.target.id()),
         // id: `rect${rectangles.length + 1}`,
         id: `rect${crypto.randomUUID()}`,
@@ -226,9 +243,10 @@ const KonvaGrid = () => {
         kwt: 100,
         image: Math.floor(Math.random() * images.length),
       }
-      console.log('newRectangle',newRectangle.image)
+      console.log('newRectangle', newRectangle.image)
 
       setRectangles([...rectangles, newRectangle])
+      beregnStroemForbruk()
     } else if (isResizing && selectedRect && previewRect) {
       setRectangles(
         rectangles.map((rect) =>
@@ -241,6 +259,7 @@ const KonvaGrid = () => {
             : rect
         )
       )
+      beregnStroemForbruk()
     }
 
     setIsDrawing(false)
@@ -265,26 +284,25 @@ const KonvaGrid = () => {
       strokeWidth: 2,
       dash: [5, 5],
     })
-
-
-
     // Skjul det faktiske rektangelet ved å sette opacity til 0
     rect.opacity(0)
   }
 
   const handleDeleteClick = (rectId) => {
     setRectangles(rectangles.filter((rect) => rect.id !== rectId))
+    beregnStroemForbruk()
   }
 
   // Tegn grid-linjer
   const gridLines = []
   // Vertikale linjer
+  const gridLinesColor = '#ddd'
   for (let i = 0; i <= gridColumns; i++) {
     gridLines.push(
       <Line
         key={`v${i}`}
         points={[i * columnWidth, 0, i * columnWidth, stageHeight]}
-        stroke='#ddd'
+        stroke={gridLinesColor}
         strokeWidth={0.5}
       />
     )
@@ -295,11 +313,72 @@ const KonvaGrid = () => {
       <Line
         key={`h${i}`}
         points={[0, i * rowHeight, stageWidth, i * rowHeight]}
-        stroke='#ddd'
+        stroke={gridLinesColor}
         strokeWidth={0.5}
       />
     )
   }
+
+  // Legg til denne funksjonen for å beregne strømforbruk per kolonne
+  const beregnStroemForbruk = () => {
+    const forbrukPerKolonne = new Array(gridColumns).fill(0)
+
+    rectangles.forEach((rect) => {
+      const startKolonne = Math.floor(rect.x / columnWidth)
+      const sluttKolonne = Math.ceil((rect.x + rect.width) / columnWidth)
+
+      for (let i = startKolonne; i < sluttKolonne; i++) {
+        if (i >= 0 && i < gridColumns) {
+          forbrukPerKolonne[i] += rect.kwt
+        }
+      }
+    })
+
+    // Konverter til nytt format
+    setStroemForbruk({
+      id: 'stroemforbruk',
+      data: forbrukPerKolonne.map((y, x) => ({ x, y })),
+    })
+  }
+
+  // La oss også legge til en useEffect for å se initialverdiene
+  useEffect(() => {
+    console.log('Initial rectangles:', rectangles)
+    beregnStroemForbruk()
+  }, []) // Kjører én gang ved oppstart
+
+  // Legg til denne useEffect for å lytte på endringer i rectangles
+  useEffect(() => {
+    beregnStroemForbruk()
+  }, [rectangles]) // Kjører hver gang rectangles endres
+
+  useEffect(() => {
+    // Initialiser strømforbruk med nuller i nytt format
+    const initialData = {
+      id: 'stroemforbruk',
+      data: Array(gridColumns)
+        .fill(0)
+        .map((verdi, index) => ({
+          x: index,
+          y: verdi,
+        })),
+    }
+    setStroemForbruk(initialData)
+  }, []) // Kjør kun én gang ved oppstart
+
+  // Oppdater useEffect for å laste fra localStorage
+  // useEffect(() => {
+  //   const savedRectangles = localStorage.getItem('rectangles')
+  //   if (savedRectangles) {
+  //     setRectangles(JSON.parse(savedRectangles))
+  //   }
+  // }, [])
+
+  // // Legg til useEffect for å lagre til localStorage
+  // useEffect(() => {
+  //   localStorage.setItem('rectangles', JSON.stringify(rectangles))
+  //   beregnStroemForbruk()
+  // }, [rectangles])
 
   return (
     <Wrapper>
@@ -334,11 +413,16 @@ const KonvaGrid = () => {
                   x={3}
                   y={-1}
                 />
-                <Image image={images[rect.image]} x={-(rect.width / 2)} y={-5} listening={false}/>
+                <Image
+                  image={images[rect.image]}
+                  x={-(rect.width / 2)}
+                  y={-5}
+                  listening={false}
+                />
               </Group>
             </Group>
           ))}
-          {(isResizing || isDrawing ||previewRect) && (
+          {(isResizing || isDrawing || previewRect) && (
             <Rect
               {...previewRect}
               cornerRadius={8}

@@ -3,7 +3,8 @@ import { linearGradientDef } from '@nivo/core'
 import styled from 'styled-components'
 import useForbukStore from '../stores/useForbruk'
 
-function ForbruksGraf() {
+function ForbruksGraf({ stroemForbruk }) {
+  console.log('stroemForbruk i graf:', stroemForbruk)
   const { forbruk, pris, nettleie, updateValue } = useForbukStore()
 
   const CustomBakgrunn = ({ innerWidth, innerHeight }) => {
@@ -17,11 +18,12 @@ function ForbruksGraf() {
       </>
     )
   }
+  console.log(forbruk)
 
   return (
     <GrafWrapper>
       <ResponsiveLine
-        data={[forbruk, pris, nettleie]}
+        data={[stroemForbruk]}
         lineWidth={1}
         areaOpacity={1}
         maxValue={6.6}
@@ -32,9 +34,9 @@ function ForbruksGraf() {
         yScale={{
           type: 'linear',
           min: '.05',
-          max: '20',
-          // stacked: false,
-          // reverse: false,
+          // max: '20',
+          stacked: false,
+          reverse: false,
         }}
         // yFormat=" >-.2f"
         curve='basis'
