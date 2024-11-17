@@ -48,16 +48,16 @@ function ForbruksGraf({ stroemForbruk }) {
         //   legendOffset: 0,
         //   truncateTickAt: 0,
         // }}
-        // axisRight={true}
-        axisRight={{
-          tickSize: 0,
-          tickPadding: 0,
-          tickRotation: 0,
-          legend: '',
-          legendOffset: -44,
-          legendPosition: 'left',
-          truncateTickAt: 0,
-        }}
+        axisRight={false}
+        // axisRight={{
+        //   tickSize: 0,
+        //   tickPadding: 0,
+        //   tickRotation: 0,
+        //   legend: '',
+        //   legendOffset: -44,
+        //   legendPosition: 'left',
+        //   truncateTickAt: 0,
+        // }}
         axisBottom={true}
         axisLeft={false}
         enableGridX={false}

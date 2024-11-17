@@ -17,19 +17,4 @@ export default defineConfig({
   define: {
     SC_DISABLE_SPEEDY: 'true', // needed to enable vendor prefixing using 'vite build'
   },
-  build: {
-    chunkSizeWarningLimit: 1000, // øker størrelsesbegrensningen (i KB)
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'styled-components'],
-          charts: [
-            './src/components/ForbruksGrapf.jsx',
-            './src/components/GanttTidslinje.jsx',
-          ],
-          utils: ['./src/utils/startdata.js', './src/utils/ganttConfig.js'],
-        },
-      },
-    },
-  },
 })
