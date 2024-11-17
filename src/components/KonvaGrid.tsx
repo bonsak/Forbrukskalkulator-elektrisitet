@@ -4,7 +4,45 @@ import styled from 'styled-components'
 import useImage from 'use-image'
 import { COLORS } from '../utils/constants'
 
-const KonvaGrid = ({ setStroemForbruk }) => {
+interface KonvaGridProps {
+  setStroemForbruk: (data: StroemForbrukData) => void
+}
+
+interface StroemForbrukData {
+  id: string
+  data: Array<{x: number, y: number}>
+}
+
+interface Rectangle {
+  x: number
+  y: number
+  width: number
+  height: number
+  stroke: string
+  strokeWidth: number
+  strokeScaleEnabled: boolean
+  fill: string
+  onDragMove: (e: any) => void
+  onDragEnd: (e: any) => void
+  onDblclick: (e: any) => void
+  id: string
+  draggable: boolean
+  kwt: number
+  image: number
+}
+
+interface PreviewRectangle {
+  x: number
+  y: number
+  width: number
+  height: number
+  fill: string
+  stroke: string
+  strokeWidth: number
+  dash: number[]
+}
+
+const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [dusj] = useImage('/icons/dusj.png')
   const [elbil] = useImage('/icons/elbil.png')
   const [forbruk] = useImage('/icons/forbruk.png')
@@ -25,27 +63,25 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     vaskemaskin,
   ]
 
-  // };
-
-  const [rectangles, setRectangles] = useState([])
+  const [rectangles, setRectangles] = useState<Rectangle[]>([])
   const [isDrawing, setIsDrawing] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
-  const [resizeEdge, setResizeEdge] = useState(null) // 'left' eller 'right'
+  const [resizeEdge, setResizeEdge] = useState<'left' | 'right' | null>(null)
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
-  const [previewRect, setPreviewRect] = useState(null)
-  const [selectedRect, setSelectedRect] = useState(null)
+  const [previewRect, setPreviewRect] = useState<PreviewRectangle | null>(null)
+  const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null)
+
+  // Konstanter
   const stageWidth = 885
   const stageHeight = 300
   const RESIZE_HANDLE_WIDTH = 10
-
-  // Grid konfigurasjon
   const gridColumns = 24
   const columnWidth = stageWidth / gridColumns
   const rowHeight = 40
   const rows = Math.floor(stageHeight / rowHeight)
 
   // Snap til grid
-  const snapToGrid = (x, width) => {
+  const snapToGrid = (x: number, width: number) => {
     const startColumn = Math.round(x / columnWidth)
     const endColumn = Math.round((x + width) / columnWidth)
     return {
@@ -54,7 +90,7 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     }
   }
 
-  const isMouseOverResizeHandle = (e, rect) => {
+  const isMouseOverResizeHandle = (e: any, rect: Rectangle): 'left' | 'right' | null => {
     const stage = e.target.getStage()
     const mouseX = stage.getPointerPosition().x
 
@@ -69,7 +105,7 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     return null
   }
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = (e: any) => {
     if (e.target === e.target.getStage()) {
       setIsDrawing(true)
       const pos = e.target.getStage().getPointerPosition()
@@ -94,13 +130,14 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     }
   }
 
-  const handleRectMouseDown = (e, rect) => {
+  const handleRectMouseDown = (e: any, rect: Rectangle) => {
     const resizeEdge = isMouseOverResizeHandle(e, rect)
     if (resizeEdge) {
       e.target.draggable(false)
       setIsResizing(true)
       setResizeEdge(resizeEdge)
       setSelectedRect(rect)
+      console.log('Selected rect:', rect.id)
       const pos = e.target.getStage().getPointerPosition()
       setStartPos({ x: pos.x, y: rect.y })
 
@@ -117,12 +154,11 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     }
   }
 
-  const handleDragEnd = (e) => {
+  const handleDragEnd = (e: any) => {
     const rect = e.target
     const pos = rect.position()
     const snapped = snapToGrid(pos.x, rect.width())
 
-    // Oppdater posisjonen med snapped verdier
     setRectangles((prevRectangles) =>
       prevRectangles.map((r) =>
         r.id === rect.attrs.id
@@ -131,21 +167,16 @@ const KonvaGrid = ({ setStroemForbruk }) => {
       )
     )
 
-    // Sett den faktiske posisjonen på scenen med snap til rad
     rect.position({
       x: snapped.x,
       y: Math.round(pos.y / rowHeight) * rowHeight,
     })
-    // Vis rektangelet igjen ved å sette opacity tilbake til 1
     rect.opacity(1)
-
-    // Fjern forhåndsvisningen
     setPreviewRect(null)
-
     beregnStroemForbruk()
   }
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: any) => {
     const stage = e.target.getStage()
     const pos = stage.getPointerPosition()
 
@@ -163,7 +194,7 @@ const KonvaGrid = ({ setStroemForbruk }) => {
         dash: [5, 5],
       })
     } else if (isResizing && selectedRect) {
-      let newWidth, newX
+      let newWidth: number, newX: number
 
       if (resizeEdge === 'right') {
         newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
@@ -177,14 +208,8 @@ const KonvaGrid = ({ setStroemForbruk }) => {
           dash: [5, 5],
         })
       } else if (resizeEdge === 'left') {
-        newWidth = Math.max(
-          columnWidth,
-          selectedRect.x + selectedRect.width - pos.x
-        )
-        newX = Math.min(
-          pos.x,
-          selectedRect.x + selectedRect.width - columnWidth
-        )
+        newWidth = Math.max(columnWidth, selectedRect.x + selectedRect.width - pos.x)
+        newX = Math.min(pos.x, selectedRect.x + selectedRect.width - columnWidth)
         const snapped = snapToGrid(newX, newWidth)
         setPreviewRect({
           ...selectedRect,
@@ -197,7 +222,6 @@ const KonvaGrid = ({ setStroemForbruk }) => {
         })
       }
     } else {
-      // Håndter cursor stil
       const hoveredRect = rectangles.find((rect) => {
         const resizeEdge = isMouseOverResizeHandle(
           { target: { getStage: () => stage } },
@@ -210,7 +234,7 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     }
   }
 
-  const handleMouseUp = (e) => {
+  const handleMouseUp = (e: any) => {
     if (isDrawing) {
       const stage = e.target.getStage()
       const endPos = stage.getPointerPosition()
@@ -220,29 +244,24 @@ const KonvaGrid = ({ setStroemForbruk }) => {
         dragDistance <= 30 ? startPos.x : Math.min(startPos.x, endPos.x),
         dragDistance <= 30 ? columnWidth * 2 : dragDistance
       )
-      // console.log('image',image.src)
 
-      const newRectangle = {
+      const newRectangle: Rectangle = {
         x: snapped.x,
         y: startPos.y,
         width: snapped.width,
         height: rowHeight,
-        stroke: `${COLORS.clr_lightorange}`,
+        stroke: COLORS.clr_lightorange,
         strokeWidth: 5,
         strokeScaleEnabled: false,
-        // fill: 'var(--clr_mintgreen)',
         fill: COLORS.clr_mintgreen,
-        onDragMove: (e) => handleDragMove(e),
-        onDragEnd: (e) => handleDragEnd(e),
+        onDragMove: handleDragMove,
+        onDragEnd: handleDragEnd,
         onDblclick: (e) => console.log('dblclick', e.target),
-        // onDragStart: (e) => console.log('Starte drag:', e.target.id()),
-        // id: `rect${rectangles.length + 1}`,
         id: `rect${crypto.randomUUID()}`,
         draggable: true,
         kwt: 100,
         image: Math.floor(Math.random() * images.length),
       }
-      // console.log('newRectangle', newRectangle.image)
 
       setRectangles([...rectangles, newRectangle])
       beregnStroemForbruk()
@@ -267,12 +286,11 @@ const KonvaGrid = ({ setStroemForbruk }) => {
     setPreviewRect(null)
   }
 
-  const handleDragMove = (e) => {
+  const handleDragMove = (e: any) => {
     const rect = e.target
     const pos = rect.position()
     const snapped = snapToGrid(pos.x, rect.width())
 
-    // Oppdater forhåndsvisningen mens vi drar
     setPreviewRect({
       x: snapped.x,
       y: Math.round(pos.y / rowHeight) * rowHeight,
@@ -283,42 +301,14 @@ const KonvaGrid = ({ setStroemForbruk }) => {
       strokeWidth: 2,
       dash: [5, 5],
     })
-    // Skjul det faktiske rektangelet ved å sette opacity til 0
     rect.opacity(0)
   }
 
-  const handleDeleteClick = (rectId) => {
+  const handleDeleteClick = (rectId: string) => {
     setRectangles(rectangles.filter((rect) => rect.id !== rectId))
     beregnStroemForbruk()
   }
 
-  // Tegn grid-linjer
-  const gridLines = []
-  // Vertikale linjer
-  const gridLinesColor = '#ddd'
-  for (let i = 0; i <= gridColumns; i++) {
-    gridLines.push(
-      <Line
-        key={`v${i}`}
-        points={[i * columnWidth, 0, i * columnWidth, stageHeight]}
-        stroke={gridLinesColor}
-        strokeWidth={0.5}
-      />
-    )
-  }
-  // Horisontale linjer
-  for (let i = 0; i <= rows; i++) {
-    gridLines.push(
-      <Line
-        key={`h${i}`}
-        points={[0, i * rowHeight, stageWidth, i * rowHeight]}
-        stroke={gridLinesColor}
-        strokeWidth={0.5}
-      />
-    )
-  }
-
-  // Legg til denne funksjonen for å beregne strømforbruk per kolonne
   const beregnStroemForbruk = () => {
     const forbrukPerKolonne = new Array(gridColumns).fill(0)
 
@@ -333,52 +323,19 @@ const KonvaGrid = ({ setStroemForbruk }) => {
       }
     })
 
-    // Konverter til nytt format
     setStroemForbruk({
       id: 'stroemforbruk',
       data: forbrukPerKolonne.map((y, x) => ({ x, y })),
     })
   }
 
-  // La oss også legge til en useEffect for å se initialverdiene
-  useEffect(() => {
-    // console.log('Initial rectangles:', rectangles)
-    beregnStroemForbruk()
-  }, []) // Kjører én gang ved oppstart
-
-  // Legg til denne useEffect for å lytte på endringer i rectangles
   useEffect(() => {
     beregnStroemForbruk()
-  }, [rectangles]) // Kjører hver gang rectangles endres
+  }, [])
 
-  // useEffect(() => {
-  //   // Initialiser strømforbruk med nuller i nytt format
-  //   const initialData = {
-  //     id: 'stroemforbruk',
-  //     data: Array(gridColumns)
-  //       .fill(0)
-  //       .map((verdi, index) => ({
-  //         x: index,
-  //         y: verdi,
-  //       })),
-  //   }
-  //   setStroemForbruk(initialData)
-  // }, [])
-  // Kjør kun én gang ved oppstart
-
-  // Oppdater useEffect for å laste fra localStorage
-  // useEffect(() => {
-  //   const savedRectangles = localStorage.getItem('rectangles')
-  //   if (savedRectangles) {
-  //     setRectangles(JSON.parse(savedRectangles))
-  //   }
-  // }, [])
-
-  // // Legg til useEffect for å lagre til localStorage
-  // useEffect(() => {
-  //   localStorage.setItem('rectangles', JSON.stringify(rectangles))
-  //   beregnStroemForbruk()
-  // }, [rectangles])
+  useEffect(() => {
+    beregnStroemForbruk()
+  }, [rectangles])
 
   return (
     <Wrapper>
@@ -390,38 +347,61 @@ const KonvaGrid = ({ setStroemForbruk }) => {
         onMouseUp={handleMouseUp}
       >
         <Layer>
-          {gridLines}
-          {rectangles.map((rect) => (
-            <Group key={rect.id}>
-              <Rect
-                {...rect}
-                onMouseDown={(e) => handleRectMouseDown(e, rect)}
-                cornerRadius={8}
-                opacity={selectedRect?.id === rect.id ? 0 : 1}
-              />
-              <Group
-                x={rect.x + rect.width - 20}
-                y={rect.y + 5}
-                onClick={() => handleDeleteClick(rect.id)}
-                onTap={() => handleDeleteClick(rect.id)}
-                opacity={previewRect ? 0 : 1}
-              >
-                <Text
-                  text='×'
-                  fill='#007B50'
-                  fontSize={14}
-                  x={3}
-                  y={-1}
-                />
-                <Image
-                  image={images[rect.image]}
-                  x={-(rect.width / 2)}
-                  y={-5}
-                  listening={false}
-                />
-              </Group>
-            </Group>
+          {/* Grid lines */}
+          {Array.from({ length: gridColumns + 1 }).map((_, i) => (
+            <Line
+              key={`v${i}`}
+              points={[i * columnWidth, 0, i * columnWidth, stageHeight]}
+              stroke="#ddd"
+              strokeWidth={0.5}
+            />
           ))}
+          {Array.from({ length: rows + 1 }).map((_, i) => (
+            <Line
+              key={`h${i}`}
+              points={[0, i * rowHeight, stageWidth, i * rowHeight]}
+              stroke="#ddd"
+              strokeWidth={0.5}
+            />
+          ))}
+          {/* Rectangles */}
+          {rectangles.map((rect) => {
+            const isSelected = selectedRect?.id === rect.id
+            const shouldHide = isSelected && isResizing && previewRect
+            
+            return (
+              <Group key={rect.id}>
+                <Rect
+                  {...rect}
+                  onMouseDown={(e) => handleRectMouseDown(e, rect)}
+                  cornerRadius={8}
+                  opacity={shouldHide ? 0 : 1}
+                />
+                <Group
+                  x={rect.x + rect.width - 20}
+                  y={rect.y + 5}
+                  onClick={() => handleDeleteClick(rect.id)}
+                  onTap={() => handleDeleteClick(rect.id)}
+                  opacity={shouldHide ? 0 : 1}
+                >
+                  <Text
+                    text="×"
+                    fill="#007B50"
+                    fontSize={14}
+                    x={3}
+                    y={-1}
+                  />
+                  <Image
+                    image={images[rect.image]}
+                    x={-(rect.width / 2)}
+                    y={-5}
+                    listening={false}
+                  />
+                </Group>
+              </Group>
+            )
+          })}
+          {/* Preview rectangle */}
           {(isResizing || isDrawing || previewRect) && (
             <Rect
               {...previewRect}
@@ -437,8 +417,6 @@ const KonvaGrid = ({ setStroemForbruk }) => {
 const Wrapper = styled.div`
   background: ${COLORS.clr_lightorange};
   border-radius: 0 0 40px 40px;
-  /* box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px; */
-  /* margin-top: 1rem; */
   overflow: hidden;
 `
 
