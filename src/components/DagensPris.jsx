@@ -76,7 +76,7 @@ const DagensPris = () => {
 const Wrapper = styled.div`
   width: 885px;
   /* height: 400px; */
-  padding: 10px;
+  padding: 0px 4px 0 4px;
   background: ${COLORS.clr_lightorange};
   /* border-radius: 8px; */
   /* box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px; */
@@ -105,7 +105,7 @@ const PrisKolonne = styled.div`
 
 const Pris = styled.span`
   /* font-weight: bold; */
-  color: ${COLORS.clr_darkgreen};
+  color: ${COLORS.clr_darkmintgreen};
   font-size: 14px;
 `
 

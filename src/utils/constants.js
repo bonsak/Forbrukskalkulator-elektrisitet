@@ -7,6 +7,7 @@ export const COLORS = {
   white_coffee: 'hsl(30 18% 87%)',
   snow: 'hsl(331 100% 98%)',
   white: 'hsl(0 0% 100%)',
+  clr_darkmintgreen: '#097B4F',
   clr_mintgreen: '#CAE3D2',
   clr_mintlight: '#F0F6EF',
   clr_red: '#98241F',
