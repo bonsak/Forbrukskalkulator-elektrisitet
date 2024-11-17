@@ -13,6 +13,10 @@ export interface Rectangle {
   id: string
   draggable: boolean
   kwt: number
+  minKwt: number
+  maxKwt: number
+  name: string
+  description: string
   image: number
 }
 
@@ -40,4 +44,14 @@ export interface PreviewRectangle {
   stroke: string
   strokeWidth: number
   dash: number[]
+}
+
+export interface ForbruksEnhet {
+  id: string;
+  icon: HTMLImageElement | undefined;
+  name: string;
+  wattage: number
+  description: string
+  minWatt: number
+  maxWatt: number
 }

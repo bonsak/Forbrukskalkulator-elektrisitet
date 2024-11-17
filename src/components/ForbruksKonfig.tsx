@@ -4,6 +4,7 @@ import '../style/forbrukskonfig.css'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { ForbruksKonfigProps } from '../types/types'
 import useImage from 'use-image'
+import styled from 'styled-components'
 
 const ForbruksKonfig = ({
   isOpen,
@@ -15,21 +16,28 @@ const ForbruksKonfig = ({
   console.log('forbruk', forbruk)
 
   return (
+    
     <Dialog.Root
       open={isOpen}
       onOpenChange={setIsOpen}
     >
       <Dialog.Portal>
         <Dialog.Overlay className='DialogOverlay' />
-        <Dialog.Content className='DialogContent'>
-          {/* <Dialog.Title className='DialogTitle'>Rediger forbruk</Dialog.Title> */}
-          {/* <Dialog.Description className='DialogDescription'>
-            Strømforbruk: {currentKwt} kWt
-          </Dialog.Description> */}
+        <Dialog.Content 
+        className='DialogContent'
+        >
+          <Dialog.Title className='DialogTitle'>Navn på forbruk</Dialog.Title>
+          <InnerWrapper>
           <img
             className='forbruksIkon'
             src='/icons/forbruk.png'
           />
+            <Dialog.Description className='DialogDescription'>
+              Beskrivelse av forbruket som er valgt
+              Strømforbruk: {currentKwt} kWt
+          </Dialog.Description>
+
+          </InnerWrapper>
           <Dialog.Close asChild>
             <span
               className='IconButton'
@@ -41,7 +49,7 @@ const ForbruksKonfig = ({
           <form>
             <Slider.Root
               className='SliderRoot'
-              defaultValue={[currentKwt]}
+              defaultValue={[50]}
               max={100}
               step={1}
             >
@@ -61,3 +69,12 @@ const ForbruksKonfig = ({
 }
 
 export default ForbruksKonfig
+
+const InnerWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+`

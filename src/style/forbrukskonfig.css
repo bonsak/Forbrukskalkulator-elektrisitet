@@ -27,7 +27,7 @@ input {
   left: 50%;
   transform: translate(-50%, -50%);
   /* width: 90vw; */
-  max-width: 450px;
+  max-width: 350px;
   max-height: 85vh;
   padding: 25px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -39,13 +39,13 @@ input {
 .DialogTitle {
   margin: 0;
   font-weight: 500;
-  color: var(--mauve-12);
+  color: #097b4f;
   font-size: 17px;
 }
 
 .DialogDescription {
-  margin: 10px 0 20px;
-  color: var(--mauve-11);
+  /* margin: 10px 0 20px; */
+  color: #097b4f;
   font-size: 15px;
   line-height: 1.5;
 }
@@ -162,7 +162,7 @@ input {
   align-items: center;
   user-select: none;
   touch-action: none;
-  width: 200px;
+  /* width: 200px; */
   height: 20px;
 }
 
@@ -184,7 +184,7 @@ input {
 .SliderThumb {
   display: block;
   width: 10px;
-  height: 20px;
+  height: 14px;
   background-color: #097b4f;
   outline: none;
   /* box-shadow: 0 2px 10px var(--black-a7); */

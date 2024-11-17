@@ -4,6 +4,7 @@ import DagensPris from './DagensPris'
 import LoadingSpinner from './LoadingSpinner'
 import KonvaGrid from './KonvaGrid'
 import GlobalStyles from './GlobalStyles'
+import Dialog from './Dialog'
 
 // Lazy-laster tunge komponenter
 const ForbruksBarGraf = lazy(() => import('./ForbruksBarGrapf'))
@@ -35,6 +36,7 @@ function App() {
             stroemForbruk={stroemForbruk}
             setStroemForbruk={setStroemForbruk}
           />
+          {/* <Dialog showDialog={true} /> */}
         </Wrapper>
       </div>
     </>

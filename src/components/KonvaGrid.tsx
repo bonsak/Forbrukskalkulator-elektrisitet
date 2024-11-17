@@ -5,6 +5,7 @@ import useImage from 'use-image'
 import { COLORS } from '../utils/constants'
 import ForbruksKonfig from './ForbruksKonfig'
 import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
+import { useForbruksEnheter } from '../utils/Forbruksenheter'
 
 const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [dusj] = useImage('/icons/dusj.png')
@@ -17,19 +18,22 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [vaskemaskin] = useImage('/icons/vaskemaskin.png')
 
   const images: Array<{
-    id: string
+    name: string
     image: HTMLImageElement | undefined
     kwt: number
   }> = [
-    { id: 'dusj', image: dusj, kwt: 2.5 },
-    { id: 'elbil', image: elbil, kwt: 6.4 },
-    { id: 'forbruk', image: forbruk, kwt: 1 },
-    { id: 'kaffetrakter', image: kaffetrakter, kwt: 1.2 },
-    { id: 'oppvarming', image: oppvarming, kwt: 2 },
-    { id: 'oppvaskmaskin', image: oppvaskmaskin, kwt: 1.1 },
-    { id: 'stekeovnplate', image: stekeovnplate, kwt: 4 },
-    { id: 'vaskemaskin', image: vaskemaskin, kwt: 1.5 },
+    { name: 'dusj', image: dusj, kwt: 2.5 },
+    { name: 'elbil', image: elbil, kwt: 6.4 },
+    { name: 'forbruk', image: forbruk, kwt: 1 },
+    { name: 'kaffetrakter', image: kaffetrakter, kwt: 1.2 },
+    { name: 'oppvarming', image: oppvarming, kwt: 2 },
+    { name: 'oppvaskmaskin', image: oppvaskmaskin, kwt: 1.1 },
+    { name: 'stekeovnplate', image: stekeovnplate, kwt: 4 },
+    { name: 'vaskemaskin', image: vaskemaskin, kwt: 1.5 },
   ]
+
+  const enheter = useForbruksEnheter()
+  console.log(enheter)
 
   const [rectangles, setRectangles] = useState<Rectangle[]>([])
   const [isDrawing, setIsDrawing] = useState(false)
@@ -249,6 +253,10 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         id: `rect${crypto.randomUUID()}`,
         draggable: true,
         kwt: 100,
+        minKwt: 0,
+        maxKwt: 100,
+        name: 'Forbruk',
+        description: 'Beskrivelse av forbruket',
         image: Math.floor(Math.random() * images.length),
       }
 
