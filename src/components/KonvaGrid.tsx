@@ -81,6 +81,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const rows = Math.floor(stageHeight / rowHeight)
 
   // Snap til grid
+  // Bruk senere
   const snapToGrid = (x: number, width: number) => {
     const startColumn = Math.round(x / columnWidth)
     const endColumn = Math.round((x + width) / columnWidth)
@@ -90,6 +91,9 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     }
   }
 
+  // Sjekk om musen er over resize håndtak
+  // Kan dette gjøre ved onMouseOver onMouseOut?
+  // Bruk senere
   const isMouseOverResizeHandle = (e: any, rect: Rectangle): 'left' | 'right' | null => {
     const stage = e.target.getStage()
     const mouseX = stage.getPointerPosition().x
@@ -130,6 +134,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     }
   }
 
+  // Mulig denne logikken kan flyttes til handleDragMove
   const handleRectMouseDown = (e: any, rect: Rectangle) => {
     const resizeEdge = isMouseOverResizeHandle(e, rect)
     if (resizeEdge) {
@@ -176,6 +181,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     beregnStroemForbruk()
   }
 
+  // Dette er nok ikke helt bra. 
   const handleMouseMove = (e: any) => {
     const stage = e.target.getStage()
     const pos = stage.getPointerPosition()
@@ -234,6 +240,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     }
   }
 
+  // Lager lite default rect når bruker løfter musen
   const handleMouseUp = (e: any) => {
     if (isDrawing) {
       const stage = e.target.getStage()
@@ -286,7 +293,9 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     setPreviewRect(null)
   }
 
+  // Fyrer n
   const handleDragMove = (e: any) => {
+    console.log('handleDragMove')
     const rect = e.target
     const pos = rect.position()
     const snapped = snapToGrid(pos.x, rect.width())
