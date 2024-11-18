@@ -12,9 +12,9 @@ export interface Rectangle {
   onDblclick: (e: any) => void
   id: string
   draggable: boolean
-  kwt: number
-  minKwt: number
-  maxKwt: number
+  wattage: number
+  minWatt: number
+  maxWatt: number
   name: string
   description: string
   image: number
@@ -48,10 +48,10 @@ export interface PreviewRectangle {
 
 export interface ForbruksEnhet {
   id: string;
-  icon: HTMLImageElement | undefined;
+  image: HTMLImageElement | undefined;
   name: string;
-  wattage: number
   description: string
+  wattage: number
   minWatt: number
   maxWatt: number
 }

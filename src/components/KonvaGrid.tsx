@@ -1,39 +1,14 @@
 import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import useImage from 'use-image'
 import { COLORS } from '../utils/constants'
 import ForbruksKonfig from './ForbruksKonfig'
 import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
 import { useForbruksEnheter } from '../utils/Forbruksenheter'
 
 const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
-  const [dusj] = useImage('/icons/dusj.png')
-  const [elbil] = useImage('/icons/elbil.png')
-  const [forbruk] = useImage('/icons/forbruk.png')
-  const [kaffetrakter] = useImage('/icons/kaffetrakter.png')
-  const [oppvarming] = useImage('/icons/oppvarming.png')
-  const [oppvaskmaskin] = useImage('/icons/oppvaskmaskin.png')
-  const [stekeovnplate] = useImage('/icons/stekeovn-plate.png')
-  const [vaskemaskin] = useImage('/icons/vaskemaskin.png')
 
-  const images: Array<{
-    name: string
-    image: HTMLImageElement | undefined
-    kwt: number
-  }> = [
-    { name: 'dusj', image: dusj, kwt: 2.5 },
-    { name: 'elbil', image: elbil, kwt: 6.4 },
-    { name: 'forbruk', image: forbruk, kwt: 1 },
-    { name: 'kaffetrakter', image: kaffetrakter, kwt: 1.2 },
-    { name: 'oppvarming', image: oppvarming, kwt: 2 },
-    { name: 'oppvaskmaskin', image: oppvaskmaskin, kwt: 1.1 },
-    { name: 'stekeovnplate', image: stekeovnplate, kwt: 4 },
-    { name: 'vaskemaskin', image: vaskemaskin, kwt: 1.5 },
-  ]
-
-  const enheter = useForbruksEnheter()
-  console.log(enheter)
+  const FORBRUKSENHETER = useForbruksEnheter()
 
   const [rectangles, setRectangles] = useState<Rectangle[]>([])
   const [isDrawing, setIsDrawing] = useState(false)
@@ -43,6 +18,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [previewRect, setPreviewRect] = useState<PreviewRectangle | null>(null)
   const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null)
   const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   // Konstanter
   const stageWidth = 885
@@ -85,6 +61,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     return null
   }
 
+  // Hvis vi treffer stage, start å tegne
   const handleMouseDown = (e: any) => {
     if (e.target === e.target.getStage()) {
       setIsDrawing(true)
@@ -112,13 +89,15 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
   // Mulig denne logikken kan flyttes til handleDragMove
   const handleRectMouseDown = (e: any, rect: Rectangle) => {
+    // console.log('handleRectMouseDown', e.target)
+    
     const resizeEdge = isMouseOverResizeHandle(e, rect)
     if (resizeEdge) {
       e.target.draggable(false)
       setIsResizing(true)
       setResizeEdge(resizeEdge)
       setSelectedRect(rect)
-      console.log('Selected rect:', rect.id)
+      // console.log('Selected rect:', e.target.attrs.id)
       const pos = e.target.getStage().getPointerPosition()
       setStartPos({ x: pos.x, y: rect.y })
 
@@ -135,6 +114,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     }
   }
 
+  // Når vi slutter å dra, snap til grid
   const handleDragEnd = (e: any) => {
     const rect = e.target
     const pos = rect.position()
@@ -224,6 +204,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
   // Lager lite default rect når bruker løfter musen
   const handleMouseUp = (e: any) => {
+    setIsDragging(false)
     if (isDrawing) {
       const stage = e.target.getStage()
       const endPos = stage.getPointerPosition()
@@ -233,6 +214,8 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         dragDistance <= 30 ? startPos.x : Math.min(startPos.x, endPos.x),
         dragDistance <= 30 ? columnWidth * 2 : dragDistance
       )
+
+      const rndNumber: number = Math.floor(Math.random() * FORBRUKSENHETER.length)
 
       const newRectangle: Rectangle = {
         x: snapped.x,
@@ -250,14 +233,14 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
           setSelectedRect(clickedRect)
           setIsForbruksKonfigOpen(true)
         },
-        id: `rect${crypto.randomUUID()}`,
+        id: rndNumber.toString(),
         draggable: true,
-        kwt: 100,
-        minKwt: 0,
-        maxKwt: 100,
-        name: 'Forbruk',
-        description: 'Beskrivelse av forbruket',
-        image: Math.floor(Math.random() * images.length),
+        wattage: FORBRUKSENHETER[rndNumber].wattage,
+        minWatt: FORBRUKSENHETER[rndNumber].minWatt,
+        maxWatt: FORBRUKSENHETER[rndNumber].maxWatt,
+        name: FORBRUKSENHETER[rndNumber].name,
+        description: FORBRUKSENHETER[rndNumber].description,
+        image: rndNumber,
       }
 
       setRectangles([...rectangles, newRectangle])
@@ -285,22 +268,26 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
   // Fyrer n
   const handleDragMove = (e: any) => {
-    console.log('handleDragMove')
-    const rect = e.target
-    const pos = rect.position()
-    const snapped = snapToGrid(pos.x, rect.width())
+    setIsDragging(true)
+    console.log('isDragging',isDragging)
+
+    setSelectedRect(e.target)
+    const activeRect = e.target
+
+    const pos = activeRect.position()
+    const snapped = snapToGrid(pos.x, activeRect.width())
 
     setPreviewRect({
       x: snapped.x,
       y: Math.round(pos.y / rowHeight) * rowHeight,
-      width: rect.width(),
+      width: activeRect.width(),
       height: rowHeight,
       fill: 'transparent',
       stroke: '#b1afa9',
       strokeWidth: 2,
       dash: [5, 5],
     })
-    rect.opacity(0)
+    activeRect.opacity(0)
   }
 
   const handleDeleteClick = (rectId: string) => {
@@ -317,7 +304,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
       for (let i = startKolonne; i < sluttKolonne; i++) {
         if (i >= 0 && i < gridColumns) {
-          forbrukPerKolonne[i] += rect.kwt
+          forbrukPerKolonne[i] += rect.wattage
         }
       }
     })
@@ -366,7 +353,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
           {/* Rectangles */}
           {rectangles.map((rect) => {
             const isSelected = selectedRect?.id === rect.id
-            const shouldHide = isSelected && isResizing && previewRect
+            const shouldHide = isSelected && previewRect && (isResizing || isDragging)
 
             return (
               <Group key={rect.id}>
@@ -375,7 +362,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
                   onMouseDown={(e) => handleRectMouseDown(e, rect)}
                   cornerRadius={8}
                   opacity={shouldHide ? 0 : 1}
-                  image={images[rect.image].image}
+                  image={FORBRUKSENHETER[rect.image].image}
                 />
                 <Group
                   x={rect.x + rect.width - 20}
@@ -392,7 +379,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
                     y={-1}
                   />
                   <Image
-                    image={images[rect.image].image}
+                    image={FORBRUKSENHETER[rect.image].image}
                     x={-(rect.width / 2)}
                     y={-5}
                     listening={false}

@@ -5,15 +5,26 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { ForbruksKonfigProps } from '../types/types'
 import useImage from 'use-image'
 import styled from 'styled-components'
+import { useForbruksEnheter } from "../utils/Forbruksenheter"
+
 
 const ForbruksKonfig = ({
   isOpen,
   setIsOpen,
   selectedRect,
 }: ForbruksKonfigProps) => {
-  const currentKwt = selectedRect?.kwt || 0
-  const [forbruk] = useImage('/icons/forbruk.png')
-  console.log('forbruk', forbruk)
+  // console.log('FBKonfig',selectedRect)
+  if (!selectedRect) return null
+
+  // const currentId = selectedRect?.attrs.id
+  // const currentName = selectedRect?.attrs.name
+  // const currentDescription = selectedRect?.attrs.description
+  // const currentWattage = selectedRect?.attrs.wattage
+  // const currentMinWatt = selectedRect?.attrs.minWatt
+  // const currentMaxWatt = selectedRect?.attrs.maxWatt
+
+  // const FORBRUKSENHETER = useForbruksEnheter()
+  // console.log(selectedRect.attrs.id)
 
   return (
     
@@ -26,7 +37,7 @@ const ForbruksKonfig = ({
         <Dialog.Content 
         className='DialogContent'
         >
-          <Dialog.Title className='DialogTitle'>Navn på forbruk</Dialog.Title>
+          <Dialog.Title className='DialogTitle'>Navn</Dialog.Title>
           <InnerWrapper>
           <img
             className='forbruksIkon'
@@ -34,7 +45,9 @@ const ForbruksKonfig = ({
           />
             <Dialog.Description className='DialogDescription'>
               Beskrivelse av forbruket som er valgt
-              Strømforbruk: {currentKwt} kWt
+              <span>Strømforbruk: Watt</span>
+              <span>Min: Watt</span>
+              <span>Max: Watt</span>
           </Dialog.Description>
 
           </InnerWrapper>
