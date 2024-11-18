@@ -7,11 +7,13 @@ export interface Rectangle {
   strokeWidth: number
   strokeScaleEnabled: boolean
   fill: string
-  onDragMove: (e: any) => void
-  onDragEnd: (e: any) => void
+  // onDragStart: (e: any) => void
+  // onDragMove: (e: any) => void
+  // onDragEnd: (e: any) => void
   onDblclick: (e: any) => void
   id: string
   draggable: boolean
+  isDragging: boolean
   wattage: number
   minWatt: number
   maxWatt: number
