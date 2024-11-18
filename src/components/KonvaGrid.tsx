@@ -18,11 +18,10 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [previewRect, setPreviewRect] = useState<PreviewRectangle | null>(null)
   const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null)
   const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false)
-  const [isManipulating, setIsManipulating] = useState(false)
 
   // Konstanter
   const stageWidth = 885
-  const stageHeight = 300
+  const stageHeight = 320
   const RESIZE_HANDLE_WIDTH = 10
   const gridColumns = 24
   const columnWidth = stageWidth / gridColumns
@@ -30,9 +29,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const rows = Math.floor(stageHeight / rowHeight)
 
 
-  // Sjekk om musen er over resize håndtak
-  // Kan dette gjøre ved onMouseOver onMouseOut?
-  // Bruk senere
   const isMouseOverResizeHandle = (
     e: any,
     rect: Rectangle
@@ -40,11 +36,11 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     const stage = e.target.getStage()
     const mouseX = stage.getPointerPosition().x
     const leftHandle =
-      mouseX >= rect.x && mouseX <= rect.x + RESIZE_HANDLE_WIDTH
+    mouseX >= rect.x && mouseX <= rect.x + RESIZE_HANDLE_WIDTH
     const rightHandle =
-      mouseX >= rect.x + rect.width - RESIZE_HANDLE_WIDTH &&
-      mouseX <= rect.x + rect.width
-
+    mouseX >= rect.x + rect.width - RESIZE_HANDLE_WIDTH &&
+    mouseX <= rect.x + rect.width
+    
     if (leftHandle) return 'left'
     if (rightHandle) return 'right'
     return null
@@ -53,7 +49,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   // Hvis vi treffer stage, start å tegne
   const handleMouseDown = (e: any) => {
     if (e.target === e.target.getStage()) {
-      console
       setIsDrawing(true)
       const pos = e.target.getStage().getPointerPosition()
       const snapped = snapToGrid(pos.x, 0)
@@ -78,131 +73,101 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   }
 
   // Mulig denne logikken kan flyttes til handleDragMove
-  // const handleRectMouseDown = (e: any, rect: Rectangle) => {
-    
-  //   // const resizeEdge = isMouseOverResizeHandle(e, rect)
-  //   if (resizeEdge) {
-  //     // console.log('resizeEdge', resizeEdge)
-  //     e.target.draggable(false)
-  //     setIsResizing(true)
-  //     setResizeEdge(resizeEdge)
-  //     setSelectedRect(rect)
-  //     // console.log('Selected rect:', e.target.attrs.id)
-  //     const pos = e.target.getStage().getPointerPosition()
-  //     setStartPos({ x: pos.x, y: rect.y })
+  const handleRectMouseDown = (e: any, rect: Rectangle) => {
+    const resizeEdge = isMouseOverResizeHandle(e, rect)
 
-  //     setPreviewRect({
-  //       ...rect,
-  //       fill: 'transparent',
-  //       stroke: '#b1afa9',
-  //       strokeWidth: 2,
-  //       dash: [5, 5],
-  //     })
-  //     e.cancelBubble = true
-  //   } else {
-  //     e.target.draggable(true)
-  //   }
-  // }
+    if (resizeEdge) {
+      e.target.draggable(false)
+      setIsResizing(true)
+      setResizeEdge(resizeEdge)
+      setSelectedRect(rect)
+      const pos = e.target.getStage().getPointerPosition()
+      setStartPos({ x: pos.x, y: rect.y })
+      
+      setRectangles(prevRects => prevRects.map(r => 
+        r.id === rect.id ? {...r, isDragging: true} : r
+      ))
+      
+      e.cancelBubble = true
+    } else {
+      e.target.draggable(true)
+    }
+  }
 
-  // Når vi slutter å dra, snap til grid
-  // const handleDragEnd = (e: any) => {
-  //   setIsManipulating(false)
-  //   const rect = e.target
-  //   const pos = rect.position()
-  //   const snapped = snapToGrid(pos.x, rect.width())
-
-  //   setRectangles((prevRectangles) =>
-  //     prevRectangles.map((r) =>
-  //       r.id === rect.attrs.id
-  //         ? { ...r, x: snapped.x, y: Math.round(pos.y / rowHeight) * rowHeight }
-  //         : r
-  //     )
-  //   )
-
-  //   rect.position({
-  //     x: snapped.x,
-  //     y: Math.round(pos.y / rowHeight) * rowHeight,
-  //   })
-  //   rect.opacity(1)
-  //   setPreviewRect(null)
-  //   beregnStroemForbruk()
-  // }
-
-  // Dette er nok ikke helt bra.
   const handleMouseMoveOnStage = (e: any) => {
     const stage = e.target.getStage()
     const pos = stage.getPointerPosition()
-
+    const rect = selectedRect? selectedRect : null
+    const id = rect?.id
+    // console.log('handleMouseMoveOnStage', rect) 
+    
     if (isDrawing) {
-      setIsManipulating(true)
       const width = Math.abs(pos.x - startPos.x)
       const snapped = snapToGrid(Math.min(startPos.x, pos.x), width)
       setPreviewRect({
-        x: snapped.x,
-        y: startPos.y,
-        width: snapped.width,
-        height: rowHeight,
-        fill: 'transparent',
-        stroke: '#b1afa9',
-        strokeWidth: 2,
-        dash: [5, 5],
+          x: snapped.x,
+          y: startPos.y,
+          width: snapped.width,
+          height: rowHeight,
+          fill: 'transparent',
+          stroke: '#b1afa9',
+          strokeWidth: 2,
+          dash: [5, 5],
+        })
+      } 
+      else if (isResizing && selectedRect) {
+        setIsResizing(true)
+        // e.target.attrs.isDragging = true
+
+      let newWidth: number, newX: number
+
+      if (resizeEdge === 'right') {
+        newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
+        const snapped = snapToGrid(selectedRect.x, newWidth)
+        //Identisk med under
+        setRectangles(prevRects => prevRects.map(r => 
+          r.id === selectedRect.id 
+            ? {...r, x: snapped.x, width: snapped.width, isDragging: true} 
+            : r
+        ))
+        selectedRect.x = snapped.x
+        selectedRect.width = snapped.width
+      } else if (resizeEdge === 'left') {
+        newWidth = Math.max(
+          columnWidth,
+          selectedRect.x + selectedRect.width - pos.x
+        )
+        newX = Math.min(
+          pos.x,
+          selectedRect.x + selectedRect.width - columnWidth
+        )
+        const snapped = snapToGrid(newX, newWidth)
+        // identisk med over
+        setRectangles(prevRects => prevRects.map(r => 
+          r.id === selectedRect.id 
+            ? {...r, x: snapped.x, width: snapped.width, isDragging: true} 
+            : r
+        ))
+        selectedRect.x = snapped.x
+        selectedRect.width = snapped.width
+      }
+    } else {
+      const hoveredRect = rectangles.find((rect) => {
+        const resizeEdge = isMouseOverResizeHandle(
+          { target: { getStage: () => stage } },
+          rect
+        )
+        return resizeEdge !== null
       })
-    } 
-    // else if (isResizing && selectedRect) {
-    //   setIsManipulating(true)
-    //   let newWidth: number, newX: number
 
-    //   if (resizeEdge === 'right') {
-    //     newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
-    //     const snapped = snapToGrid(selectedRect.x, newWidth)
-    //     setPreviewRect({
-    //       ...selectedRect,
-    //       width: snapped.width,
-    //       fill: 'transparent',
-    //       stroke: '#b1afa9',
-    //       strokeWidth: 2,
-    //       dash: [5, 5],
-    //     })
-    //   } else if (resizeEdge === 'left') {
-    //     newWidth = Math.max(
-    //       columnWidth,
-    //       selectedRect.x + selectedRect.width - pos.x
-    //     )
-    //     newX = Math.min(
-    //       pos.x,
-    //       selectedRect.x + selectedRect.width - columnWidth
-    //     )
-    //     const snapped = snapToGrid(newX, newWidth)
-    //     setPreviewRect({
-    //       ...selectedRect,
-    //       x: snapped.x,
-    //       width: snapped.width,
-    //       fill: 'transparent',
-    //       stroke: '#b1afa9',
-    //       strokeWidth: 2,
-    //       dash: [5, 5],
-    //     })
-    //   }
-    // } 
-    else {
-      // const hoveredRect = rectangles.find((rect) => {
-      //   const resizeEdge = isMouseOverResizeHandle(
-      //     { target: { getStage: () => stage } },
-      //     rect
-      //   )
-      //   return resizeEdge !== null
-      // })
-
-      // document.body.style.cursor = hoveredRect ? 'ew-resize' : 'default'
+      document.body.style.cursor = hoveredRect ? 'ew-resize' : 'default'
     }
   }
 
   // Lager lite default rect når bruker løfter musen
   const handleMouseUpOnStage = (e: any) => {
-    // setIsDragging(false)
-    // setIsManipulating(false)
     if (isDrawing) {
-      console.log('handleMouseUpOnStage', "isDrawing")
+
       const stage = e.target.getStage()
       const endPos = stage.getPointerPosition()
       const dragDistance = Math.abs(endPos.x - startPos.x)
@@ -223,9 +188,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         strokeWidth: 5,
         strokeScaleEnabled: false,
         fill: COLORS.clr_mintgreen,
-        // onDragStart: handleDragStart,
-        // onDragMove: handleDragMove,
-        // onDragEnd: handleDragEnd,
+
         onDblclick: (e) => {
           const clickedRect = e.target
           setSelectedRect(clickedRect)
@@ -244,48 +207,21 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
       setRectangles([...rectangles, newRectangle])
       beregnStroemForbruk()
-    // } else if (isResizing && selectedRect && previewRect) {
-    //   setRectangles(
-    //     rectangles.map((rect) =>
-    //       rect.id === selectedRect.id
-    //         ? {
-    //             ...rect,
-    //             x: previewRect.x,
-    //             width: previewRect.width,
-    //           }
-    //         : rect
-    //     )
-    //   )
+    } else if (isResizing && selectedRect) {
+
+      setRectangles(prevRects => prevRects.map(r => 
+        r.id === selectedRect.id 
+          ? {...r, x: selectedRect.x, width: selectedRect.width, isDragging: false} 
+          : r
+      ))
       beregnStroemForbruk()
     }
 
     setIsDrawing(false)
-    // setIsResizing(false)
+    setIsResizing(false)
+    // setIsDragging(false)
     setSelectedRect(null)
     setPreviewRect(null)
-  }
-
-  // Fyrer n
-  const handleDragMove = (e: any) => {
-    setIsManipulating(true)
-
-    setSelectedRect(e.target)
-    const activeRect = e.target
-
-    const pos = activeRect.position()
-    const snapped = snapToGrid(pos.x, activeRect.width())
-
-    setPreviewRect({
-      x: snapped.x,
-      y: Math.round(pos.y / rowHeight) * rowHeight,
-      width: activeRect.width(),
-      height: rowHeight,
-      fill: 'transparent',
-      stroke: '#b1afa9',
-      strokeWidth: 2,
-      dash: [5, 5],
-    })
-    activeRect.opacity(0)
   }
 
   const handleDeleteClick = (rectId: string) => {
@@ -338,41 +274,10 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     return({x,y})
   }
 
-  const handleResize = (e: any) => {
-
-    const resizeEdge = isMouseOverResizeHandle(e, e.target.attrs)
-    // console.log('handleResize', e.target, resizeEdge)
-    // e.target.draggable(false)
-    if (resizeEdge) {
-      // console.log('resizeEdge', resizeEdge)
-      // e.target.draggable(false)
-      // setIsResizing(true)
-      // setResizeEdge(resizeEdge)
-      // setSelectedRect(e.target)
-    //   // console.log('Selected rect:', e.target.attrs.id)
-      // const pos = e.target.getStage().getPointerPosition()
-      // setStartPos({ x: pos.x, y: e.target.attrs.y })
-
-    //   setPreviewRect({
-    //     ...rect,
-    //     fill: 'transparent',
-    //     stroke: '#b1afa9',
-    //     strokeWidth: 2,
-    //     dash: [5, 5],
-    //   })
-      e.cancelBubble = true
-    } else {
-      e.target.draggable(true)
-    }
-  }
-
   const onDragStart = (e: any) => {
     
     const id = e.target.attrs.id
-    // console.log('onDragStart', e.target.get)
-    // if (resizeEdge) {
-    //   e.target.draggable(false)
-    // }
+
     setRectangles(
       rectangles.map((rect) => {
         return {
@@ -381,29 +286,28 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         };
       })
     );
-
   }
   const onDragMove = (e: any) => {
+    
     const movingRect = e.target
+    const snapped = (snapRectToPosition(movingRect.position(), movingRect.width() ))
+    setRectangles(prevRects => prevRects.map(r => 
+      r.id === movingRect.attrs.id ? {...r, x: snapped.x, y: snapped.y, isDragging: true} : r
+    )) 
     const pos = movingRect.position()
-    // console.log('onDragMove', pos)
-  } 
+  }
+
   const onDragEnd = (e: any) => {
     const movedRect = e.target
-    // const pos = {x: movedRect.attrs.x, y: movedRect.attrs.y}
-
     const snapped = (snapRectToPosition(movedRect.position(), movedRect.width() ))
     
-
     setRectangles(prevRects => prevRects.map(r => 
       r.id === movedRect.attrs.id ? {...r, x: snapped.x, y: snapped.y, isDragging: false} : r
     ))  
     movedRect.position(snapped)
-    console.log('snapped values on end', snapped)
-    console.log('snapped values on end movedRect', movedRect.position())
     
+    // setIsDragging(false)
     beregnStroemForbruk()
-    // console.log('onDragEnd', e.target.attrs)
   } 
 
   return (
@@ -434,23 +338,19 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
               strokeWidth={0.5}
             />
           ))}
-          {/* Rectangles */}
+
           {rectangles.map((rect) => {
-            // const isSelected = selectedRect?.id === rect.id
-            // const shouldHide = isSelected && previewRect && isResizing
-            // console.log(rect.x, rect.y, rect.width)
 
             return (
               <Group key={rect.id}>
                 <Rect
                   {...rect}
-                  // onMouseDown={(e) => handleRectMouseDown(e, rect)}
                   cornerRadius={8}
-                  // opacity={shouldHide ? 0 : 1}
                   image={FORBRUKSENHETER[rect.image].image}
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}
                   onDragMove={onDragMove}
+                  onMouseDown={(e) => handleRectMouseDown(e, rect)}
                   // onMouseOver={handleResize}
                   draggable
                   opacity={rect.isDragging ? 0.5 : 1}
