@@ -17,7 +17,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [previewRect, setPreviewRect] = useState<PreviewRectangle | null>(null)
   const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null)
   const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false)
-
+  const [drawerOpen, setDrawerOpen] = useState(false)
   // Konstanter
   const stageWidth = 885
   const stageHeight = 360
@@ -116,6 +116,11 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     // console.log('handleMouseMoveOnStage', rect)
 
     if (isDrawing) {
+      // setIsForbruksKonfigOpen(true)
+      // setIsForbruksKonfigOpen(true)
+      // const handleClose = () => {
+      //   setIsForbruksKonfigOpen(false)
+      // }
       const width = Math.abs(pos.x - startPos.x)
       const snapped = snapToGrid(Math.min(startPos.x, pos.x), width)
       setPreviewRect({
@@ -174,6 +179,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   // Lager lite default rect når bruker løfter musen
   const handleMouseUpOnStage = (e: any) => {
     if (isDrawing) {
+
       const stage = e.target.getStage()
       const endPos = stage.getPointerPosition()
       const dragDistance = Math.abs(endPos.x - startPos.x)
@@ -442,6 +448,8 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         isOpen={isForbruksKonfigOpen}
         setIsOpen={setIsForbruksKonfigOpen}
         updateWattage={updateWattage}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
       />
     </Wrapper>
   )

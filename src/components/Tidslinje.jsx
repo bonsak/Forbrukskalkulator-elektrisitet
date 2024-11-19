@@ -5,7 +5,7 @@ import { COLORS, SIZES } from '../utils/constants'
 function Tidslinje({ mittHus }) {
   return (
     <TidContainer>
-      <TidHeader></TidHeader>
+      {/* <TidHeader>Min strømdag</TidHeader> */}
       <TidWrapper>
         <Natt>00 - 04</Natt>
         <MorgenKveld>05 - 08</MorgenKveld>

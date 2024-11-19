@@ -27,6 +27,8 @@ export interface ForbruksKonfigProps {
   setIsOpen: (isOpen: boolean) => void
   selectedRect: Rectangle | null
   updateWattage: (wattage: number) => void
+  drawerOpen?: boolean
+  setDrawerOpen?: (drawerOpen: boolean) => void
 }
 
 export interface KonvaGridProps {

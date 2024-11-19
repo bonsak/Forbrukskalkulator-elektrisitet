@@ -7,6 +7,7 @@ import MinBolig from './MinBolig'
 import Kontroll from './Kontroll'
 import Tidslinje from './Tidslinje'
 import LegendeRight from './LegendeRight'
+import NyttForbruk from "./NyttForbruk"
 
 // Lazy-laster tunge komponenter
 const ForbruksBarGraf = lazy(() => import('./ForbruksBarGrapf'))
@@ -21,7 +22,7 @@ function App() {
         y: 0,
       })),
   })
-  console.log(stroemForbruk)
+  // console.log(stroemForbruk)
   const [mittHus, setMittHus] = useState({
     navn: 'Wessels gt 4',
     antallRom: 5,
@@ -40,7 +41,7 @@ function App() {
   return (
     <>
       <MainWrapper className={'main-wrapper'}>
-        {/* <GlobalStyles /> */}
+        {/* <NyttForbruk /> */}
         <Wrapper>
           <Tidslinje mittHus={mittHus} />
           <Kontroll mittHus={mittHus} />
@@ -78,9 +79,10 @@ const MainWrapper = styled.div`
 
 const Wrapper = styled.div`
   /* align-items: center; */
+  padding-top: 2rem;
   display: grid;
   grid-template-columns: 0.3fr 1fr 100px;
-  grid-template-rows: 0.25fr 1fr 1fr;
+  grid-template-rows: 40px 1fr 1fr;
   grid-template-areas:
     '. tidslinje .'
     'kontroll graf legende'

@@ -3,14 +3,13 @@ import { COLORS } from '../utils/constants'
 import { useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 
-const MinBolig = ({ mittHus, setMittHus }) => {
+const OldMinBolig = ({ mittHus, setMittHus }) => {
   return (
     <MinBoligWrapper>
       <Formik
         initialValues={mittHus}
         onSubmit={(values) => {
           setMittHus(values)
-          console.log(values)
         }}
       >
         <StyledForm>
@@ -147,4 +146,4 @@ const MinBoligWrapper = styled.div`
   width: 400px;
 `
 
-export default MinBolig
+export default OldMinBolig
