@@ -10,7 +10,7 @@ export interface Rectangle {
   // onDragStart: (e: any) => void
   // onDragMove: (e: any) => void
   // onDragEnd: (e: any) => void
-  onDblclick: (e: any) => void
+  // onDblclick: (e: any) => void
   id: string
   draggable: boolean
   isDragging: boolean
@@ -26,6 +26,7 @@ export interface ForbruksKonfigProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
   selectedRect: Rectangle | null
+  updateWattage: (wattage: number) => void
 }
 
 export interface KonvaGridProps {
@@ -49,9 +50,9 @@ export interface PreviewRectangle {
 }
 
 export interface ForbruksEnhet {
-  id: string;
-  image: HTMLImageElement | undefined;
-  name: string;
+  id: string
+  image: HTMLImageElement | undefined
+  name: string
   description: string
   wattage: number
   minWatt: number

@@ -5,51 +5,52 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { ForbruksKonfigProps } from '../types/types'
 import useImage from 'use-image'
 import styled from 'styled-components'
-import { useForbruksEnheter } from "../utils/Forbruksenheter"
-
+import { COLORS } from '../utils/constants'
+import { useForbruksEnheter } from '../utils/Forbruksenheter'
+import { useEffect, useState } from 'react'
 
 const ForbruksKonfig = ({
   isOpen,
   setIsOpen,
   selectedRect,
+  updateWattage,
 }: ForbruksKonfigProps) => {
-  // console.log('FBKonfig',selectedRect)
-  if (!selectedRect) return null
+  const [sliderValue, setSliderValue] = useState(selectedRect?.wattage || 0)
 
-  // const currentId = selectedRect?.attrs.id
-  // const currentName = selectedRect?.attrs.name
-  // const currentDescription = selectedRect?.attrs.description
-  // const currentWattage = selectedRect?.attrs.wattage
-  // const currentMinWatt = selectedRect?.attrs.minWatt
-  // const currentMaxWatt = selectedRect?.attrs.maxWatt
+  useEffect(() => {
+    setSliderValue(selectedRect?.wattage || 0)
+  }, [selectedRect?.wattage])
 
-  // const FORBRUKSENHETER = useForbruksEnheter()
-  // console.log(selectedRect.attrs.id)
+  const handleValueChange = (wattage: number[]) => {
+    if (selectedRect) {
+      setSliderValue(wattage[0])
+      updateWattage(sliderValue)
+    }
+  }
 
   return (
-    
     <Dialog.Root
       open={isOpen}
       onOpenChange={setIsOpen}
     >
       <Dialog.Portal>
         <Dialog.Overlay className='DialogOverlay' />
-        <Dialog.Content 
-        className='DialogContent'
-        >
-          <Dialog.Title className='DialogTitle'>Navn</Dialog.Title>
+        <Dialog.Content className='DialogContent'>
+          <Dialog.Title className='DialogTitle'>
+            {selectedRect?.name}
+          </Dialog.Title>
           <InnerWrapper>
-          <img
-            className='forbruksIkon'
-            src='/icons/forbruk.png'
-          />
+            <img
+              className='forbruksIkon'
+              src='/icons/forbruk.png'
+            />
             <Dialog.Description className='DialogDescription'>
-              Beskrivelse av forbruket som er valgt
-              <span>Strømforbruk: Watt</span>
-              <span>Min: Watt</span>
-              <span>Max: Watt</span>
-          </Dialog.Description>
+              {/* {selectedRect?.description} */}
+              <span>Strømforbruk: {sliderValue} Watt</span>
 
+              {/* <span>Min: {selectedRect?.minWatt} Watt</span>
+              <span>Max: {selectedRect?.maxWatt} Watt</span> */}
+            </Dialog.Description>
           </InnerWrapper>
           <Dialog.Close asChild>
             <span
@@ -61,14 +62,18 @@ const ForbruksKonfig = ({
           </Dialog.Close>
           <form>
             <Slider.Root
+              onValueChange={handleValueChange}
               className='SliderRoot'
-              defaultValue={[50]}
-              max={100}
+              value={[sliderValue]}
+              min={selectedRect?.minWatt || 0}
+              max={selectedRect?.maxWatt || 0}
               step={1}
             >
-              <Slider.Track className='SliderTrack'>
+              <StyledTrack className='SliderTrack flex flex-row'>
+                <MinMax>{selectedRect?.minWatt}</MinMax>
                 <Slider.Range className='SliderRange' />
-              </Slider.Track>
+                <MinMax>{selectedRect?.maxWatt}</MinMax>
+              </StyledTrack>
               <Slider.Thumb
                 className='SliderThumb'
                 aria-label='Strømforbruk'
@@ -90,4 +95,16 @@ const InnerWrapper = styled.div`
   gap: 10px;
   margin-bottom: 10px;
   margin-top: 10px;
+`
+const MinMax = styled.div`
+  font-size: 12px;
+  /* font-weight: bold; */
+  color: ${COLORS.clr_darkmintgreen};
+  margin-top: 22px;
+`
+const StyledTrack = styled(Slider.Track)`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
 `

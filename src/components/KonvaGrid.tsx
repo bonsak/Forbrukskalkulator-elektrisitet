@@ -7,7 +7,6 @@ import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
 import { useForbruksEnheter } from '../utils/Forbruksenheter'
 
 const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
-
   const FORBRUKSENHETER = useForbruksEnheter()
 
   const [rectangles, setRectangles] = useState<Rectangle[]>([])
@@ -28,6 +27,19 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const rowHeight = 40
   const rows = Math.floor(stageHeight / rowHeight)
 
+  const updateRectangles = (
+    selectedRect: Rectangle,
+    snapped: { x: number; width: number },
+    prevRects: Rectangle[]
+  ) => {
+    setRectangles((prevRects) =>
+      prevRects.map((r) =>
+        r.id === selectedRect.id
+          ? { ...r, x: snapped.x, width: snapped.width, isDragging: true }
+          : r
+      )
+    )
+  }
 
   const isMouseOverResizeHandle = (
     e: any,
@@ -36,11 +48,11 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     const stage = e.target.getStage()
     const mouseX = stage.getPointerPosition().x
     const leftHandle =
-    mouseX >= rect.x && mouseX <= rect.x + RESIZE_HANDLE_WIDTH
+      mouseX >= rect.x && mouseX <= rect.x + RESIZE_HANDLE_WIDTH
     const rightHandle =
-    mouseX >= rect.x + rect.width - RESIZE_HANDLE_WIDTH &&
-    mouseX <= rect.x + rect.width
-    
+      mouseX >= rect.x + rect.width - RESIZE_HANDLE_WIDTH &&
+      mouseX <= rect.x + rect.width
+
     if (leftHandle) return 'left'
     if (rightHandle) return 'right'
     return null
@@ -83,11 +95,13 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       setSelectedRect(rect)
       const pos = e.target.getStage().getPointerPosition()
       setStartPos({ x: pos.x, y: rect.y })
-      
-      setRectangles(prevRects => prevRects.map(r => 
-        r.id === rect.id ? {...r, isDragging: true} : r
-      ))
-      
+
+      setRectangles((prevRects) =>
+        prevRects.map((r) =>
+          r.id === rect.id ? { ...r, isDragging: true } : r
+        )
+      )
+
       e.cancelBubble = true
     } else {
       e.target.draggable(true)
@@ -97,39 +111,35 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const handleMouseMoveOnStage = (e: any) => {
     const stage = e.target.getStage()
     const pos = stage.getPointerPosition()
-    const rect = selectedRect? selectedRect : null
+    const rect = selectedRect ? selectedRect : null
     const id = rect?.id
-    // console.log('handleMouseMoveOnStage', rect) 
-    
+    // console.log('handleMouseMoveOnStage', rect)
+
     if (isDrawing) {
       const width = Math.abs(pos.x - startPos.x)
       const snapped = snapToGrid(Math.min(startPos.x, pos.x), width)
       setPreviewRect({
-          x: snapped.x,
-          y: startPos.y,
-          width: snapped.width,
-          height: rowHeight,
-          fill: 'transparent',
-          stroke: '#b1afa9',
-          strokeWidth: 2,
-          dash: [5, 5],
-        })
-      } 
-      else if (isResizing && selectedRect) {
-        setIsResizing(true)
-        // e.target.attrs.isDragging = true
+        x: snapped.x,
+        y: startPos.y,
+        width: snapped.width,
+        height: rowHeight,
+        fill: 'transparent',
+        stroke: '#b1afa9',
+        strokeWidth: 2,
+        dash: [5, 5],
+      })
+    } else if (isResizing && selectedRect) {
+      setIsResizing(true)
+      // e.target.attrs.isDragging = true
 
       let newWidth: number, newX: number
 
       if (resizeEdge === 'right') {
         newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
         const snapped = snapToGrid(selectedRect.x, newWidth)
-        //Identisk med under
-        setRectangles(prevRects => prevRects.map(r => 
-          r.id === selectedRect.id 
-            ? {...r, x: snapped.x, width: snapped.width, isDragging: true} 
-            : r
-        ))
+
+        updateRectangles(selectedRect, snapped, rectangles)
+
         selectedRect.x = snapped.x
         selectedRect.width = snapped.width
       } else if (resizeEdge === 'left') {
@@ -142,12 +152,9 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
           selectedRect.x + selectedRect.width - columnWidth
         )
         const snapped = snapToGrid(newX, newWidth)
-        // identisk med over
-        setRectangles(prevRects => prevRects.map(r => 
-          r.id === selectedRect.id 
-            ? {...r, x: snapped.x, width: snapped.width, isDragging: true} 
-            : r
-        ))
+
+        updateRectangles(selectedRect, snapped, rectangles)
+
         selectedRect.x = snapped.x
         selectedRect.width = snapped.width
       }
@@ -167,7 +174,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   // Lager lite default rect når bruker løfter musen
   const handleMouseUpOnStage = (e: any) => {
     if (isDrawing) {
-
       const stage = e.target.getStage()
       const endPos = stage.getPointerPosition()
       const dragDistance = Math.abs(endPos.x - startPos.x)
@@ -177,7 +183,9 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         dragDistance <= 30 ? columnWidth * 2 : dragDistance
       )
 
-      const rndNumber: number = Math.floor(Math.random() * FORBRUKSENHETER.length)
+      const rndNumber: number = Math.floor(
+        Math.random() * FORBRUKSENHETER.length
+      )
 
       const newRectangle: Rectangle = {
         x: snapped.x,
@@ -189,11 +197,11 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         strokeScaleEnabled: false,
         fill: COLORS.clr_mintgreen,
 
-        onDblclick: (e) => {
-          const clickedRect = e.target
-          setSelectedRect(clickedRect)
-          setIsForbruksKonfigOpen(true)
-        },
+        // onDblclick: (e) => {
+        //   const clickedRect = e.target
+        //   setSelectedRect(clickedRect)
+        //   setIsForbruksKonfigOpen(true)
+        // },
         id: Math.random().toString(36).substring(7),
         draggable: false,
         isDragging: false,
@@ -208,12 +216,18 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       setRectangles([...rectangles, newRectangle])
       beregnStroemForbruk()
     } else if (isResizing && selectedRect) {
-
-      setRectangles(prevRects => prevRects.map(r => 
-        r.id === selectedRect.id 
-          ? {...r, x: selectedRect.x, width: selectedRect.width, isDragging: false} 
-          : r
-      ))
+      setRectangles((prevRects) =>
+        prevRects.map((r) =>
+          r.id === selectedRect.id
+            ? {
+                ...r,
+                x: selectedRect.x,
+                width: selectedRect.width,
+                isDragging: false,
+              }
+            : r
+        )
+      )
       beregnStroemForbruk()
     }
 
@@ -256,7 +270,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   useEffect(() => {
     beregnStroemForbruk()
   }, [rectangles])
-  
+
   const snapToGrid = (x: number, width: number) => {
     const startColumn = Math.round(x / columnWidth)
     const endColumn = Math.round((x + width) / columnWidth)
@@ -266,16 +280,17 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     }
   }
 
-  const snapRectToPosition = (position: {x: number, y: number}, width: number) => {
-
+  const snapRectToPosition = (
+    position: { x: number; y: number },
+    width: number
+  ) => {
     const snapped = snapToGrid(position.x, width)
     let x = snapped.x
     let y = Math.round(position.y / rowHeight) * rowHeight
-    return({x,y})
+    return { x, y }
   }
 
   const onDragStart = (e: any) => {
-    
     const id = e.target.attrs.id
 
     setRectangles(
@@ -283,39 +298,69 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         return {
           ...rect,
           isDragging: rect.id === id,
-        };
+        }
       })
-    );
+    )
   }
   const onDragMove = (e: any) => {
-    
     const movingRect = e.target
-    const snapped = (snapRectToPosition(movingRect.position(), movingRect.width() ))
-    setRectangles(prevRects => prevRects.map(r => 
-      r.id === movingRect.attrs.id ? {...r, x: snapped.x, y: snapped.y, isDragging: true} : r
-    )) 
+    const snapped = snapRectToPosition(
+      movingRect.position(),
+      movingRect.width()
+    )
+    setRectangles((prevRects) =>
+      prevRects.map((r) =>
+        r.id === movingRect.attrs.id
+          ? { ...r, x: snapped.x, y: snapped.y, isDragging: true }
+          : r
+      )
+    )
     const pos = movingRect.position()
   }
 
   const onDragEnd = (e: any) => {
     const movedRect = e.target
-    const snapped = (snapRectToPosition(movedRect.position(), movedRect.width() ))
-    
-    setRectangles(prevRects => prevRects.map(r => 
-      r.id === movedRect.attrs.id ? {...r, x: snapped.x, y: snapped.y, isDragging: false} : r
-    ))  
+    const snapped = snapRectToPosition(movedRect.position(), movedRect.width())
+
+    setRectangles((prevRects) =>
+      prevRects.map((r) =>
+        r.id === movedRect.attrs.id
+          ? { ...r, x: snapped.x, y: snapped.y, isDragging: false }
+          : r
+      )
+    )
     movedRect.position(snapped)
-    
+
     // setIsDragging(false)
     beregnStroemForbruk()
-  } 
+  }
+
+  const handleRectDblclick = (e: any, rect: Rectangle) => {
+    setSelectedRect(rect)
+    setIsForbruksKonfigOpen(true)
+
+    // const clickedRect = e.target
+    // setSelectedRect(clickedRect)
+    // setIsForbruksKonfigOpen(true)
+  }
+
+  const updateWattage = (wattage: number) => {
+    if (!selectedRect) return
+
+    setRectangles((prevRects) =>
+      prevRects.map((rect) =>
+        rect.id === selectedRect.id ? { ...rect, wattage: wattage } : rect
+      )
+    )
+
+    beregnStroemForbruk()
+  }
 
   return (
     <Wrapper>
       <Stage
         width={stageWidth}
         height={stageHeight}
-
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMoveOnStage}
         onMouseUp={handleMouseUpOnStage}
@@ -340,7 +385,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
           ))}
 
           {rectangles.map((rect) => {
-
             return (
               <Group key={rect.id}>
                 <Rect
@@ -351,6 +395,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
                   onDragEnd={onDragEnd}
                   onDragMove={onDragMove}
                   onMouseDown={(e) => handleRectMouseDown(e, rect)}
+                  onDblclick={(e) => handleRectDblclick(e, rect)}
                   // onMouseOver={handleResize}
                   draggable
                   opacity={rect.isDragging ? 0.5 : 1}
@@ -396,6 +441,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         selectedRect={selectedRect}
         isOpen={isForbruksKonfigOpen}
         setIsOpen={setIsForbruksKonfigOpen}
+        updateWattage={updateWattage}
       />
     </Wrapper>
   )
