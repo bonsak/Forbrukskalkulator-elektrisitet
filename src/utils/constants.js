@@ -8,9 +8,16 @@ export const COLORS = {
   snow: 'hsl(331 100% 98%)',
   white: 'hsl(0 0% 100%)',
   clr_darkmintgreen: '#097B4F',
+  clr_green_300: '#006D42',
+  clr_green_400: '#097B4F',
+  clr_green_500: '#6BB68E',
+  clr_green_600: '#95CCAD',
+  clr_green_700: '#B2DCC4',
   clr_mintgreen: '#CAE3D2',
   clr_mintlight: '#F0F6EF',
   clr_red: '#98241F',
+  clr_mediumdarkred: '#BB4E2C',
+  clr_mediumred: '#D96656',
   clr_lightred: '#F9CEB8',
   clr_orange: '#FCD395',
   clr_lightorange: '#FFF7EB',
@@ -30,6 +37,7 @@ export const SIZES = {
   heading_medium: 28 / 16,
   heading_small: 20 / 16,
   body: 16 / 16,
+  medium_spacer: 40,
 }
 
 export const BREAKPOINTS = {

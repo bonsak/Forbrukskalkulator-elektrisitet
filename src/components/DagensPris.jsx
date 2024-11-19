@@ -74,15 +74,20 @@ const DagensPris = () => {
 }
 
 const Wrapper = styled.div`
-  width: 885px;
+  /* mar: 1rem; */
+  /* width: 885px; */
   /* height: 400px; */
-  padding: 0px 4px 0 4px;
+  display: grid;
+  place-items: center;
+  min-height: 40px;
+  /* padding: 0.5rem 0 0.5rem 0; */
   background: ${COLORS.clr_lightorange};
   /* border-radius: 8px; */
   /* box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px; */
 `
 
 const PrisGrid = styled.div`
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(24, 1fr);
   gap: 2px;

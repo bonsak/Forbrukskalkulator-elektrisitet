@@ -20,7 +20,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
   // Konstanter
   const stageWidth = 885
-  const stageHeight = 320
+  const stageHeight = 360
   const RESIZE_HANDLE_WIDTH = 10
   const gridColumns = 24
   const columnWidth = stageWidth / gridColumns
@@ -244,7 +244,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   }
 
   const beregnStroemForbruk = () => {
-    const forbrukPerKolonne = new Array(gridColumns).fill(0)
+    const forbrukPerKolonne = new Array(gridColumns + 1).fill(0)
 
     rectangles.forEach((rect) => {
       const startKolonne = Math.floor(rect.x / columnWidth)
@@ -448,10 +448,12 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 }
 
 const Wrapper = styled.div`
+  grid-area: grid;
   position: relative;
   background: ${COLORS.clr_lightorange};
-  border-radius: 0 0 40px 40px;
-  overflow: hidden;
+  border-radius: 0 0 40px 0;
+  max-height: 360px;
+  /* overflow: hidden; */
 `
 
 export default KonvaGrid
