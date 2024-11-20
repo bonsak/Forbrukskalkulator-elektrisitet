@@ -2,6 +2,7 @@ import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
+import { DEFAULT_DAG } from '../utils/DefaultDag'
 import ForbruksKonfig from './ForbruksKonfig'
 import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
 import { useForbruksEnheter } from '../utils/Forbruksenheter'
@@ -10,7 +11,7 @@ import { KonvaEventObject } from 'konva/lib/Node'
 const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const FORBRUKSENHETER = useForbruksEnheter()
 
-  const [rectangles, setRectangles] = useState<Rectangle[]>([])
+  const [brukerEnheter, setBrukerEnheter] = useState<Rectangle[]>([])
   const [isDrawing, setIsDrawing] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const [resizeEdge, setResizeEdge] = useState<'left' | 'right' | null>(null)
@@ -31,12 +32,17 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const rowHeight = 40
   const rows = Math.floor(stageHeight / rowHeight)
 
-  const updateRectangles = (
+  // console.log(brukerEnheter, DEFAULT_DAG)
+  useEffect(() => {
+    setBrukerEnheter(DEFAULT_DAG)
+  }, [])
+
+  const oppdaterBrukerEnheter = (
     selectedRect: Rectangle,
     snapped: { x: number; width: number },
     prevRects: Rectangle[]
   ) => {
-    setRectangles((prevRects) =>
+    setBrukerEnheter((prevRects) =>
       prevRects.map((r) =>
         r.id === selectedRect.id
           ? { ...r, x: snapped.x, width: snapped.width, isDragging: true }
@@ -100,7 +106,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       const pos = e.target.getStage().getPointerPosition()
       setStartPos({ x: pos.x, y: rect.y })
 
-      setRectangles((prevRects) =>
+      setBrukerEnheter((prevRects) =>
         prevRects.map((r) =>
           r.id === rect.id ? { ...r, isDragging: true } : r
         )
@@ -147,7 +153,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
         const snapped = snapToGrid(selectedRect.x, newWidth)
 
-        updateRectangles(selectedRect, snapped, rectangles)
+        oppdaterBrukerEnheter(selectedRect, snapped, brukerEnheter)
 
         selectedRect.x = snapped.x
         selectedRect.width = snapped.width
@@ -162,13 +168,13 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         )
         const snapped = snapToGrid(newX, newWidth)
 
-        updateRectangles(selectedRect, snapped, rectangles)
+        oppdaterBrukerEnheter(selectedRect, snapped, brukerEnheter)
 
         selectedRect.x = snapped.x
         selectedRect.width = snapped.width
       }
     } else {
-      const hoveredRect = rectangles.find((rect) => {
+      const hoveredRect = brukerEnheter.find((rect) => {
         const resizeEdge = isMouseOverResizeHandle(
           { target: { getStage: () => stage } },
           rect
@@ -217,7 +223,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         image: defaultEnhet.image,
       }
 
-      setRectangles([...rectangles, newRectangle])
+      setBrukerEnheter([...brukerEnheter, newRectangle])
       setNewRect(newRectangle)
       updateSelectedRect(newRectangle)
       setDrawerOpen(true)
@@ -231,7 +237,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       }
 
       updateSelectedRect(updatedRect)
-      setRectangles((prevRects) =>
+      setBrukerEnheter((prevRects) =>
         prevRects.map((rect) =>
           rect.id === selectedRect.id ? { ...rect, isDragging: false } : rect
         )
@@ -246,14 +252,14 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   }
 
   const handleDeleteClick = (rectId: string) => {
-    setRectangles(rectangles.filter((rect) => rect.id !== rectId))
+    setBrukerEnheter(brukerEnheter.filter((rect) => rect.id !== rectId))
     beregnStroemForbruk()
   }
 
   const beregnStroemForbruk = () => {
     const forbrukPerKolonne = new Array(gridColumns + 1).fill(0)
 
-    rectangles.forEach((rect) => {
+    brukerEnheter.forEach((rect) => {
       const startKolonne = Math.floor(rect.x / columnWidth)
       const sluttKolonne = Math.ceil((rect.x + rect.width) / columnWidth)
 
@@ -275,7 +281,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
   useEffect(() => {
     beregnStroemForbruk()
-  }, [rectangles])
+  }, [brukerEnheter])
 
   const snapToGrid = (x: number, width: number) => {
     const startColumn = Math.round(x / columnWidth)
@@ -297,8 +303,8 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const onDragStart = (e: any) => {
     const id = e.target.attrs.id
 
-    setRectangles(
-      rectangles.map((rect) => {
+    setBrukerEnheter(
+      brukerEnheter.map((rect) => {
         return {
           ...rect,
           isDragging: rect.id === id,
@@ -312,7 +318,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       movingRect.position(),
       movingRect.width()
     )
-    setRectangles((prevRects) =>
+    setBrukerEnheter((prevRects) =>
       prevRects.map((r) =>
         r.id === movingRect.attrs.id
           ? { ...r, x: snapped.x, y: snapped.y, isDragging: true }
@@ -325,7 +331,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     const movedRect = e.target
     const snapped = snapRectToPosition(movedRect.position(), movedRect.width())
 
-    setRectangles((prevRects) =>
+    setBrukerEnheter((prevRects) =>
       prevRects.map((r) =>
         r.id === movedRect.attrs.id
           ? { ...r, x: snapped.x, y: snapped.y, isDragging: false }
@@ -344,6 +350,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     updateSelectedRect(rect)
     setIsForbruksKonfigOpen(true)
   }
+
   const updateWattage = (wattage: number) => {
     if (!selectedRect) return
 
@@ -369,7 +376,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
   const updateSelectedRect = (updatedRect: Rectangle) => {
     setSelectedRect(updatedRect)
-    setRectangles((prevRects) =>
+    setBrukerEnheter((prevRects) =>
       prevRects.map((rect) => (rect.id === updatedRect.id ? updatedRect : rect))
     )
   }
@@ -403,7 +410,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
             />
           ))}
 
-          {rectangles.map((rect) => {
+          {brukerEnheter.map((rect) => {
             return (
               <Group key={rect.id}>
                 <Rect

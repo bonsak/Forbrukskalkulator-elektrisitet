@@ -7,12 +7,12 @@ import MinBolig from './MinBolig'
 import Kontroll from './Kontroll'
 import Tidslinje from './Tidslinje'
 import LegendeRight from './LegendeRight'
-import NyttForbruk from "./NyttForbruk"
 
 // Lazy-laster tunge komponenter
 const ForbruksBarGraf = lazy(() => import('./ForbruksBarGrapf'))
 
 function App() {
+  const [forbruksUnit, setForbruksUnit] = useState([])
   const [stroemForbruk, setStroemForbruk] = useState({
     id: 'stroemforbruk',
     data: Array(25)
@@ -22,7 +22,6 @@ function App() {
         y: 0,
       })),
   })
-  // console.log(stroemForbruk)
   const [mittHus, setMittHus] = useState({
     navn: 'Wessels gt 4',
     antallRom: 5,
@@ -33,6 +32,7 @@ function App() {
     effektVarmtvannstanker: 2.5,
     effektElbillader: 6.5,
   })
+  const [priser, setPriser] = useState([])
 
   // useEffect(() => {
   //   localStorage.setItem('stroemForbruk', JSON.stringify(stroemForbruk))
@@ -46,10 +46,13 @@ function App() {
           <Tidslinje mittHus={mittHus} />
           <Kontroll mittHus={mittHus} />
           <div style={{ gridArea: 'graf' }}>
-            <Suspense fallback={<LoadingSpinner />}>
-              <ForbruksBarGraf stroemForbruk={stroemForbruk} />
-            </Suspense>
-            <DagensPris />
+            {/* <Suspense fallback={<LoadingSpinner />}> */}
+            <ForbruksBarGraf stroemForbruk={stroemForbruk} />
+            {/* </Suspense> */}
+            <DagensPris
+              priser={priser}
+              setPriser={setPriser}
+            />
           </div>
           <LegendeRight />
           {/* <Tidslinje /> */}
@@ -58,6 +61,8 @@ function App() {
             setMittHus={setMittHus}
           />
           <KonvaGrid
+            forbruksUnit={forbruksUnit}
+            setForbruksUnit={setForbruksUnit}
             stroemForbruk={stroemForbruk}
             setStroemForbruk={setStroemForbruk}
             // style={{ gridArea: 'grid' }}

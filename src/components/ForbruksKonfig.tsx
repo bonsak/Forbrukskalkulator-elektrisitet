@@ -45,6 +45,7 @@ const ForbruksKonfig = ({
   }
   const handleEnhetClick = (enhet: ForbruksEnhet) => {
     if (selectedRect) {
+      console.log('enhet', enhet.name)
       const oppdatertRect = {
         ...selectedRect,
         name: enhet.name,
@@ -66,6 +67,7 @@ const ForbruksKonfig = ({
   // interface DialogRootProps extends Dialog.DialogProps {
   //   setDrawerOpen: (open: boolean) => void
   // }
+  // console.log('selectedRect', selectedRect?.name)
 
   return (
     <Dialog.Root
@@ -80,9 +82,9 @@ const ForbruksKonfig = ({
               {selectedRect?.name}
             </DialogTitle>
             <InnerWrapper>
-              <img
+              <ForbruksIkon
                 className='forbruksIkon'
-                src='/icons/forbruk.png'
+                src={selectedRect?.image?.src}
               />
               <Dialog.Description className='DialogDescription'>
                 {/* {selectedRect?.description} */}
@@ -138,6 +140,7 @@ const ForbruksKonfig = ({
                 key={enhet.id}
                 src={enhet.image?.src}
                 onClick={() => handleEnhetClick(enhet)}
+                $selected={selectedRect?.name === enhet.name}
               />
             ))}
             {/* </div> */}
@@ -204,7 +207,10 @@ const Drawer = styled.div<{ $drawerOpen: boolean }>`
   overflow: hidden;
   background-color: 'lightgray';
 `
-const ForbruksIkon = styled.img`
+const ForbruksIkon = styled.img<{ $selected: boolean }>`
+  border: ${(props) =>
+    props.$selected ? `2px solid ${COLORS.clr_green_400}` : 'none'};
+  border-radius: 8px;
   width: 40px;
   height: 40px;
 `

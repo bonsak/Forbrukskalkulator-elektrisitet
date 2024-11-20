@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
 
-const DagensPris = () => {
-  const [priser, setPriser] = useState([])
+const DagensPris = ({ priser, setPriser }) => {
+  // const [priser, setPriser] = useState([])
   const [feilmelding, setFeilmelding] = useState('')
   const [lasterInn, setLasterInn] = useState(true)
 

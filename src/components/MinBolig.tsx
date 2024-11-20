@@ -1,12 +1,18 @@
-import * as Form from '@radix-ui/react-form';
-import styled from 'styled-components';
-import { COLORS } from "../utils/constants";
+import * as Form from '@radix-ui/react-form'
+import styled from 'styled-components'
+import { COLORS } from '../utils/constants'
 
-const MinBolig = ({ mittHus, setMittHus }: { mittHus: MittHus; setMittHus: (hus: MittHus) => void }) => {
+const MinBolig = ({
+  mittHus,
+  setMittHus,
+}: {
+  mittHus: MittHus
+  setMittHus: (hus: MittHus) => void
+}) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+
     const oppdatertHus: MittHus = {
       navn: formData.get('navn') as string,
       antallRom: Number(formData.get('antallRom')),
@@ -16,69 +22,69 @@ const MinBolig = ({ mittHus, setMittHus }: { mittHus: MittHus; setMittHus: (hus:
       antallVarmtvannstanker: Number(formData.get('antallVarmtvannstanker')),
       effektVarmtvannstanker: Number(formData.get('effektVarmtvannstanker')),
       effektElbillader: Number(formData.get('effektElbillader')),
-    };
-    
-    setMittHus(oppdatertHus);
-  };
+    }
+
+    setMittHus(oppdatertHus)
+  }
 
   return (
     <StyledForm onSubmit={handleSubmit}>
-      <StyledField name="navn">
+      <StyledField name='navn'>
         <StyledLabel>Navn</StyledLabel>
-        <StyledInput 
-          type="text" 
-          defaultValue={mittHus.navn} 
+        <StyledInput
+          type='text'
+          defaultValue={mittHus.navn}
           required
         />
       </StyledField>
 
-      <StyledField name="antallRom">
+      <StyledField name='antallRom'>
         <StyledLabel>Rom</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.antallRom} 
+        <StyledInput
+          type='number'
+          defaultValue={mittHus.antallRom}
           required
-          min="1"
+          min='1'
         />
       </StyledField>
 
-      <StyledField name="antallVoksne">
+      <StyledField name='antallVoksne'>
         <StyledLabel>Voksne</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.antallVoksne} 
+        <StyledInput
+          type='number'
+          defaultValue={mittHus.antallVoksne}
           required
-          min="0"
+          min='0'
         />
       </StyledField>
 
-      <StyledField name="antallBarn">
+      <StyledField name='antallBarn'>
         <StyledLabel>Barn</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.antallBarn} 
+        <StyledInput
+          type='number'
+          defaultValue={mittHus.antallBarn}
           required
-          min="0"
+          min='0'
         />
       </StyledField>
 
-      <StyledField name="antallKvadrat">
+      <StyledField name='antallKvadrat'>
         <StyledLabel>Størrelse (m²)</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.antallKvadrat} 
+        <StyledInput
+          type='number'
+          defaultValue={mittHus.antallKvadrat}
           required
-          min="1"
+          min='1'
         />
       </StyledField>
 
-      <StyledField name="antallVarmtvannstanker">
+      <StyledField name='antallVarmtvannstanker'>
         <StyledLabel>Beredere</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.antallVarmtvannstanker} 
+        <StyledInput
+          type='number'
+          defaultValue={mittHus.antallVarmtvannstanker}
           required
-          min="0"
+          min='0'
         />
       </StyledField>
 
@@ -93,26 +99,23 @@ const MinBolig = ({ mittHus, setMittHus }: { mittHus: MittHus; setMittHus: (hus:
         />
       </StyledField> */}
 
-      <StyledField name="effektElbillader">
-        <StyledLabel>Effekt lader (kW)</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.effektElbillader} 
+      <StyledField name='effektElbillader'>
+        <StyledLabel>Billader (kW)</StyledLabel>
+        <StyledInput
+          type='number'
+          defaultValue={mittHus.effektElbillader}
           required
-          step="0.1"
-          min="0"
+          step='0.1'
+          min='0'
         />
       </StyledField>
 
-      <StyledButton type="submit">
-        Oppdater boliginfo
-      </StyledButton>
+      <StyledButton type='submit'>Oppdater boliginfo</StyledButton>
     </StyledForm>
-  );
-};
+  )
+}
 
 export default MinBolig
-
 
 const StyledForm = styled(Form.Root)`
   grid-area: minbolig;
@@ -124,7 +127,7 @@ const StyledForm = styled(Form.Root)`
   border-radius: 40px 0 40px 40px;
   height: 360px;
   width: 400px;
-`;
+`
 
 const StyledField = styled(Form.Field)`
   display: flex;
@@ -132,7 +135,7 @@ const StyledField = styled(Form.Field)`
   justify-content: space-between;
   gap: 1.5rem;
   /* margin-bottom: 1rem; */
-`;
+`
 
 const StyledLabel = styled(Form.Label)`
   /* display: block; */
@@ -140,7 +143,7 @@ const StyledLabel = styled(Form.Label)`
   font-weight: 500;
   color: ${COLORS.clr_darkmintgreen};
   /* margin-bottom: 0.5rem; */
-`;
+`
 
 const StyledInput = styled(Form.Control)`
   text-align: right;
@@ -151,7 +154,7 @@ const StyledInput = styled(Form.Control)`
   &:focus {
     outline: 2px solid ${COLORS.clr_mintgreen};
   }
-`;
+`
 
 const StyledButton = styled.button`
   background: ${COLORS.clr_mintgreen};
@@ -166,15 +169,15 @@ const StyledButton = styled.button`
     background: ${COLORS.clr_darkmintgreen};
     opacity: 0.5;
   }
-`;
+`
 
 interface MittHus {
-  navn: string;
-  antallRom: number;
-  antallVoksne: number;
-  antallBarn: number;
-  antallKvadrat: number;
-  antallVarmtvannstanker: number;
-  effektVarmtvannstanker: number;
-  effektElbillader: number;
+  navn: string
+  antallRom: number
+  antallVoksne: number
+  antallBarn: number
+  antallKvadrat: number
+  antallVarmtvannstanker: number
+  effektVarmtvannstanker: number
+  effektElbillader: number
 }
