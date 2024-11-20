@@ -1,60 +1,65 @@
 import PropTypes from 'prop-types'
-import { ResponsiveLine, Line } from '@nivo/line'
+import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
 import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
-// import useForbukStore from '../stores/useForbruk'
+import { useEffect, useState } from 'react'
+import { line, curveBasis } from 'd3-shape'
 
-function ForbruksGraf({ stroemForbruk }) {
-  // console.log(COLORS.clr_red)
-  const CustomBakgrunn = ({ innerWidth, innerHeight }) => {
+function ForbruksGraf({ stroemForbruk, priser }) {
+  const [dagesStroemPris, setDagesStroemPris] = useState(null)
+  const scaleFactor = 6667
+
+  useEffect(() => {
+    if (priser && priser.length > 0) {
+      const stroemPrisData = {
+        id: 'strømpris',
+        color: COLORS.clr_darkmintgreen,
+        data: priser.map((pris, index) => ({
+          x: index,
+          y: pris['NOK_per_kWh'] * scaleFactor,
+        })),
+      }
+      setDagesStroemPris(stroemPrisData)
+    }
+  }, [priser])
+
+  const CustomLayer = ({ xScale, yScale }) => {
+    if (!dagesStroemPris) return null
+
     return (
-      <>
+      <g>
         <path
-          d={`M${innerWidth} 0 L${innerWidth} ${innerHeight} L0 ${innerHeight} L0 0 Z`}
-          fill={`${COLORS.clr_mintlight}`}
-          fillOpacity={1}
+          d={line()
+            .x((d) => xScale(d.x) * 1.05)
+            .y((d) => yScale(d.y))
+            .curve(curveBasis)(dagesStroemPris.data)}
+          fill='none'
+          opacity={0.25}
+          stroke={COLORS.clr_darkmintgreen}
+          strokeWidth={5}
         />
-      </>
+      </g>
     )
   }
 
-  const customTheme = {
-    axis: {
-      right: {
-        ticks: {
-          text: {
-            fill: `${COLORS.clr_red}`,
-            fontSize: '14px',
-            fontWeight: '500',
-            fontFamily: 'Inter, sans-serif',
-          },
-          line: {
-            stroke: '#c94545', // Farve på tick lines
-            strokeWidth: 1, // Tykkelse på tick lines
-          },
-        },
-      },
-    },
+  CustomLayer.propTypes = {
+    xScale: PropTypes.func.isRequired,
+    yScale: PropTypes.func.isRequired,
   }
+
+  console.log('dagesStroemPris:', dagesStroemPris)
+  console.log('stroemForbruk:', stroemForbruk)
 
   return (
     <GrafWrapper>
       <ResponsiveLine
-        // theme={customTheme}
         data={[stroemForbruk]}
+        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         lineWidth={0}
         areaOpacity={1}
-        // maxValue={6.6}
         colors={[`${COLORS.clr_red}`, '#ee4590', `${COLORS.clr_red}`]}
-        // margin={{ top: 50, right: 0, bottom: 0, left: 0 }}
         isInteractive={false}
-        // xScale={{
-        //   type: 'point',
-        //   padding: 0.2,
-        //   min: '0',
-        //   max: '22',
-        // }}
         yScale={{
           type: 'linear',
           min: '.05',
@@ -62,79 +67,14 @@ function ForbruksGraf({ stroemForbruk }) {
           stacked: false,
           reverse: false,
         }}
-        // yFormat=" >-.2f"
         curve='stepAfter'
         axisTop={false}
-        // axisTop={{
-        //   orient: 'top',
-        //   tickSize: 0,
-        //   tickPadding: 5,
-        //   tickRotation: 0,
-        //   legend: '',
-        //   legendOffset: 0,
-        //   truncateTickAt: 0,
-        // }}
-        // axisRight={false}
-        // axisRight={{
-        //   tickValues: [5000, 10000, 15000, 20000],
-        //   renderTick: ({ x, y, value }) => (
-        //     <g transform={`translate(${x},${y})`}>
-        //       <text
-        //         x={-10}
-        //         y={1}
-        //         textAnchor='end'
-        //         dominantBaseline='middle'
-        //         style={{
-        //           marginRight: -500,
-        //           fill: `${COLORS.clr_red}`,
-        //           fontSize: 14,
-        //           fontWeight: 'bold',
-        //         }}
-        //       >
-        //         {value.toLocaleString()}
-        //       </text>
-        //     </g>
-        //   ),
-        // }}
-        // axisRight={{
-        //   tickSize: 0,
-        //   tickPadding: 12,
-        //   tickRotation: 0,
-        //   tickValues: [5000, 10000, 15000, 20000],
-        //   format: (value) => `${value.toLocaleString()}`,
-        //   legend: '',
-        //   legendOffset: -20,
-        //   legendPosition: 'left',
-        //   truncateTickAt: 0,
-        // className: 'axis-right-text',
-        // tickClassName: 'axis-right-tick',
-        // }}
-
-        // axisBottom={true}
-        // axisLeft={false}
-        // axisLeft={{
-        //   renderTick: ({ x, y, value }) => (
-        //     <g transform={`translate(${x},${y})`}>
-        //       <text
-        //         x={-10}
-        //         y={0}
-        //         textAnchor='end'
-        //         dominantBaseline='middle'
-        //         style={{
-        //           fill: 'blue',
-        //           fontSize: 12,
-        //           fontWeight: 'normal',
-        //         }}
-        //       >
-        //         {value}
-        //       </text>
-        //     </g>
-        //   ),
-        // }}
+        axisBottom={false}
+        axisLeft={false}
+        axisRight={false}
         enableGridX={true}
         enableGridY={true}
         gridYValues={[5000, 10000, 15000, 20000]}
-        // gridYValues={[5, 10, 15, 20]}
         gridLineStyle={{
           stroke: COLORS.clr_red,
           strokeWidth: 1,
@@ -144,30 +84,30 @@ function ForbruksGraf({ stroemForbruk }) {
         enableArea={true}
         enableCrosshair={false}
         layers={[
-          // CustomBakgrunn,
           'grid',
           'markers',
+          'axes',
           'areas',
           'lines',
-          'slices',
-          'axes',
           'points',
-          'legends',
+          'slices',
+          'mesh',
+          CustomLayer,
         ]}
         defs={[
           linearGradientDef('gradientA', [
             { offset: 0, color: `${COLORS.clr_red}` },
             { offset: 1000, color: `${COLORS.clr_lightred}` },
           ]),
+          linearGradientDef('gradientB', [
+            { offset: 0, color: `green` },
+            { offset: 1000, color: `blue` },
+          ]),
         ]}
         fill={[
           {
-            id: 'gradientA',
-            match: { id: 'pris' },
-          },
-          {
-            id: 'gradientA',
-            match: { id: 'nettleie' },
+            id: 'gradientB',
+            match: { id: 'dagesStroemPris' },
           },
           {
             id: 'gradientA',
@@ -181,12 +121,12 @@ function ForbruksGraf({ stroemForbruk }) {
 
 ForbruksGraf.propTypes = {
   stroemForbruk: PropTypes.object.isRequired,
+  priser: PropTypes.arrayOf(
+    PropTypes.shape({
+      NOK_per_kWh: PropTypes.number.isRequired,
+    })
+  ).isRequired,
 }
-
-// const CustomBakgrunn = PropTypes.shape({
-//   innerWidth: PropTypes.number.isRequired,
-//   innerHeight: PropTypes.number.isRequired,
-// })
 
 const GrafWrapper = styled.div`
   grid-area: graf;

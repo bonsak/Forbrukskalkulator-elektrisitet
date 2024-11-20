@@ -24,6 +24,7 @@
     "@vitejs/plugin-react-swc": "^3.7.1",
     "babel-plugin-styled-components": "^2.1.4",
     "components": "^0.1.0",
+    "d3-shape": "^3.2.0",
     "formik": "^2.4.6",
     "gsap": "^3.12.5",
     "konva": "^9.3.16",

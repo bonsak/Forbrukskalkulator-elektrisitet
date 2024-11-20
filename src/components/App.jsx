@@ -47,7 +47,10 @@ function App() {
           <Kontroll mittHus={mittHus} />
           <div style={{ gridArea: 'graf' }}>
             {/* <Suspense fallback={<LoadingSpinner />}> */}
-            <ForbruksBarGraf stroemForbruk={stroemForbruk} />
+            <ForbruksBarGraf
+              stroemForbruk={stroemForbruk}
+              priser={priser}
+            />
             {/* </Suspense> */}
             <DagensPris
               priser={priser}
