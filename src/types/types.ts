@@ -19,16 +19,18 @@ export interface Rectangle {
   maxWatt: number
   name: string
   description: string
-  image: number
+  image: HTMLImageElement | undefined
 }
 
 export interface ForbruksKonfigProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
   selectedRect: Rectangle | null
+  setSelectedRect: (selectedRect: Rectangle) => void
   updateWattage: (wattage: number) => void
-  drawerOpen?: boolean
-  setDrawerOpen?: (drawerOpen: boolean) => void
+  drawerOpen: boolean
+  setDrawerOpen: (open: boolean) => void
+  newRect?: Rectangle | null
 }
 
 export interface KonvaGridProps {

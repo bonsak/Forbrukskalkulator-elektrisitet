@@ -1,10 +1,11 @@
 import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
 import ForbruksKonfig from './ForbruksKonfig'
 import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
 import { useForbruksEnheter } from '../utils/Forbruksenheter'
+import { KonvaEventObject } from 'konva/lib/Node'
 
 const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const FORBRUKSENHETER = useForbruksEnheter()
@@ -18,6 +19,9 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null)
   const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [newRect, setNewRect] = useState<Rectangle | null>(null)
+
+  const stageRef = useRef<any>(null)
   // Konstanter
   const stageWidth = 885
   const stageHeight = 360
@@ -179,7 +183,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   // Lager lite default rect når bruker løfter musen
   const handleMouseUpOnStage = (e: any) => {
     if (isDrawing) {
-
       const stage = e.target.getStage()
       const endPos = stage.getPointerPosition()
       const dragDistance = Math.abs(endPos.x - startPos.x)
@@ -192,6 +195,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       const rndNumber: number = Math.floor(
         Math.random() * FORBRUKSENHETER.length
       )
+      const defaultEnhet = FORBRUKSENHETER[rndNumber]
 
       const newRectangle: Rectangle = {
         x: snapped.x,
@@ -202,36 +206,34 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         strokeWidth: 5,
         strokeScaleEnabled: false,
         fill: COLORS.clr_mintgreen,
-
-        // onDblclick: (e) => {
-        //   const clickedRect = e.target
-        //   setSelectedRect(clickedRect)
-        //   setIsForbruksKonfigOpen(true)
-        // },
         id: Math.random().toString(36).substring(7),
         draggable: false,
         isDragging: false,
-        wattage: FORBRUKSENHETER[rndNumber].wattage,
-        minWatt: FORBRUKSENHETER[rndNumber].minWatt,
-        maxWatt: FORBRUKSENHETER[rndNumber].maxWatt,
-        name: FORBRUKSENHETER[rndNumber].name,
-        description: FORBRUKSENHETER[rndNumber].description,
-        image: rndNumber,
+        wattage: defaultEnhet.wattage,
+        minWatt: defaultEnhet.minWatt,
+        maxWatt: defaultEnhet.maxWatt,
+        name: defaultEnhet.name,
+        description: defaultEnhet.description,
+        image: defaultEnhet.image,
       }
 
       setRectangles([...rectangles, newRectangle])
+      setNewRect(newRectangle)
+      updateSelectedRect(newRectangle)
+      setDrawerOpen(true)
+      setIsForbruksKonfigOpen(true)
       beregnStroemForbruk()
     } else if (isResizing && selectedRect) {
+      // Oppdater rektangelet med de endelige dimensjonene
+      const updatedRect = {
+        ...selectedRect,
+        isDragging: false,
+      }
+
+      updateSelectedRect(updatedRect)
       setRectangles((prevRects) =>
-        prevRects.map((r) =>
-          r.id === selectedRect.id
-            ? {
-                ...r,
-                x: selectedRect.x,
-                width: selectedRect.width,
-                isDragging: false,
-              }
-            : r
+        prevRects.map((rect) =>
+          rect.id === selectedRect.id ? { ...rect, isDragging: false } : rect
         )
       )
       beregnStroemForbruk()
@@ -239,8 +241,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
 
     setIsDrawing(false)
     setIsResizing(false)
-    // setIsDragging(false)
-    setSelectedRect(null)
+    setResizeEdge(null)
     setPreviewRect(null)
   }
 
@@ -268,7 +269,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       data: forbrukPerKolonne.map((y, x) => ({ x, y })),
     })
   }
-
   useEffect(() => {
     beregnStroemForbruk()
   }, [])
@@ -285,7 +285,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       width: (endColumn - startColumn) * columnWidth,
     }
   }
-
   const snapRectToPosition = (
     position: { x: number; y: number },
     width: number
@@ -295,7 +294,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     let y = Math.round(position.y / rowHeight) * rowHeight
     return { x, y }
   }
-
   const onDragStart = (e: any) => {
     const id = e.target.attrs.id
 
@@ -323,7 +321,6 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     )
     const pos = movingRect.position()
   }
-
   const onDragEnd = (e: any) => {
     const movedRect = e.target
     const snapped = snapRectToPosition(movedRect.position(), movedRect.width())
@@ -340,31 +337,47 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
     // setIsDragging(false)
     beregnStroemForbruk()
   }
-
-  const handleRectDblclick = (e: any, rect: Rectangle) => {
-    setSelectedRect(rect)
+  const handleRectDblclick = (
+    e: KonvaEventObject<MouseEvent>,
+    rect: Rectangle
+  ) => {
+    updateSelectedRect(rect)
     setIsForbruksKonfigOpen(true)
-
-    // const clickedRect = e.target
-    // setSelectedRect(clickedRect)
-    // setIsForbruksKonfigOpen(true)
   }
-
   const updateWattage = (wattage: number) => {
     if (!selectedRect) return
 
-    setRectangles((prevRects) =>
-      prevRects.map((rect) =>
-        rect.id === selectedRect.id ? { ...rect, wattage: wattage } : rect
-      )
-    )
+    const updatedRect = {
+      ...selectedRect,
+      wattage: wattage,
+    }
 
+    updateSelectedRect(updatedRect)
     beregnStroemForbruk()
+  }
+
+  // Deaktiverer stage når dialog er åpen
+  useEffect(() => {
+    if (stageRef.current) {
+      const stage = stageRef.current.getStage()
+      stage.listening(!isForbruksKonfigOpen)
+      // stage.opacity(isForbruksKonfigOpen ? 0.25 : 1)
+      stage.batchDraw()
+      // console.log(isForbruksKonfigOpen, stage.listening())
+    }
+  }, [isForbruksKonfigOpen])
+
+  const updateSelectedRect = (updatedRect: Rectangle) => {
+    setSelectedRect(updatedRect)
+    setRectangles((prevRects) =>
+      prevRects.map((rect) => (rect.id === updatedRect.id ? updatedRect : rect))
+    )
   }
 
   return (
     <Wrapper>
       <Stage
+        ref={stageRef}
         width={stageWidth}
         height={stageHeight}
         onMouseDown={handleMouseDown}
@@ -396,13 +409,16 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
                 <Rect
                   {...rect}
                   cornerRadius={8}
-                  image={FORBRUKSENHETER[rect.image].image}
+                  image={rect.image}
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}
                   onDragMove={onDragMove}
-                  onMouseDown={(e) => handleRectMouseDown(e, rect)}
-                  onDblclick={(e) => handleRectDblclick(e, rect)}
-                  // onMouseOver={handleResize}
+                  onMouseDown={(e: KonvaEventObject<MouseEvent>) =>
+                    handleRectMouseDown(e, rect)
+                  }
+                  onDblclick={(e: KonvaEventObject<MouseEvent>) =>
+                    handleRectDblclick(e, rect)
+                  }
                   draggable
                   opacity={rect.isDragging ? 0.5 : 1}
                   fill={rect.isDragging ? 'transparent' : COLORS.clr_mintgreen}
@@ -425,7 +441,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
                     y={-1}
                   />
                   <Image
-                    image={FORBRUKSENHETER[rect.image].image}
+                    image={rect.image}
                     x={-(rect.width / 2)}
                     y={-5}
                     listening={false}
@@ -445,11 +461,13 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       </Stage>
       <ForbruksKonfig
         selectedRect={selectedRect}
+        setSelectedRect={updateSelectedRect}
         isOpen={isForbruksKonfigOpen}
         setIsOpen={setIsForbruksKonfigOpen}
         updateWattage={updateWattage}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        newRect={newRect}
       />
     </Wrapper>
   )

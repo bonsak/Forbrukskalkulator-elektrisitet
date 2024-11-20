@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Slider from '@radix-ui/react-slider'
-import { ChevronDownIcon, Pencil1Icon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, Pencil1Icon } from '@radix-ui/react-icons'
 // import '../style/forbrukskonfig.css'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { ForbruksEnhet, ForbruksKonfigProps } from '../types/types'
@@ -14,30 +14,53 @@ const ForbruksKonfig = ({
   isOpen,
   setIsOpen,
   selectedRect,
+  setSelectedRect,
   updateWattage,
   drawerOpen,
-  setDrawerOpen
+  setDrawerOpen,
+  newRect,
 }: ForbruksKonfigProps) => {
   const [sliderValue, setSliderValue] = useState(selectedRect?.wattage || 0)
-  
   const alleEnheter = useForbruksEnheter()
 
+  useEffect(() => {
+    if (!selectedRect && newRect && typeof setSelectedRect === 'function') {
+      setSelectedRect(newRect)
+    }
+  }, [newRect, selectedRect, setSelectedRect])
 
   useEffect(() => {
     setSliderValue(selectedRect?.wattage || 0)
-  }, [selectedRect?.wattage])
+  }, [selectedRect])
 
   const handleValueChange = (wattage: number[]) => {
     if (selectedRect) {
-      setSliderValue(wattage[0])
-      updateWattage(sliderValue)
+      const newWattage = wattage[0]
+      setSliderValue(newWattage)
+      updateWattage(newWattage)
     }
   }
   const handleDrawerClick = () => {
     setDrawerOpen(!drawerOpen)
   }
   const handleEnhetClick = (enhet: ForbruksEnhet) => {
-    console.log(enhet, selectedRect)
+    if (selectedRect) {
+      const oppdatertRect = {
+        ...selectedRect,
+        name: enhet.name,
+        image: enhet.image,
+        wattage: enhet.wattage,
+        minWatt: enhet.minWatt,
+        maxWatt: enhet.maxWatt,
+      }
+
+      setSelectedRect(oppdatertRect)
+
+      setSliderValue(enhet.wattage)
+
+      // Lukk drawer etter valg hvis ønskelig
+      // setDrawerOpen(false)
+    }
   }
 
   // interface DialogRootProps extends Dialog.DialogProps {
@@ -47,16 +70,11 @@ const ForbruksKonfig = ({
   return (
     <Dialog.Root
       open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) {
-          setDrawerOpen(false);
-        }
-      }}
+      onOpenChange={setIsOpen}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className='DialogOverlay' />
-        <Content className='DialogContent'>
+        <DialogOverlay />
+        <Content>
           <div className='konfig'>
             <DialogTitle className='DialogTitle'>
               {selectedRect?.name}
@@ -74,7 +92,7 @@ const ForbruksKonfig = ({
                 <span>Max: {selectedRect?.maxWatt} Watt</span> */}
               </Dialog.Description>
             </InnerWrapper>
-            <DialogClose  asChild>
+            <DialogClose asChild>
               <span
                 className='IconButton'
                 aria-label='Close'
@@ -85,15 +103,15 @@ const ForbruksKonfig = ({
             <form>
               <SliderRoot
                 onValueChange={handleValueChange}
-                className='SliderRoot'
+                // className='SliderRoot'
                 value={[sliderValue]}
-                min={selectedRect?.minWatt || 0}
-                max={selectedRect?.maxWatt || 0}
+                min={selectedRect?.minWatt}
+                max={selectedRect?.maxWatt}
                 step={1}
               >
-                <StyledTrack className='SliderTrack flex flex-row'>
+                <StyledTrack>
                   <MinMax>{selectedRect?.minWatt}</MinMax>
-                  <SliderRange className='SliderRange' />
+                  <SliderRange />
                   <MinMax>{selectedRect?.maxWatt}</MinMax>
                 </StyledTrack>
                 <SliderThumb
@@ -103,17 +121,25 @@ const ForbruksKonfig = ({
               </SliderRoot>
             </form>
           </div>
-          <EditButtonWrapper >
-          <Pencil1Icon width={20} height={20} onClick={handleDrawerClick}/>
+          <EditButtonWrapper>
+            <Pencil1Icon
+              width={20}
+              height={20}
+              onClick={handleDrawerClick}
+            />
           </EditButtonWrapper>
-          
-          <Drawer $drawerOpen={drawerOpen} >
+
+          <Drawer $drawerOpen={drawerOpen}>
             {/* <div 
               className='drawer-content'
             > */}
-              {alleEnheter.map((enhet) => (
-                <ForbruksIkon key={enhet.id} src={enhet.image?.src} onClick={() => handleEnhetClick(enhet)} />
-              ))}
+            {alleEnheter.map((enhet) => (
+              <ForbruksIkon
+                key={enhet.id}
+                src={enhet.image?.src}
+                onClick={() => handleEnhetClick(enhet)}
+              />
+            ))}
             {/* </div> */}
           </Drawer>
         </Content>
@@ -124,6 +150,11 @@ const ForbruksKonfig = ({
 
 export default ForbruksKonfig
 
+const DialogOverlay = styled(Dialog.Overlay)`
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+`
 const DialogTitle = styled(Dialog.Title)`
   margin-top: 20px;
   font-size: 20px;
@@ -168,7 +199,7 @@ const Drawer = styled.div<{ $drawerOpen: boolean }>`
   gap: 3px;
   /* justify-content: space-between; */
   grid-template-columns: repeat(6, 1fr);
-  height: ${props => props.$drawerOpen ? '150px' : '0px'};
+  height: ${(props) => (props.$drawerOpen ? '150px' : '0px')};
   /* top: 150px; */
   overflow: hidden;
   background-color: 'lightgray';
@@ -203,7 +234,7 @@ const StyledTrack = styled(Slider.Track)`
   height: 3px;
 `
 const SliderRoot = styled(Slider.Root)`
-    position: relative;
+  position: relative;
   display: flex;
   align-items: center;
   user-select: none;
