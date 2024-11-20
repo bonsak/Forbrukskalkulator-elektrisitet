@@ -139,6 +139,7 @@ const StyledField = styled(Form.Field)`
 
 const StyledLabel = styled(Form.Label)`
   /* display: block; */
+  /* width: 150px; */
   font-size: 0.9rem;
   font-weight: 500;
   color: ${COLORS.clr_darkmintgreen};
@@ -146,6 +147,7 @@ const StyledLabel = styled(Form.Label)`
 `
 
 const StyledInput = styled(Form.Control)`
+  max-width: 150px;
   text-align: right;
   padding: 0.1rem;
   background-color: transparent;
