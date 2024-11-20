@@ -5,9 +5,12 @@ import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
 import { useEffect, useState } from 'react'
 import { line, curveBasis } from 'd3-shape'
+import { useStrom } from '../context/StroemContext'
 
-function ForbruksGraf({ stroemForbruk, priser }) {
-  const [dagesStroemPris, setDagesStroemPris] = useState(null)
+function ForbruksGraf() {
+  const { stroemForbruk, priser, dagensStroemPris, setDagensStroemPris } =
+    useStrom()
+  // const [dagensStroemPris, setDagensStroemPris] = useState(null)
   const scaleFactor = 6667
 
   useEffect(() => {
@@ -20,12 +23,12 @@ function ForbruksGraf({ stroemForbruk, priser }) {
           y: pris['NOK_per_kWh'] * scaleFactor,
         })),
       }
-      setDagesStroemPris(stroemPrisData)
+      setDagensStroemPris(stroemPrisData)
     }
   }, [priser])
 
   const CustomLayer = ({ xScale, yScale }) => {
-    if (!dagesStroemPris) return null
+    if (!dagensStroemPris) return null
 
     return (
       <g>
@@ -33,7 +36,7 @@ function ForbruksGraf({ stroemForbruk, priser }) {
           d={line()
             .x((d) => xScale(d.x) * 1.05)
             .y((d) => yScale(d.y))
-            .curve(curveBasis)(dagesStroemPris.data)}
+            .curve(curveBasis)(dagensStroemPris.data)}
           fill='none'
           opacity={0.25}
           stroke={COLORS.clr_darkmintgreen}
@@ -117,15 +120,6 @@ function ForbruksGraf({ stroemForbruk, priser }) {
       />
     </GrafWrapper>
   )
-}
-
-ForbruksGraf.propTypes = {
-  stroemForbruk: PropTypes.object.isRequired,
-  priser: PropTypes.arrayOf(
-    PropTypes.shape({
-      NOK_per_kWh: PropTypes.number.isRequired,
-    })
-  ).isRequired,
 }
 
 const GrafWrapper = styled.div`

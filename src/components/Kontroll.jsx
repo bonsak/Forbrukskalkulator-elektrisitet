@@ -1,18 +1,10 @@
 import styled from 'styled-components'
 import { COLORS, SIZES } from '../utils/constants'
-import { useEffect } from 'react'
+import { useStrom } from '../context/StroemContext'
 
-const Kontroll = ({
-  mittHus,
-  totaltForbruk,
-  gjennomsnittsPris,
-  stroemForbruk,
-}) => {
-  console.log('Kontroll render - gjennomsnittsPris:', gjennomsnittsPris)
-
-  useEffect(() => {
-    console.log('useEffect - gjennomsnittsPris:', gjennomsnittsPris)
-  }, [gjennomsnittsPris])
+const Kontroll = () => {
+  const { mittHus, totaltForbruk, gjennomsnittsPris, stroemForbruk } =
+    useStrom()
 
   return (
     <KontrollWrapper>

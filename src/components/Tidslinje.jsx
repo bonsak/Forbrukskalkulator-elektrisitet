@@ -2,7 +2,7 @@
 import styled from 'styled-components'
 import { COLORS, SIZES } from '../utils/constants'
 
-function Tidslinje({ mittHus }) {
+function Tidslinje() {
   return (
     <TidContainer>
       {/* <TidHeader>Min strømdag</TidHeader> */}

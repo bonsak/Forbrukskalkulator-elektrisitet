@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
+import { useStrom } from '../context/StroemContext'
 
-const DagensPris = ({ priser, setPriser, setGjennomsnittsPris }) => {
+const DagensPris = () => {
   // const [priser, setPriser] = useState([])
   const [feilmelding, setFeilmelding] = useState('')
   const [lasterInn, setLasterInn] = useState(true)
+  const { setGjennomsnittsPris, setTotaltForbruk } = useStrom()
+  const { priser, setPriser } = useStrom()
 
   const regnGjennomsnitt = (data) => {
     const dagsGjennomSnitt =

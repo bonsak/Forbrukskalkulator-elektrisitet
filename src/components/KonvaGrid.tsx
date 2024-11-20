@@ -7,9 +7,11 @@ import ForbruksKonfig from './ForbruksKonfig'
 import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
 import { useForbruksEnheter } from '../utils/Forbruksenheter'
 import { KonvaEventObject } from 'konva/lib/Node'
+import { useStrom } from '../context/StroemContext'
 
-const KonvaGrid = ({ setStroemForbruk, setTotaltForbruk }: KonvaGridProps) => {
+const KonvaGrid = () => {
   const FORBRUKSENHETER = useForbruksEnheter()
+  const { setStroemForbruk, setTotaltForbruk } = useStrom()
 
   const [brukerEnheter, setBrukerEnheter] = useState<Rectangle[]>([])
   const [isDrawing, setIsDrawing] = useState(false)

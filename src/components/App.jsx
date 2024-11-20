@@ -1,95 +1,59 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import DagensPris from './DagensPris'
-import LoadingSpinner from './LoadingSpinner'
 import KonvaGrid from './KonvaGrid'
 import MinBolig from './MinBolig'
 import Kontroll from './Kontroll'
 import Tidslinje from './Tidslinje'
 import LegendeRight from './LegendeRight'
+import { useStrom, StromProvider } from '../context/StroemContext'
 
 // Lazy-laster tunge komponenter
 const ForbruksBarGraf = lazy(() => import('./ForbruksBarGrapf'))
 
 function App() {
-  const [forbruksUnit, setForbruksUnit] = useState([])
-  const [stroemForbruk, setStroemForbruk] = useState({
-    id: 'stroemforbruk',
-    data: Array(25)
-      .fill(0)
-      .map((_, x) => ({
-        x: x.toString().padStart(2, '0'),
-        y: 0,
-      })),
-  })
-  const [mittHus, setMittHus] = useState({
-    navn: 'Wessels gt 4',
-    antallRom: 5,
-    antallVoksne: 2,
-    antallBarn: 2,
-    antallKvadrat: 120,
-    antallVarmtvannstanker: 2,
-    effektVarmtvannstanker: 2.5,
-    effektElbillader: 6.5,
-  })
-  const [priser, setPriser] = useState([])
-  const [gjennomsnittsPris, setGjennomsnittsPris] = useState(0)
-  const [totaltForbruk, setTotaltForbruk] = useState(0)
+  // const { priser, setPriser } = useStrom()
 
-  // useEffect(() => {
-  //   localStorage.setItem('stroemForbruk', JSON.stringify(stroemForbruk))
-  // }, [stroemForbruk])
-  // useEffect(() => {
-  //   console.log('APP: totaltForbruk:', totaltForbruk)
-  //   console.log('APP: gjennomsnittsPris:', gjennomsnittsPris)
-  // }, [totaltForbruk, gjennomsnittsPris, stroemForbruk])
+  // const [forbruksUnit, setForbruksUnit] = useState([])
+  // const [stroemForbruk, setStroemForbruk] = useState({
+  //   id: 'stroemforbruk',
+  //   data: Array(25)
+  //     .fill(0)
+  //     .map((_, x) => ({
+  //       x: x.toString().padStart(2, '0'),
+  //       y: 0,
+  //     })),
+  // })
+
+  // const [mittHus, setMittHus] = useState({
+
+  // const [priser, setPriser] = useState([])
+  // const [gjennomsnittsPris, setGjennomsnittsPris] = useState(0)
+  // const [totaltForbruk, setTotaltForbruk] = useState(0)
 
   return (
-    <>
+    <StromProvider>
       <MainWrapper className={'main-wrapper'}>
         {/* <NyttForbruk /> */}
         <Wrapper>
-          <Tidslinje
-            mittHus={mittHus}
-            stroemForbruk={stroemForbruk}
-          />
-          <Kontroll
-            mittHus={mittHus}
-            totaltForbruk={totaltForbruk}
-            gjennomsnittsPris={gjennomsnittsPris}
-            stroemForbruk={stroemForbruk}
-          />
+          <Tidslinje />
+          <Kontroll />
           <div style={{ gridArea: 'graf' }}>
             {/* <Suspense fallback={<LoadingSpinner />}> */}
-            <ForbruksBarGraf
-              stroemForbruk={stroemForbruk}
-              priser={priser}
-            />
+            <ForbruksBarGraf />
             {/* </Suspense> */}
-            <DagensPris
-              priser={priser}
-              setPriser={setPriser}
-              setGjennomsnittsPris={setGjennomsnittsPris}
-            />
+            <DagensPris />
           </div>
           <LegendeRight />
           {/* <Tidslinje /> */}
-          <MinBolig
-            mittHus={mittHus}
-            setMittHus={setMittHus}
-          />
+          <MinBolig />
           <KonvaGrid
-            forbruksUnit={forbruksUnit}
-            setForbruksUnit={setForbruksUnit}
-            stroemForbruk={stroemForbruk}
-            setStroemForbruk={setStroemForbruk}
-            setTotaltForbruk={setTotaltForbruk}
-            // style={{ gridArea: 'grid' }}
+          // setTotaltForbruk={setTotaltForbruk}
           />
           {/* <Dialog showDialog={true} /> */}
         </Wrapper>
       </MainWrapper>
-    </>
+    </StromProvider>
   )
 }
 const MainWrapper = styled.div`
