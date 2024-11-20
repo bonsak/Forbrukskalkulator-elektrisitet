@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import DagensPris from './DagensPris'
 import LoadingSpinner from './LoadingSpinner'
@@ -33,18 +33,32 @@ function App() {
     effektElbillader: 6.5,
   })
   const [priser, setPriser] = useState([])
+  const [gjennomsnittsPris, setGjennomsnittsPris] = useState(0)
+  const [totaltForbruk, setTotaltForbruk] = useState(0)
 
   // useEffect(() => {
   //   localStorage.setItem('stroemForbruk', JSON.stringify(stroemForbruk))
   // }, [stroemForbruk])
+  // useEffect(() => {
+  //   console.log('APP: totaltForbruk:', totaltForbruk)
+  //   console.log('APP: gjennomsnittsPris:', gjennomsnittsPris)
+  // }, [totaltForbruk, gjennomsnittsPris, stroemForbruk])
 
   return (
     <>
       <MainWrapper className={'main-wrapper'}>
         {/* <NyttForbruk /> */}
         <Wrapper>
-          <Tidslinje mittHus={mittHus} />
-          <Kontroll mittHus={mittHus} />
+          <Tidslinje
+            mittHus={mittHus}
+            stroemForbruk={stroemForbruk}
+          />
+          <Kontroll
+            mittHus={mittHus}
+            totaltForbruk={totaltForbruk}
+            gjennomsnittsPris={gjennomsnittsPris}
+            stroemForbruk={stroemForbruk}
+          />
           <div style={{ gridArea: 'graf' }}>
             {/* <Suspense fallback={<LoadingSpinner />}> */}
             <ForbruksBarGraf
@@ -55,6 +69,7 @@ function App() {
             <DagensPris
               priser={priser}
               setPriser={setPriser}
+              setGjennomsnittsPris={setGjennomsnittsPris}
             />
           </div>
           <LegendeRight />
@@ -68,6 +83,7 @@ function App() {
             setForbruksUnit={setForbruksUnit}
             stroemForbruk={stroemForbruk}
             setStroemForbruk={setStroemForbruk}
+            setTotaltForbruk={setTotaltForbruk}
             // style={{ gridArea: 'grid' }}
           />
           {/* <Dialog showDialog={true} /> */}

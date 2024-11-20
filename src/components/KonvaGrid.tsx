@@ -8,7 +8,7 @@ import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
 import { useForbruksEnheter } from '../utils/Forbruksenheter'
 import { KonvaEventObject } from 'konva/lib/Node'
 
-const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
+const KonvaGrid = ({ setStroemForbruk, setTotaltForbruk }: KonvaGridProps) => {
   const FORBRUKSENHETER = useForbruksEnheter()
 
   const [brukerEnheter, setBrukerEnheter] = useState<Rectangle[]>([])
@@ -36,6 +36,18 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
   useEffect(() => {
     setBrukerEnheter(DEFAULT_DAG)
   }, [])
+
+  useEffect(() => {
+    regnUtTotalForbruk(brukerEnheter)
+  }, [brukerEnheter, isResizing, previewRect])
+
+  const regnUtTotalForbruk = (brukerEnheter) => {
+    const totalWattage = brukerEnheter.reduce(
+      (sum, enhet) => sum + enhet.wattage,
+      0
+    )
+    setTotaltForbruk(totalWattage)
+  }
 
   const oppdaterBrukerEnheter = (
     selectedRect: Rectangle,
@@ -131,6 +143,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       // const handleClose = () => {
       //   setIsForbruksKonfigOpen(false)
       // }
+
       const width = Math.abs(pos.x - startPos.x)
       const snapped = snapToGrid(Math.min(startPos.x, pos.x), width)
       setPreviewRect({
@@ -150,6 +163,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       let newWidth: number, newX: number
 
       if (resizeEdge === 'right') {
+        setIsResizing(true)
         newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
         const snapped = snapToGrid(selectedRect.x, newWidth)
 
@@ -158,6 +172,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
         selectedRect.x = snapped.x
         selectedRect.width = snapped.width
       } else if (resizeEdge === 'left') {
+        setIsResizing(true)
         newWidth = Math.max(
           columnWidth,
           selectedRect.x + selectedRect.width - pos.x
@@ -228,6 +243,7 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
       updateSelectedRect(newRectangle)
       setDrawerOpen(true)
       setIsForbruksKonfigOpen(true)
+      // regnUtTotalForbruk(brukerEnheter)
       beregnStroemForbruk()
     } else if (isResizing && selectedRect) {
       // Oppdater rektangelet med de endelige dimensjonene
@@ -429,8 +445,8 @@ const KonvaGrid = ({ setStroemForbruk }: KonvaGridProps) => {
                   draggable
                   opacity={rect.isDragging ? 0.5 : 1}
                   fill={rect.isDragging ? 'transparent' : COLORS.clr_mintgreen}
-                  stroke={rect.isDragging ? '#b1afa9' : 'none'}
-                  strokeWidth={rect.isDragging ? 2 : 0}
+                  stroke={rect.isDragging ? '#92908b' : COLORS.clr_lightorange}
+                  strokeWidth={rect.isDragging ? 2 : 5}
                   dash={rect.isDragging ? [5, 5] : []}
                 />
                 <Group

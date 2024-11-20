@@ -2,10 +2,17 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '../utils/constants'
 
-const DagensPris = ({ priser, setPriser }) => {
+const DagensPris = ({ priser, setPriser, setGjennomsnittsPris }) => {
   // const [priser, setPriser] = useState([])
   const [feilmelding, setFeilmelding] = useState('')
   const [lasterInn, setLasterInn] = useState(true)
+
+  const regnGjennomsnitt = (data) => {
+    const dagsGjennomSnitt =
+      data.reduce((sum, pris) => sum + pris['NOK_per_kWh'], 0) / data.length
+    // console.log('data:', data, dagsGjennomSnitt)
+    setGjennomsnittsPris(dagsGjennomSnitt)
+  }
 
   useEffect(() => {
     const hentPriser = async () => {
@@ -42,6 +49,7 @@ const DagensPris = ({ priser, setPriser }) => {
         } else {
           const data = await respons.json()
           setPriser(data)
+          regnGjennomsnitt(data)
         }
       } catch (error) {
         console.error('Feil ved henting av strømpriser:', error)

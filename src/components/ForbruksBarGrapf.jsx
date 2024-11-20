@@ -48,8 +48,8 @@ function ForbruksGraf({ stroemForbruk, priser }) {
     yScale: PropTypes.func.isRequired,
   }
 
-  console.log('dagesStroemPris:', dagesStroemPris)
-  console.log('stroemForbruk:', stroemForbruk)
+  // console.log('dagesStroemPris:', dagesStroemPris)
+  // console.log('stroemForbruk:', stroemForbruk)
 
   return (
     <GrafWrapper>

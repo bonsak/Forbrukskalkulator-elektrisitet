@@ -37,6 +37,7 @@ export interface KonvaGridProps {
   forbruksUnit: Rectangle[]
   setForbruksUnit: (forbruksUnit: Rectangle[]) => void
   setStroemForbruk: (data: StroemForbrukData) => void
+  setTotaltForbruk: (totaltForbruk: number) => void
 }
 
 export interface StroemForbrukData {
