@@ -1,12 +1,12 @@
 import styled from 'styled-components'
-import dusj from '@assets/aktiviteter/dusj.svg'
-import elbil from '@assets/aktiviteter/elbil.svg'
-import forbruk from '@assets/aktiviteter/forbruk.svg'
-import kaffetrakter from '@assets/aktiviteter/kaffetrakter.svg'
-import oppvarming from '@assets/aktiviteter/oppvarming.svg'
-import oppvaskmaskin from '@assets/aktiviteter/oppvaskmaskin.svg'
-import stekeovn from '@assets/aktiviteter/stekeovn-plate.svg'
-import vaskemaskin from '@assets/aktiviteter/vaskemaskin.svg'
+import '@assets/aktiviteter/dusj.svg'
+import '@assets/aktiviteter/elbil.svg'
+import '@assets/aktiviteter/forbruk.svg'
+import '@assets/aktiviteter/kaffetrakter.svg'
+import '@assets/aktiviteter/oppvarming.svg'
+import '@assets/aktiviteter/oppvaskmaskin.svg'
+import '@assets/aktiviteter/stekeovn-plate.svg'
+import '@assets/aktiviteter/vaskemaskin.svg'
 
 const AktivitetsGrid = styled.div`
   display: grid;
@@ -14,19 +14,22 @@ const AktivitetsGrid = styled.div`
 `
 
 const AktivitetsIkon = styled.img`
-  // Legg til din ikon-styling her
+  width: 100%;
+  height: auto;
+  max-width: 40px;
+  object-fit: contain;
 `
 
 export default function Icons() {
   const icons = [
-    { src: dusj, alt: 'Dusj ikon' },
-    { src: elbil, alt: 'Elbil ikon' },
-    { src: forbruk, alt: 'Forbruk ikon' },
-    { src: kaffetrakter, alt: 'Kaffetrakter ikon' },
-    { src: oppvarming, alt: 'Oppvarming ikon' },
-    { src: oppvaskmaskin, alt: 'Oppvaskmaskin ikon' },
-    { src: stekeovn, alt: 'Stekeovn ikon' },
-    { src: vaskemaskin, alt: 'Vaskemaskin ikon' },
+    { src: '@assets/aktiviteter/dusj.svg', alt: 'Dusj ikon' },
+    { src: '@assets/aktiviteter/elbil.svg', alt: 'Elbil ikon' },
+    { src: '@assets/aktiviteter/forbruk.svg', alt: 'Forbruk ikon' },
+    { src: '@assets/aktiviteter/kaffetrakter.svg', alt: 'Kaffetrakter ikon' },
+    { src: '@assets/aktiviteter/oppvarming.svg', alt: 'Oppvarming ikon' },
+    { src: '@assets/aktiviteter/oppvaskmaskin.svg', alt: 'Oppvaskmaskin ikon' },
+    { src: '@assets/aktiviteter/stekeovn-plate.svg', alt: 'Stekeovn ikon' },
+    { src: '@assets/aktiviteter/vaskemaskin.svg', alt: 'Vaskemaskin ikon' },
   ]
 
   return (

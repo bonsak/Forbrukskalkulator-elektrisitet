@@ -2,11 +2,9 @@ import * as Form from '@radix-ui/react-form'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
 import { useStrom } from '@context/StroemContext'
-import { useEffect } from 'react'
 
 const MinBolig = () => {
   const { mittHus, setMittHus } = useStrom()
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)

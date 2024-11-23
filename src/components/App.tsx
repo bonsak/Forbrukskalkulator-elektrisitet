@@ -1,19 +1,19 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import DagensPris from '@components/DagensPris'
+import DagensPris from '@/components/Priser/DagensPris'
 import HovedGrid from '@components/Grid/HovedGrid'
 import MinBolig from '@components/SideFelt/MinBolig'
 import TittelFelt from '@components/SideFelt/TittelFelt'
 import Tidslinje from '@components/Tidslinje'
 import LegendeRight from '@components/SideFelt/LegendeRight'
-import { useStrom, StromProvider } from '@context/StroemContext'
+import { useStrom, StroemProvider } from '@context/StroemContext'
 
 // Lazy-laster tunge komponenter
 const ForbruksBarGraf = lazy(() => import('./HovedGraf/HovedGraf'))
 
 function App() {
   return (
-    <StromProvider>
+    <StroemProvider>
       <MainWrapper className={'main-wrapper'}>
         <Wrapper>
           <Tidslinje />
@@ -27,7 +27,7 @@ function App() {
           <HovedGrid />
         </Wrapper>
       </MainWrapper>
-    </StromProvider>
+    </StroemProvider>
   )
 }
 const MainWrapper = styled.div`

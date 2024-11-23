@@ -1,6 +1,6 @@
-const defaultImage = (src) => {
+const defaultImage = (src: string) => {
   const img = new window.Image()
-  img.src = src // Tom bildekilde
+  img.src = src
   return img
 }
 const dusj = '/icons/dusj.png'

@@ -2,12 +2,27 @@ import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
-import { DEFAULT_DAG } from '@utils/DefaultDag'
+import { DEFAULT_DAG } from '@/utils/defaultdag'
 import ForbruksKonfig from '@components/Dialoger/ForbruksRedigering'
-import { KonvaGridProps, Rectangle, PreviewRectangle } from '@types/types'
-import { useForbruksEnheter } from '@utils/Forbruksenheter'
+import { KonvaGridProps, Rectangle, PreviewRectangle } from '@/types/types'
+import { useForbruksEnheter } from '@/utils/forbruksenheter'
 import { KonvaEventObject } from 'konva/lib/Node'
 import { useStrom } from '@context/StroemContext'
+
+interface StroemData {
+  x: number
+  y: number
+}
+
+interface StroemForbrukData {
+  id: string
+  data: StroemData[]
+}
+
+type StroemForbrukState = {
+  id: string
+  data: StroemData[]
+}
 
 const HovedGrid = () => {
   const FORBRUKSENHETER = useForbruksEnheter()
@@ -43,9 +58,9 @@ const HovedGrid = () => {
     regnUtTotalForbruk(brukerEnheter)
   }, [brukerEnheter, isResizing, previewRect])
 
-  const regnUtTotalForbruk = (brukerEnheter) => {
+  const regnUtTotalForbruk = (brukerEnheter: Rectangle[]) => {
     const totalWattage = brukerEnheter.reduce(
-      (sum, enhet) => sum + enhet.wattage,
+      (sum: number, enhet: Rectangle) => sum + enhet.wattage,
       0
     )
     setTotaltForbruk(totalWattage)
