@@ -33,32 +33,44 @@ function HovedGraf() {
   }, [priser])
 
   const CustomLayer = ({ xScale, yScale }: { xScale: any; yScale: any }) => {
-    if (!dagensStroemPris) return null
+    if (!dagensStroemPris || !dagensStroemPris.data || dagensStroemPris.data.length === 0) return null;
+
+    const validData = dagensStroemPris.data.filter(
+      (d) => typeof d.x === 'number' && 
+             !isNaN(d.x) && 
+             typeof d.y === 'number' && 
+             !isNaN(d.y)
+    );
+
+    if (validData.length === 0) return null;
+
+    const pathGenerator = line<[number, number]>()
+      .x(([x]) => xScale(x))
+      .y(([, y]) => yScale(y))
+      .curve(curveBasis);
+
+    const points = validData.map(d => [d.x, d.y] as [number, number]);
+    const pathData = pathGenerator(points);
+
+    if (!pathData) return null;
 
     return (
       <g>
         <path
-          d={
-            line()
-              .x((d: any) => xScale(d.x))
-              .y((d: any) => yScale(d.y))
-              .curve(curveBasis)(
-              dagensStroemPris.data.map((d) => [d.x, d.y] as [number, number])
-            ) || ''
-          }
-          fill='none'
+          d={pathData}
+          fill="none"
           opacity={0.25}
           stroke={COLORS.clr_darkmintgreen}
           strokeWidth={5}
         />
       </g>
-    )
-  }
+    );
+  };
 
-  CustomLayer.propTypes = {
-    xScale: PropTypes.func.isRequired,
-    yScale: PropTypes.func.isRequired,
-  }
+  // CustomLayer.propTypes = {
+  //   xScale: PropTypes.func.isRequired,
+  //   yScale: PropTypes.func.isRequired,
+  // }
 
   return (
     <GrafWrapper>
