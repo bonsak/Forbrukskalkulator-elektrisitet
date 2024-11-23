@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { COLORS, SIZES } from '@utils/constants'
 import { useStrom } from '@context/StroemContext'
+import { TittelFeltProps } from './types'
 
 const TittelFelt = () => {
   const { mittHus, totaltForbruk, gjennomsnittsPris, stroemForbruk } =

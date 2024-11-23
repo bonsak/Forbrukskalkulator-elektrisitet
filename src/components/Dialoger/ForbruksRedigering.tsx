@@ -2,12 +2,23 @@ import * as Dialog from '@radix-ui/react-dialog'
 import * as Slider from '@radix-ui/react-slider'
 import { ChevronDownIcon, Pencil1Icon } from '@radix-ui/react-icons'
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { ForbruksEnhet, ForbruksKonfigProps } from '@types/types'
+import { ForbruksEnhet, Rectangle } from '@/types/types'
 import useImage from 'use-image'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
 import { useForbruksEnheter } from '@utils/Forbruksenheter'
 import { useEffect, useState } from 'react'
+
+interface ForbruksKonfigProps {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  selectedRect: Rectangle | null
+  setSelectedRect: (selectedRect: Rectangle) => void
+  updateWattage: (wattage: number) => void
+  drawerOpen: boolean
+  setDrawerOpen: (open: boolean) => void
+  newRect?: Rectangle | null
+}
 
 const ForbruksRedigering = ({
   isOpen,

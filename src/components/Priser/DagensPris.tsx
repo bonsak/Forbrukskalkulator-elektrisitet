@@ -3,6 +3,11 @@ import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
 import { useStrom } from '@context/StroemContext'
 
+type Strompris = {
+  NOK_per_kWh: number
+  time_start: string
+}
+
 const DagensPris = () => {
   // const [priser, setPriser] = useState([])
   const [feilmelding, setFeilmelding] = useState('')
@@ -76,7 +81,7 @@ const DagensPris = () => {
         <LasteIndikator>Laster inn strømpriser...</LasteIndikator>
       ) : (
         <PrisGrid>
-          {priser.map((pris, index) => (
+          {priser.map((pris: Strompris, index: number) => (
             <PrisKolonne key={index}>
               {/* <Time>{new Date(pris.time_start).getHours()}:00</Time> */}
               <Pris>{pris.NOK_per_kWh.toFixed(2)}</Pris>

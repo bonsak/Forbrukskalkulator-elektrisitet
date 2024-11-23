@@ -10,7 +10,6 @@ import { useStrom } from '@context/StroemContext'
 function HovedGraf() {
   const { stroemForbruk, priser, dagensStroemPris, setDagensStroemPris } =
     useStrom()
-  // const [dagensStroemPris, setDagensStroemPris] = useState(null)
   const scaleFactor = 6667
 
   useEffect(() => {
@@ -33,10 +32,12 @@ function HovedGraf() {
     return (
       <g>
         <path
-          d={line()
-            .x((d) => xScale(d.x) * 1.05)
-            .y((d) => yScale(d.y))
-            .curve(curveBasis)(dagensStroemPris.data)}
+          d={
+            line()
+              .x((d: any) => xScale(d.x) * 1.05)
+              .y((d: any) => yScale(d.y))
+              .curve(curveBasis)(dagensStroemPris.data) || ''
+          }
           fill='none'
           opacity={0.25}
           stroke={COLORS.clr_darkmintgreen}
@@ -51,9 +52,6 @@ function HovedGraf() {
     yScale: PropTypes.func.isRequired,
   }
 
-  // console.log('dagesStroemPris:', dagesStroemPris)
-  // console.log('stroemForbruk:', stroemForbruk)
-
   return (
     <GrafWrapper>
       <ResponsiveLine
@@ -65,24 +63,19 @@ function HovedGraf() {
         isInteractive={false}
         yScale={{
           type: 'linear',
-          min: '.05',
-          max: '20000',
+          min: 0.05,
+          max: 20000,
           stacked: false,
           reverse: false,
         }}
         curve='stepAfter'
-        axisTop={false}
-        axisBottom={false}
-        axisLeft={false}
-        axisRight={false}
+        axisTop={null}
+        axisBottom={null}
+        axisLeft={null}
+        axisRight={null}
         enableGridX={true}
         enableGridY={true}
         gridYValues={[5000, 10000, 15000, 20000]}
-        gridLineStyle={{
-          stroke: COLORS.clr_red,
-          strokeWidth: 1,
-          strokeOpacity: 0.2,
-        }}
         enablePoints={false}
         enableArea={true}
         enableCrosshair={false}

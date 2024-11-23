@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import DagensPris from '@components/DagensPris'
+import DagensPris from '@/components/Priser/DagensPris'
 import HovedGrid from '@components/Grid/HovedGrid'
 import MinBolig from '@components/SideFelt/MinBolig'
 import TittelFelt from '@components/SideFelt/TittelFelt'
