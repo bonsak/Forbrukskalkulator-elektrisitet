@@ -1,7 +1,7 @@
 // import { createGlobalStyle } from 'styled-components'
 import { createGlobalStyle } from 'styled-components'
 
-import { COLORS, WEIGHTS, FAMILIES, SIZES } from '../utils/constants.js'
+import { COLORS, WEIGHTS, FAMILIES, SIZES } from '@utils/constants'
 import seriffont from '@assets/fonts/young-serif/YoungSerif-Regular.ttf'
 import sansseriffont from '@assets/fonts/outfit/Outfit-VariableFont_wght.ttf'
 
@@ -52,6 +52,13 @@ table {
 
 /* DESIGN TOKENS */
 html {
+  --clr_mintgreen: ${COLORS.clr_mintgreen};
+  --clr_mintlight: ${COLORS.clr_mintlight};
+  --clr_red: ${COLORS.clr_red};
+  --clr_lightred: ${COLORS.clr_lightred};
+  --clr_orange: ${COLORS.clr_orange};
+  --clr_lightorange: ${COLORS.clr_lightorange};
+  
    --color-dark-charcoal: ${COLORS.dark_charcoal};
    --color-dark-raspberry: ${COLORS.dark_raspberry};
    --color-brandy-red: ${COLORS.brandy_red};
