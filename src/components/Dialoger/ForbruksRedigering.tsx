@@ -1,16 +1,15 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Slider from '@radix-ui/react-slider'
 import { ChevronDownIcon, Pencil1Icon } from '@radix-ui/react-icons'
-// import '../style/forbrukskonfig.css'
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { ForbruksEnhet, ForbruksKonfigProps } from '../types/types'
+import { ForbruksEnhet, ForbruksKonfigProps } from '@types/types'
 import useImage from 'use-image'
 import styled from 'styled-components'
-import { COLORS } from '../utils/constants'
-import { useForbruksEnheter } from '../utils/Forbruksenheter'
+import { COLORS } from '@utils/constants'
+import { useForbruksEnheter } from '@utils/Forbruksenheter'
 import { useEffect, useState } from 'react'
 
-const ForbruksKonfig = ({
+const ForbruksRedigering = ({
   isOpen,
   setIsOpen,
   selectedRect,
@@ -45,7 +44,6 @@ const ForbruksKonfig = ({
   }
   const handleEnhetClick = (enhet: ForbruksEnhet) => {
     if (selectedRect) {
-      console.log('enhet', enhet.name)
       const oppdatertRect = {
         ...selectedRect,
         name: enhet.name,
@@ -58,16 +56,8 @@ const ForbruksKonfig = ({
       setSelectedRect(oppdatertRect)
 
       setSliderValue(enhet.wattage)
-
-      // Lukk drawer etter valg hvis ønskelig
-      // setDrawerOpen(false)
     }
   }
-
-  // interface DialogRootProps extends Dialog.DialogProps {
-  //   setDrawerOpen: (open: boolean) => void
-  // }
-  // console.log('selectedRect', selectedRect?.name)
 
   return (
     <Dialog.Root
@@ -151,7 +141,7 @@ const ForbruksKonfig = ({
   )
 }
 
-export default ForbruksKonfig
+export default ForbruksRedigering
 
 const DialogOverlay = styled(Dialog.Overlay)`
   position: fixed;

@@ -2,12 +2,12 @@ import PropTypes from 'prop-types'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
 import styled from 'styled-components'
-import { COLORS } from '../utils/constants'
+import { COLORS } from '@utils/constants'
 import { useEffect, useState } from 'react'
 import { line, curveBasis } from 'd3-shape'
-import { useStrom } from '../context/StroemContext'
+import { useStrom } from '@context/StroemContext'
 
-function ForbruksGraf() {
+function HovedGraf() {
   const { stroemForbruk, priser, dagensStroemPris, setDagensStroemPris } =
     useStrom()
   // const [dagensStroemPris, setDagensStroemPris] = useState(null)
@@ -18,7 +18,7 @@ function ForbruksGraf() {
       const stroemPrisData = {
         id: 'strømpris',
         color: COLORS.clr_darkmintgreen,
-        data: priser.map((pris, index) => ({
+        data: priser.map((pris: any, index: number) => ({
           x: index,
           y: pris['NOK_per_kWh'] * scaleFactor,
         })),
@@ -27,7 +27,7 @@ function ForbruksGraf() {
     }
   }, [priser])
 
-  const CustomLayer = ({ xScale, yScale }) => {
+  const CustomLayer = ({ xScale, yScale }: { xScale: any; yScale: any }) => {
     if (!dagensStroemPris) return null
 
     return (
@@ -147,4 +147,4 @@ const GrafWrapper = styled.div`
   } */
 `
 
-export default ForbruksGraf
+export default HovedGraf

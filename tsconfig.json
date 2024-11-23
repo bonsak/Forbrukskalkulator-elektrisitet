@@ -1,5 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@styles/*": ["src/styles/*"],
+      "@context/*": ["src/context/*"],
+      "@domains/*": ["src/domains/*"],
+      "@utils/*": ["src/utils/*"]
+    },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -17,4 +27,4 @@
     "jsx": "react-jsx"
   },
   "include": ["src"]
-} 
+}

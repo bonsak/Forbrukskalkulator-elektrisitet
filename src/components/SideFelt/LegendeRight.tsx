@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { COLORS } from '../utils/constants'
+import { COLORS } from '../../utils/constants'
 
 const LegendeRight = () => {
   return (

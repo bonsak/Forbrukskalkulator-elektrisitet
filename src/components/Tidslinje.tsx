@@ -1,6 +1,6 @@
 // import './Tidslinje.css'
 import styled from 'styled-components'
-import { COLORS, SIZES } from '../utils/constants'
+import { COLORS, SIZES } from '@utils/constants'
 
 function Tidslinje() {
   return (
@@ -40,7 +40,7 @@ const TidHeader = styled.h1`
 const Natt = styled.div`
   align-items: center;
   background-color: ${COLORS.clr_mintgreen}80;
-  color: ${COLORS.clr_darkcharcoal};
+  color: ${COLORS.dark_charcoal};
   display: flex;
   /* height: 25px; */
   justify-content: center;
@@ -49,7 +49,7 @@ const Natt = styled.div`
 const MorgenKveld = styled.div`
   align-items: center;
   background-color: ${COLORS.clr_mintlight};
-  color: ${COLORS.clr_darkcharcoal};
+  color: ${COLORS.dark_charcoal};
   display: flex;
   /* height: 25px; */
   justify-content: center;

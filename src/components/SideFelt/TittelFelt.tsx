@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { COLORS, SIZES } from '../utils/constants'
-import { useStrom } from '../context/StroemContext'
+import { COLORS, SIZES } from '@utils/constants'
+import { useStrom } from '@context/StroemContext'
 
-const Kontroll = () => {
+const TittelFelt = () => {
   const { mittHus, totaltForbruk, gjennomsnittsPris, stroemForbruk } =
     useStrom()
 
@@ -78,4 +78,4 @@ const KotrollVerdi = styled.h3`
   color: ${COLORS.clr_mediumdarkred};
   /* text-align: center; */
 `
-export default Kontroll
+export default TittelFelt

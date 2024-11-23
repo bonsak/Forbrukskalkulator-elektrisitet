@@ -1,7 +1,7 @@
 // import { createGlobalStyle } from 'styled-components'
 import { createGlobalStyle } from 'styled-components'
 
-import { COLORS, WEIGHTS, FAMILIES, SIZES } from '../utils/constants.js'
+import { COLORS, WEIGHTS, FAMILIES, SIZES } from '@utils/constants'
 import seriffont from '@assets/fonts/young-serif/YoungSerif-Regular.ttf'
 import sansseriffont from '@assets/fonts/outfit/Outfit-VariableFont_wght.ttf'
 

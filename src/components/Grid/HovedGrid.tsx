@@ -1,15 +1,15 @@
 import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { COLORS } from '../utils/constants'
-import { DEFAULT_DAG } from '../utils/DefaultDag'
-import ForbruksKonfig from './ForbruksKonfig'
-import { KonvaGridProps, Rectangle, PreviewRectangle } from '../types/types'
-import { useForbruksEnheter } from '../utils/Forbruksenheter'
+import { COLORS } from '@utils/constants'
+import { DEFAULT_DAG } from '@utils/DefaultDag'
+import ForbruksKonfig from '@components/Dialoger/ForbruksRedigering'
+import { KonvaGridProps, Rectangle, PreviewRectangle } from '@types/types'
+import { useForbruksEnheter } from '@utils/Forbruksenheter'
 import { KonvaEventObject } from 'konva/lib/Node'
-import { useStrom } from '../context/StroemContext'
+import { useStrom } from '@context/StroemContext'
 
-const KonvaGrid = () => {
+const HovedGrid = () => {
   const FORBRUKSENHETER = useForbruksEnheter()
   const { setStroemForbruk, setTotaltForbruk } = useStrom()
 
@@ -507,4 +507,4 @@ const Wrapper = styled.div`
   /* overflow: hidden; */
 `
 
-export default KonvaGrid
+export default HovedGrid

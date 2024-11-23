@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { COLORS } from '../utils/constants'
-import { useStrom } from '../context/StroemContext'
+import { COLORS } from '@utils/constants'
+import { useStrom } from '@context/StroemContext'
 
 const DagensPris = () => {
   // const [priser, setPriser] = useState([])
@@ -10,9 +10,13 @@ const DagensPris = () => {
   const { setGjennomsnittsPris, setTotaltForbruk } = useStrom()
   const { priser, setPriser } = useStrom()
 
-  const regnGjennomsnitt = (data) => {
+  const regnGjennomsnitt = (data: { NOK_per_kWh: number }[]) => {
     const dagsGjennomSnitt =
-      data.reduce((sum, pris) => sum + pris['NOK_per_kWh'], 0) / data.length
+      data.reduce(
+        (sum: number, pris: { NOK_per_kWh: number }) =>
+          sum + pris['NOK_per_kWh'],
+        0
+      ) / data.length
     // console.log('data:', data, dagsGjennomSnitt)
     setGjennomsnittsPris(dagsGjennomSnitt)
   }

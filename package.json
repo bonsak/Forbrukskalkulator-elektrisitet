@@ -11,12 +11,10 @@
     "pub": "surge dist --domain loadbalance.surge.sh"
   },
   "dependencies": {
-    "@dnd-kit/core": "^6.1.0",
     "@gsap/react": "^2.1.1",
     "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
     "@radix-ui/colors": "^3.0.0",
-    "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-form": "^0.1.0",
     "@radix-ui/react-icons": "^1.3.2",
@@ -24,20 +22,16 @@
     "@vitejs/plugin-react-swc": "^3.7.1",
     "babel-plugin-styled-components": "^2.1.4",
     "components": "^0.1.0",
-    "d3-shape": "^3.2.0",
-    "formik": "^2.4.6",
     "gsap": "^3.12.5",
     "konva": "^9.3.16",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-konva": "^18.2.10",
     "styled-components": "^6.1.13",
-    "use-image": "^1.1.1",
-    "zustand": "^5.0.0"
+    "use-image": "^1.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
-    "@shadcn/ui": "^0.0.4",
     "@swc/core": "^1.7.39",
     "@swc/plugin-styled-components": "^3.0.3",
     "@types/node": "^22.9.0",
@@ -45,15 +39,13 @@
     "@types/react-dom": "^18.3.1",
     "@types/styled-components": "^5.1.34",
     "@vitejs/plugin-react": "^4.3.3",
-    "autoprefixer": "^10.4.20",
     "eslint": "^9.11.1",
     "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.9.0",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vite-plugin-svgr": "^4.3.0"
   }
 }
