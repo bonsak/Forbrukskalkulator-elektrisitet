@@ -1,109 +1,43 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
-import { useStrom } from '@context/StroemContext'
+import { useDagensPriserStore } from '@stores/dagensPriserStore'
 
 type Strompris = {
   NOK_per_kWh: number
   time_start: string
 }
 
+type PrisData = {
+  y: number
+  x: number // eller Date, avhengig av dataformatet
+}
+
 const DagensPris = () => {
-  // const [priser, setPriser] = useState([])
-  const [feilmelding, setFeilmelding] = useState('')
-  const [lasterInn, setLasterInn] = useState(true)
-  const { setGjennomsnittsPris, setTotaltForbruk } = useStrom()
-  const { priser, setPriser } = useStrom()
-
-  const regnGjennomsnitt = (data: { NOK_per_kWh: number }[]) => {
-    const dagsGjennomSnitt =
-      data.reduce(
-        (sum: number, pris: { NOK_per_kWh: number }) =>
-          sum + pris['NOK_per_kWh'],
-        0
-      ) / data.length
-    // console.log('data:', data, dagsGjennomSnitt)
-    setGjennomsnittsPris(dagsGjennomSnitt)
-  }
-
+  const { priser, hentPriser, aktivSone } = useDagensPriserStore()
   useEffect(() => {
-    const hentPriser = async () => {
-      try {
-        setLasterInn(true)
-        setFeilmelding('')
+    hentPriser(aktivSone)
+  }, [aktivSone])
 
-        const idag = new Date()
-        const dato = `${idag.getFullYear()}/${(idag.getMonth() + 1)
-          .toString()
-          .padStart(2, '0')}-${idag.getDate().toString().padStart(2, '0')}`
-
-        const sone = 'NO1'
-        // let url = `/strompris/${dato}_${sone}.json`
-        let url = `https://www.hvakosterstrommen.no/api/v1/prices/${dato}_${sone}.json`
-
-        //https://www.hvakosterstrommen.no/api/v1/prices/2024/11-14_NO5.json
-
-        const respons = await fetch(url)
-        if (!respons.ok) {
-          const igar = new Date(idag)
-          igar.setDate(igar.getDate() - 1)
-          const igarDato = igar.toISOString().split('T')[0]
-          url = `/strompris/${igarDato}_${sone}.json`
-
-          const igarsRespons = await fetch(url)
-          if (!igarsRespons.ok) {
-            throw new Error(
-              `Kunne ikke hente strømpriser: ${igarsRespons.status}`
-            )
-          }
-          const data = await igarsRespons.json()
-          setPriser(data)
-        } else {
-          const data = await respons.json()
-          setPriser(data)
-          regnGjennomsnitt(data)
-        }
-      } catch (error) {
-        console.error('Feil ved henting av strømpriser:', error)
-        setFeilmelding('Kunne ikke hente strømpriser. Prøv igjen senere.')
-      } finally {
-        setLasterInn(false)
-      }
-    }
-
-    hentPriser()
-  }, [])
-
+  // console.log(priser)
   return (
     <Wrapper>
-      {feilmelding && <Feilmelding>{feilmelding}</Feilmelding>}
-      {lasterInn ? (
-        <LasteIndikator>Laster inn strømpriser...</LasteIndikator>
-      ) : (
-        <PrisGrid>
-          {priser.map((pris: Strompris, index: number) => (
-            <PrisKolonne key={index}>
-              {/* <Time>{new Date(pris.time_start).getHours()}:00</Time> */}
-              <Pris>{pris.NOK_per_kWh.toFixed(2)}</Pris>
-            </PrisKolonne>
-          ))}
-        </PrisGrid>
-      )}
+      <PrisGrid>
+        {priser.data.map((pris: PrisData, index: number) => (
+          <PrisKolonne key={index}>
+            <Pris>{pris.y.toFixed(2)}</Pris>
+          </PrisKolonne>
+        ))}
+      </PrisGrid>
     </Wrapper>
   )
 }
 
 const Wrapper = styled.div`
-  /* mar: 1rem; */
-  /* width: 885px; */
-  /* height: 400px; */
   display: grid;
   place-items: center;
   min-height: 40px;
-  /* padding: 0.5rem 0 0.5rem 0; */
   background: ${COLORS.clr_lightorange};
-  /* border-radius: 8px; */
-  /* box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 6px 0px; */
 `
 
 const PrisGrid = styled.div`
@@ -118,15 +52,9 @@ const PrisKolonne = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* padding: 8px; */
-  /* background: #f5f5f5; */
+
   border-radius: 4px;
 `
-
-// const Time = styled.span`
-//   font-size: 12px;
-//   color: #666;
-// `
 
 const Pris = styled.span`
   /* font-weight: bold; */
@@ -143,7 +71,6 @@ const Feilmelding = styled.div`
 const LasteIndikator = styled.div`
   text-align: center;
   color: #666;
-  /* padding: 2rem; */
 `
 
 export default DagensPris

@@ -22,6 +22,8 @@ export interface Rectangle {
   image: HTMLImageElement | undefined
 }
 
+export type Stromsone = 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5'
+
 type StromsoneInfo = {
   token: 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5'
   navn: string
@@ -32,7 +34,7 @@ export const STROMSONER: StromsoneInfo[] = [
   { token: 'NO2', navn: 'Sør-Norge' },
   { token: 'NO3', navn: 'Midt-Norge' },
   { token: 'NO4', navn: 'Nord-Norge' },
-  { token: 'NO5', navn: 'Vest-Norge' }
+  { token: 'NO5', navn: 'Vest-Norge' },
 ] as const
 
 export interface ForbruksKonfigProps {

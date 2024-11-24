@@ -13,21 +13,21 @@ const ForbruksBarGraf = lazy(() => import('./HovedGraf/HovedGraf'))
 
 function App() {
   return (
-    <StroemProvider>
-      <MainWrapper className={'main-wrapper'}>
-        <Wrapper>
-          <Tidslinje />
-          <TittelFelt />
-          <div style={{ gridArea: 'graf' }}>
-            <ForbruksBarGraf />
-            <DagensPris />
-          </div>
-          <LegendeRight />
-          <MinBolig />
-          <HovedGrid />
-        </Wrapper>
-      </MainWrapper>
-    </StroemProvider>
+    // <StroemProvider>
+    <MainWrapper className={'main-wrapper'}>
+      <Wrapper>
+        <Tidslinje />
+        <TittelFelt />
+        <div style={{ gridArea: 'graf' }}>
+          <ForbruksBarGraf />
+          <DagensPris />
+        </div>
+        <LegendeRight />
+        <MinBolig />
+        <HovedGrid />
+      </Wrapper>
+    </MainWrapper>
+    // </StroemProvider>
   )
 }
 const MainWrapper = styled.div`

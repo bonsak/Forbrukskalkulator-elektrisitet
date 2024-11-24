@@ -13,16 +13,17 @@ const MinBolig = () => {
   const { mittHus, setMittHus } = useMittHusStore()
   const { totaltForbruk } = useStroemForbrukStore()
 
-  const { aktivSone, setAktivSone, priser, hentPriser, } = useDagensPriserStore()
+  const { aktivSone, setAktivSone, hentPriser } = useDagensPriserStore()
 
   useEffect(() => {
-    const oppdaterPriser = async () => {
-      await hentPriser(aktivSone)
-      // console.log('Priser oppdatert for sone:', aktivSone)
-    }
-    setMittHus({...mittHus, sone: aktivSone})
-    oppdaterPriser()
-  }, [aktivSone, hentPriser])
+    // const oppdaterPriser = async () => {
+    //   await hentPriser(aktivSone)
+    //   // console.log('Priser oppdatert for sone:', aktivSone)
+    // }
+    setMittHus({ ...mittHus, sone: aktivSone })
+    // hentPriser(aktivSone)
+    // oppdaterPriser()
+  }, [aktivSone])
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -37,28 +38,33 @@ const MinBolig = () => {
       antallVarmtvannstanker: Number(formData.get('antallVarmtvannstanker')),
       effektVarmtvannstanker: Number(formData.get('effektVarmtvannstanker')),
       effektElbillader: Number(formData.get('effektElbillader')),
-      sone: formData.get('sone') as typeof STROMSONER[number]['token']
+      sone: formData.get('sone') as (typeof STROMSONER)[number]['token'],
     }
 
     setMittHus(oppdatertHus)
   }
-  
 
   return (
     <StyledForm onSubmit={handleSubmit}>
-      <Select.Root value={aktivSone} onValueChange={setAktivSone}>
+      <Select.Root
+        value={aktivSone}
+        onValueChange={setAktivSone}
+      >
         <StyledSelectTrigger>
-          <Select.Value placeholder="Velg strømsone" />
+          <Select.Value placeholder='Velg strømsone' />
           <Select.Icon>
             <ChevronDownIcon />
           </Select.Icon>
         </StyledSelectTrigger>
-        
+
         <Select.Portal>
           <StyledSelectContent>
             <StyledSelectViewport>
               {STROMSONER.map((sone) => (
-                <StyledSelectItem key={sone.token} value={sone.token}>
+                <StyledSelectItem
+                  key={sone.token}
+                  value={sone.token}
+                >
                   <Select.ItemText>{sone.navn}</Select.ItemText>
                 </StyledSelectItem>
               ))}
@@ -146,7 +152,7 @@ const StyledSelectTrigger = styled(Select.Trigger)`
   border-radius: 4px;
   font-size: 0.9rem;
   color: ${COLORS.clr_darkmintgreen};
-  
+
   &:hover {
     background: ${COLORS.clr_mintlight};
   }
@@ -168,11 +174,11 @@ const StyledSelectItem = styled(Select.Item)`
   padding: 0.5rem;
   cursor: pointer;
   outline: none;
-  
+
   &:hover {
     background: ${COLORS.clr_mintlight};
   }
-  
+
   &[data-highlighted] {
     background: ${COLORS.clr_mintlight};
   }
@@ -243,5 +249,5 @@ interface MittHus {
   antallVarmtvannstanker: number
   effektVarmtvannstanker: number
   effektElbillader: number
-  sone: "NO1" | "NO2" | "NO3" | "NO4" | "NO5"
+  sone: 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5'
 }

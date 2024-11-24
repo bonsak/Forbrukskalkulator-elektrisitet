@@ -5,17 +5,18 @@ import { COLORS } from '@utils/constants'
 import { DEFAULT_DAG } from '@/utils/DefaultDag'
 import ForbruksKonfig from '@components/Dialoger/ForbruksRedigering'
 import { Rectangle, PreviewRectangle } from '@/types/types'
-import { useForbruksEnheter } from '@/utils/forbruksenheter'
+import { useForbruksEnheter } from '@/utils/Forbruksenheter'
 import { KonvaEventObject } from 'konva/lib/Node'
 import { useBrukerEnheterStore } from '@/stores/brukerEnheterStore'
 import { useStroemForbrukStore } from '@/stores/stroemForbrukStore'
-import { useMittHusStore } from "@/stores/mittHusStore"
-import { useDagensPriserStore } from '@/stores/dagensPriserStore'
+import { useMittHusStore } from '@/stores/mittHusStore'
+// import { useDagensPriserStore } from '@/stores/dagensPriserStore'
 
 const HovedGrid = () => {
   const FORBRUKSENHETER = useForbruksEnheter()
   const { brukerEnheter, setBrukerEnheter } = useBrukerEnheterStore()
-  const { setStroemForbruk, setTotaltForbruk } = useStroemForbrukStore()
+  const { stroemForbruk, setStroemForbruk, setTotaltForbruk } =
+    useStroemForbrukStore()
   const [isDrawing, setIsDrawing] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const [resizeEdge, setResizeEdge] = useState<'left' | 'right' | null>(null)
@@ -26,7 +27,6 @@ const HovedGrid = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [newRect, setNewRect] = useState<Rectangle | null>(null)
   const { mittHus } = useMittHusStore()
-
   const stageRef = useRef<any>(null)
   // Konstanter
   const stageWidth = 885
@@ -41,9 +41,16 @@ const HovedGrid = () => {
     setBrukerEnheter(DEFAULT_DAG)
   }, [])
 
+  // Deaktiverer stage når dialog er åpen
   useEffect(() => {
-    regnUtTotalForbruk(brukerEnheter)
-  }, [brukerEnheter, isResizing, isDrawing])
+    if (stageRef.current) {
+      const stage = stageRef.current.getStage()
+      stage.listening(!isForbruksKonfigOpen)
+      // stage.opacity(isForbruksKonfigOpen ? 0.25 : 1)
+      stage.batchDraw()
+      // console.log(isForbruksKonfigOpen, stage.listening())
+    }
+  }, [isForbruksKonfigOpen])
 
   const regnUtTotalForbruk = (brukerEnheter: Rectangle[]) => {
     const totalWattage = brukerEnheter.reduce(
@@ -55,8 +62,8 @@ const HovedGrid = () => {
 
   const oppdaterBrukerEnheter = (
     selectedRect: Rectangle,
-    snapped: { x: number; width: number },
-    prevRects: Rectangle[]
+    snapped: { x: number; width: number }
+    // prevRects: Rectangle[]
   ) => {
     setBrukerEnheter((prevRects) =>
       prevRects.map((r) =>
@@ -295,13 +302,6 @@ const HovedGrid = () => {
       data: forbrukPerKolonne.map((y, x) => ({ x, y })),
     })
   }
-  useEffect(() => {
-    beregnStroemForbruk()
-  }, [])
-
-  useEffect(() => {
-    beregnStroemForbruk()
-  }, [brukerEnheter])
 
   const snapToGrid = (x: number, width: number) => {
     const startColumn = Math.round(x / columnWidth)
@@ -338,6 +338,14 @@ const HovedGrid = () => {
       movingRect.position(),
       movingRect.width()
     )
+
+    // Oppdater kun posisjonen, ikke hele arrays
+    movingRect.position({
+      x: snapped.x,
+      y: snapped.y,
+    })
+
+    // Unngå unødvendige oppdateringer under dragging
     setBrukerEnheter((prevRects) =>
       prevRects.map((r) =>
         r.id === movingRect.attrs.id
@@ -345,7 +353,6 @@ const HovedGrid = () => {
           : r
       )
     )
-    const pos = movingRect.position()
   }
   const onDragEnd = (e: any) => {
     const movedRect = e.target
@@ -358,10 +365,10 @@ const HovedGrid = () => {
           : r
       )
     )
-    movedRect.position(snapped)
 
-    // setIsDragging(false)
+    // Kjør beregninger kun når dragging er ferdig
     beregnStroemForbruk()
+    // regnUtTotalForbruk(brukerEnheter)
   }
   const handleRectDblclick = (
     e: KonvaEventObject<MouseEvent>,
@@ -370,7 +377,6 @@ const HovedGrid = () => {
     updateSelectedRect(rect)
     setIsForbruksKonfigOpen(true)
   }
-
   const updateWattage = (wattage: number) => {
     if (!selectedRect) return
 
@@ -382,17 +388,6 @@ const HovedGrid = () => {
     updateSelectedRect(updatedRect)
     beregnStroemForbruk()
   }
-
-  // Deaktiverer stage når dialog er åpen
-  useEffect(() => {
-    if (stageRef.current) {
-      const stage = stageRef.current.getStage()
-      stage.listening(!isForbruksKonfigOpen)
-      // stage.opacity(isForbruksKonfigOpen ? 0.25 : 1)
-      stage.batchDraw()
-      // console.log(isForbruksKonfigOpen, stage.listening())
-    }
-  }, [isForbruksKonfigOpen])
 
   const updateSelectedRect = (updatedRect: Rectangle) => {
     setSelectedRect(updatedRect)

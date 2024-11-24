@@ -8,16 +8,14 @@ import { useEffect } from 'react'
 
 const TittelFelt = () => {
   const { mittHus } = useMittHusStore()
-  const { totaltForbruk, brukerEnheter } = useStroemForbrukStore()
-  const { hentPriser, gjennomsnittsPris } = useDagensPriserStore()
-  // const { brukerEnheter } = useBrukerEnheterStore() 
+  const { totaltForbruk, brukerEnheter, stroemForbruk } =
+    useStroemForbrukStore()
+  const { gjennomsnittsPris } = useDagensPriserStore()
+  // const { brukerEnheter } = useBrukerEnheterStore()
 
-
-  useEffect(() => {
-    // console.log('gjennomsnittsPris', gjennomsnittsPris)
-    console.log('totaltForbruk', totaltForbruk)
-    hentPriser(mittHus.sone as 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5')
-  }, [mittHus, brukerEnheter])
+  // useEffect(() => {
+  //   hentPriser(mittHus.sone as 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5')
+  // }, [mittHus])
 
   return (
     <KontrollWrapper>

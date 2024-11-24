@@ -1,12 +1,12 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Slider from '@radix-ui/react-slider'
-import { ChevronDownIcon, Pencil1Icon } from '@radix-ui/react-icons'
+import { Pencil1Icon } from '@radix-ui/react-icons'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { ForbruksEnhet, Rectangle } from '@/types/types'
-import useImage from 'use-image'
+// import useImage from 'use-image'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
-import { useForbruksEnheter } from '@/utils/forbruksenheter'
+import { useForbruksEnheter } from '@/utils/Forbruksenheter'
 import { useEffect, useState } from 'react'
 
 interface ForbruksKonfigProps {

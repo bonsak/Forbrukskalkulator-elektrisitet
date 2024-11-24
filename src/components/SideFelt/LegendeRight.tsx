@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 import { COLORS } from '../../utils/constants'
 import { LegendeRightProps } from './types'
-import { useStrom } from '@context/StroemContext'
+// import { useStrom } from '@context/StroemContext'
 
 const LegendeRight = () => {
-  const { mittHus } = useStrom()
   return (
     <LegendeRightWrapper>
       <Topp>20 kW/t</Topp>

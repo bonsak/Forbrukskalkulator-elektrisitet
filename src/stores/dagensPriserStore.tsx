@@ -1,10 +1,12 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { STROMSONER } from '../types/types' 
+import { STROMSONER } from '../types/types'
+// import { Stromsone } from '../types/types'
+import { fetchStromPriser } from '../components/api/hvakosterstroemmen'
 
 type PrisData = {
-  x: number  // time (0-23)
-  y: number  // NOK_per_kWh
+  x: number // time (0-23)
+  y: number // NOK_per_kWh
 }
 
 type PrisDataSet = {
@@ -21,80 +23,37 @@ interface DagensPriserState {
   aktivSone: Stromsone
   hentPriser: (sone: Stromsone) => Promise<void>
   setAktivSone: (sone: Stromsone) => void
-  getPrisForTime: (time: number) => number | null
   gjennomsnittsPris: number
-  setGjennomsnittsPris: (pris: number) => void
+  sistOppdatert: string | null
 }
 
 export const useDagensPriserStore = create<DagensPriserState>()(
+  devtools((set, get) => ({
+    priser: { id: 'dagensStroemPris', data: [] },
+    isLoading: false,
+    error: null,
+    aktivSone: 'NO1',
+    sistOppdatert: null,
 
-  devtools(
-    (set, get) => ({
-      
-      priser: { id: 'dagensStroemPris', data: [] },
-      isLoading: false,
-      error: null,
-      aktivSone: 'NO1',
-      
-      setAktivSone: (sone: Stromsone) => {
-        set({ aktivSone: sone }, false, 'setAktivSone')
-        get().hentPriser(sone)
-      },
-      
-      hentPriser: async (sone: Stromsone) => {
-        const idag = new Date()
-        const dato = `${idag.getFullYear()}/${(idag.getMonth() + 1)
-          .toString()
-          .padStart(2, '0')}-${idag.getDate().toString().padStart(2, '0')}`
-        
-        const url = `https://www.hvakosterstrommen.no/api/v1/prices/${dato}_${sone}.json`
-        
-        set({ isLoading: true, error: null }, false, 'startHentPriser')
-        
-        try {
-          const scaleFactor = 6667
-          const response = await fetch(url)
-          if (!response.ok) throw new Error('Kunne ikke hente strømpriser')
-          const rawData = await response.json()
-          
-          if (!Array.isArray(rawData) || rawData.length !== 24) {
-            throw new Error('Ugyldig data: Forventet 24 timer med priser')
-          }
+    setAktivSone: (sone: Stromsone) => {
+      set({ aktivSone: sone }, false, 'setAktivSone')
+    },
 
-          const transformertData: PrisData[] = rawData.map((pris, index) => ({
-            x: index,
-            y: pris.NOK_per_kWh
-          }))
-          
-          const gjennomsnitt = transformertData.reduce((sum, pris) => sum + pris.y, 0) / transformertData.length
-          get().setGjennomsnittsPris(gjennomsnitt)
-          
-          set({ 
-            priser: { 
-              id: 'dagensPriser', 
-              data: transformertData 
-            },
-            isLoading: false 
-          }, false, 'prisHentet')
-        } catch (error) {
-          set(
-            { 
-              error: error instanceof Error ? error.message : 'Ukjent feil oppstod', 
-              isLoading: false 
-            }, 
-            false, 
-            'prisHentingFeilet'
-          )
-        }
-      },
+    hentPriser: async (sone: Stromsone) => {
+      const dagensPriser = await fetchStromPriser(sone)
+      const gjennomsnitt =
+        dagensPriser.reduce((sum, pris) => sum + pris.y, 0) /
+        dagensPriser.length
 
-      getPrisForTime: (time: number) => {
-        const priser = get().priser.data
-        if (time < 0 || time > 23 || !priser[time]) return null
-        return priser[time].y
-      },
-      gjennomsnittsPris: 0,
-      setGjennomsnittsPris: (pris: number) => set({ gjennomsnittsPris: pris }), 
-    })
-  )
+      set({
+        priser: {
+          id: 'dagensPriser',
+          data: dagensPriser,
+        },
+        isLoading: false,
+        gjennomsnittsPris: gjennomsnitt,
+      })
+    },
+    gjennomsnittsPris: 0,
+  }))
 )
