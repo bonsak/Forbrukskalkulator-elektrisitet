@@ -2,33 +2,20 @@ import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
-import { DEFAULT_DAG } from '@/utils/defaultdag'
+import { DEFAULT_DAG } from '@/utils/DefaultDag'
 import ForbruksKonfig from '@components/Dialoger/ForbruksRedigering'
-import { KonvaGridProps, Rectangle, PreviewRectangle } from '@/types/types'
+import { Rectangle, PreviewRectangle } from '@/types/types'
 import { useForbruksEnheter } from '@/utils/forbruksenheter'
 import { KonvaEventObject } from 'konva/lib/Node'
-import { useStrom } from '@context/StroemContext'
-
-interface StroemData {
-  x: number
-  y: number
-}
-
-interface StroemForbrukData {
-  id: string
-  data: StroemData[]
-}
-
-type StroemForbrukState = {
-  id: string
-  data: StroemData[]
-}
+import { useBrukerEnheterStore } from '@/stores/brukerEnheterStore'
+import { useStroemForbrukStore } from '@/stores/stroemForbrukStore'
+import { useMittHusStore } from "@/stores/mittHusStore"
+import { useDagensPriserStore } from '@/stores/dagensPriserStore'
 
 const HovedGrid = () => {
   const FORBRUKSENHETER = useForbruksEnheter()
-  const { setStroemForbruk, setTotaltForbruk } = useStrom()
-
-  const [brukerEnheter, setBrukerEnheter] = useState<Rectangle[]>([])
+  const { brukerEnheter, setBrukerEnheter } = useBrukerEnheterStore()
+  const { setStroemForbruk, setTotaltForbruk } = useStroemForbrukStore()
   const [isDrawing, setIsDrawing] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const [resizeEdge, setResizeEdge] = useState<'left' | 'right' | null>(null)
@@ -38,6 +25,7 @@ const HovedGrid = () => {
   const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [newRect, setNewRect] = useState<Rectangle | null>(null)
+  const { mittHus } = useMittHusStore()
 
   const stageRef = useRef<any>(null)
   // Konstanter
@@ -49,14 +37,13 @@ const HovedGrid = () => {
   const rowHeight = 40
   const rows = Math.floor(stageHeight / rowHeight)
 
-  // console.log(brukerEnheter, DEFAULT_DAG)
   useEffect(() => {
     setBrukerEnheter(DEFAULT_DAG)
   }, [])
 
   useEffect(() => {
     regnUtTotalForbruk(brukerEnheter)
-  }, [brukerEnheter, isResizing, previewRect])
+  }, [brukerEnheter, isResizing, isDrawing])
 
   const regnUtTotalForbruk = (brukerEnheter: Rectangle[]) => {
     const totalWattage = brukerEnheter.reduce(

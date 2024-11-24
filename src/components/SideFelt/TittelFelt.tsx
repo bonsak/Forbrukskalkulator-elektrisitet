@@ -1,11 +1,22 @@
 import styled from 'styled-components'
 import { COLORS, SIZES } from '@utils/constants'
-import { useStrom } from '@context/StroemContext'
-import { TittelFeltProps } from './types'
+import { useStroemForbrukStore } from '@stores/stroemForbrukStore'
+import { useMittHusStore } from '@stores/mittHusStore'
+import { useDagensPriserStore } from '@stores/dagensPriserStore'
+import { useBrukerEnheterStore } from '@stores/brukerEnheterStore'
+import { useEffect } from 'react'
 
 const TittelFelt = () => {
-  const { mittHus, totaltForbruk, gjennomsnittsPris, stroemForbruk } =
-    useStrom()
+  const { mittHus } = useMittHusStore()
+  const { totaltForbruk } = useStroemForbrukStore()
+  const { hentPriser, gjennomsnittsPris } = useDagensPriserStore()
+  const { brukerEnheter } = useBrukerEnheterStore() 
+
+
+  useEffect(() => {
+    // console.log('gjennomsnittsPris', gjennomsnittsPris)
+    hentPriser(mittHus.sone as 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5')
+  }, [mittHus, brukerEnheter])
 
   return (
     <KontrollWrapper>
@@ -59,7 +70,6 @@ const InnerWrapper = styled.div`
 const ListItemFirst = styled.li`
   margin-top: 1.2rem;
 `
-
 const PrisLegende = styled.div`
   text-align: right;
   /* padding-right: 2rem; */

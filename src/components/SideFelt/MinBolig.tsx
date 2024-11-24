@@ -1,10 +1,29 @@
 import * as Form from '@radix-ui/react-form'
+import * as Select from '@radix-ui/react-select'
 import styled from 'styled-components'
 import { COLORS } from '@utils/constants'
-import { useStrom } from '@context/StroemContext'
+import { useDagensPriserStore } from '@stores/dagensPriserStore'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { useEffect } from 'react'
+import { useMittHusStore } from '@stores/mittHusStore'
+import { useStroemForbrukStore } from '@stores/stroemForbrukStore'
+import { STROMSONER } from '../../types/types'
 
 const MinBolig = () => {
-  const { mittHus, setMittHus } = useStrom()
+  const { mittHus, setMittHus } = useMittHusStore()
+  const { totaltForbruk } = useStroemForbrukStore()
+
+  const { aktivSone, setAktivSone, priser, hentPriser, } = useDagensPriserStore()
+
+  useEffect(() => {
+    const oppdaterPriser = async () => {
+      await hentPriser(aktivSone)
+      // console.log('Priser oppdatert for sone:', aktivSone)
+    }
+    setMittHus({...mittHus, sone: aktivSone})
+    oppdaterPriser()
+  }, [aktivSone, hentPriser])
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -18,13 +37,35 @@ const MinBolig = () => {
       antallVarmtvannstanker: Number(formData.get('antallVarmtvannstanker')),
       effektVarmtvannstanker: Number(formData.get('effektVarmtvannstanker')),
       effektElbillader: Number(formData.get('effektElbillader')),
+      sone: formData.get('sone') as typeof STROMSONER[number]['token']
     }
 
     setMittHus(oppdatertHus)
   }
+  
 
   return (
     <StyledForm onSubmit={handleSubmit}>
+      <Select.Root value={aktivSone} onValueChange={setAktivSone}>
+        <StyledSelectTrigger>
+          <Select.Value placeholder="Velg strømsone" />
+          <Select.Icon>
+            <ChevronDownIcon />
+          </Select.Icon>
+        </StyledSelectTrigger>
+        
+        <Select.Portal>
+          <StyledSelectContent>
+            <StyledSelectViewport>
+              {STROMSONER.map((sone) => (
+                <StyledSelectItem key={sone.token} value={sone.token}>
+                  <Select.ItemText>{sone.navn}</Select.ItemText>
+                </StyledSelectItem>
+              ))}
+            </StyledSelectViewport>
+          </StyledSelectContent>
+        </Select.Portal>
+      </Select.Root>
       <StyledField name='navn'>
         <StyledLabel>Navn</StyledLabel>
         <StyledInput
@@ -33,7 +74,6 @@ const MinBolig = () => {
           required
         />
       </StyledField>
-
       <StyledField name='antallRom'>
         <StyledLabel>Rom</StyledLabel>
         <StyledInput
@@ -43,7 +83,6 @@ const MinBolig = () => {
           min='1'
         />
       </StyledField>
-
       <StyledField name='antallVoksne'>
         <StyledLabel>Voksne</StyledLabel>
         <StyledInput
@@ -53,7 +92,6 @@ const MinBolig = () => {
           min='0'
         />
       </StyledField>
-
       <StyledField name='antallBarn'>
         <StyledLabel>Barn</StyledLabel>
         <StyledInput
@@ -63,7 +101,6 @@ const MinBolig = () => {
           min='0'
         />
       </StyledField>
-
       <StyledField name='antallKvadrat'>
         <StyledLabel>Størrelse (m²)</StyledLabel>
         <StyledInput
@@ -73,7 +110,6 @@ const MinBolig = () => {
           min='1'
         />
       </StyledField>
-
       <StyledField name='antallVarmtvannstanker'>
         <StyledLabel>Beredere</StyledLabel>
         <StyledInput
@@ -83,18 +119,6 @@ const MinBolig = () => {
           min='0'
         />
       </StyledField>
-
-      {/* <StyledField name="effektVarmtvannstanker">
-        <StyledLabel>Effekt bereder (kW)</StyledLabel>
-        <StyledInput 
-          type="number" 
-          defaultValue={mittHus.effektVarmtvannstanker} 
-          required
-          step="0.1"
-          min="0"
-        />
-      </StyledField> */}
-
       <StyledField name='effektElbillader'>
         <StyledLabel>Billader (kW)</StyledLabel>
         <StyledInput
@@ -105,13 +129,54 @@ const MinBolig = () => {
           min='0'
         />
       </StyledField>
-
       <StyledButton type='submit'>Oppdater boliginfo</StyledButton>
     </StyledForm>
   )
 }
 
 export default MinBolig
+
+const StyledSelectTrigger = styled(Select.Trigger)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid ${COLORS.clr_mintgreen};
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: ${COLORS.clr_darkmintgreen};
+  
+  &:hover {
+    background: ${COLORS.clr_mintlight};
+  }
+`
+
+const StyledSelectContent = styled(Select.Content)`
+  background: white;
+  border-radius: 4px;
+  border: 1px solid ${COLORS.clr_mintgreen};
+  overflow: hidden;
+`
+
+const StyledSelectViewport = styled(Select.Viewport)`
+  padding: 0.5rem;
+`
+
+const StyledSelectItem = styled(Select.Item)`
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  outline: none;
+  
+  &:hover {
+    background: ${COLORS.clr_mintlight};
+  }
+  
+  &[data-highlighted] {
+    background: ${COLORS.clr_mintlight};
+  }
+`
 
 const StyledForm = styled(Form.Root)`
   grid-area: minbolig;
@@ -178,4 +243,5 @@ interface MittHus {
   antallVarmtvannstanker: number
   effektVarmtvannstanker: number
   effektElbillader: number
+  sone: "NO1" | "NO2" | "NO3" | "NO4" | "NO5"
 }
