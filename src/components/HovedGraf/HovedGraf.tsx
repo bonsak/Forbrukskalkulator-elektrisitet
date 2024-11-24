@@ -13,6 +13,7 @@ function HovedGraf() {
   const CustomLayer = ({ xScale, yScale }: { xScale: any; yScale: any }) => {
     if (!priser || !priser.data || priser.data.length === 0) return null;
 
+    const scaleFactor = 6667
     const validData = priser.data.filter(
       (d) => typeof d.x === 'number' && 
              !isNaN(d.x) && 
@@ -24,7 +25,7 @@ function HovedGraf() {
 
     const pathGenerator = line<[number, number]>()
       .x(([x]) => xScale(x))
-      .y(([, y]) => yScale(y))
+      .y(([, y]) => yScale(y * scaleFactor))
       .curve(curveBasis);
 
     const points = validData.map(d => [d.x, d.y] as [number, number]);

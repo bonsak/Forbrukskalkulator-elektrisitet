@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 import { STROMSONER } from '../types/types'
 
 type Stromsone = typeof STROMSONER[number]['token']
@@ -21,8 +21,10 @@ interface MittHusStore {
     setMittHus: (mittHus: MittHus) => void
 }
 
-export const useMittHusStore = create<MittHusStore>((set) => ({
-  mittHus: {
+export const useMittHusStore = create<MittHusStore>()(
+  devtools(
+    (set) => ({
+      mittHus: {
     navn: 'Wessels gt 4',
     antallRom: 5,
     antallVoksne: 2,
@@ -33,5 +35,7 @@ export const useMittHusStore = create<MittHusStore>((set) => ({
     effektElbillader: 6.5,
     sone: 'NO1'
   },
-  setMittHus: (mittHus) => set({ mittHus }),
-}))
+      setMittHus: (mittHus) => set({ mittHus }),
+    })
+  )
+)
