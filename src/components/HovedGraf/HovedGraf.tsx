@@ -7,9 +7,10 @@ import { useDagensPriserStore } from '@stores/dagensPriserStore'
 import { useStroemForbrukStore } from '@stores/stroemForbrukStore'
 
 function HovedGraf() {
-  const { stroemForbruk } = useStroemForbrukStore()
-  const { priser } = useDagensPriserStore()
-
+  //
+  const stroemForbruk = useStroemForbrukStore((state) => state.stroemForbruk); 
+  const priser = useDagensPriserStore((state) => state.priser); 
+  //
   const CustomLayer = ({ xScale, yScale }: { xScale: any; yScale: any }) => {
     if (!priser || !priser.data || priser.data.length === 0) return null;
 

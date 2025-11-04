@@ -1,64 +1,73 @@
-import { Stage, Layer, Rect, Line, Group, Text, Image } from 'react-konva'
-import { useState, useEffect, useRef } from 'react'
-import styled from 'styled-components'
-import { COLORS } from '@utils/constants'
-import { DEFAULT_DAG } from '@/utils/DefaultDag'
-import ForbruksKonfig from '@components/Dialoger/ForbruksRedigering'
-import { Rectangle, PreviewRectangle } from '@/types/types'
-import { useForbruksEnheter } from '@/utils/Forbruksenheter'
-import { KonvaEventObject } from 'konva/lib/Node'
-import { useBrukerEnheterStore } from '@/stores/brukerEnheterStore'
-import { useStroemForbrukStore } from '@/stores/stroemForbrukStore'
-import { useMittHusStore } from '@/stores/mittHusStore'
+import { Stage, Layer, Rect, Line, Group, Text, Image } from "react-konva";
+import { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import { COLORS } from "@utils/constants";
+import { DEFAULT_DAG } from "@/utils/DefaultDag";
+import ForbruksKonfig from "@components/Dialoger/ForbruksRedigering";
+import { Rectangle, PreviewRectangle } from "@/types/types";
+import { useForbruksEnheter } from "@/utils/Forbruksenheter";
+import { KonvaEventObject } from "konva/lib/Node";
+import { useBrukerEnheterStore } from "@/stores/brukerEnheterStore";
+import { useStroemForbrukStore } from "@/stores/stroemForbrukStore";
+import { useMittHusStore } from "@/stores/mittHusStore";
 // import { useDagensPriserStore } from '@/stores/dagensPriserStore'
 
 const HovedGrid = () => {
-  const FORBRUKSENHETER = useForbruksEnheter()
-  const { brukerEnheter, setBrukerEnheter } = useBrukerEnheterStore()
-  const { stroemForbruk, setStroemForbruk, setTotaltForbruk } =
-    useStroemForbrukStore()
-  const [isDrawing, setIsDrawing] = useState(false)
-  const [isResizing, setIsResizing] = useState(false)
-  const [resizeEdge, setResizeEdge] = useState<'left' | 'right' | null>(null)
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 })
-  const [previewRect, setPreviewRect] = useState<PreviewRectangle | null>(null)
-  const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null)
-  const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [newRect, setNewRect] = useState<Rectangle | null>(null)
-  const { mittHus } = useMittHusStore()
-  const stageRef = useRef<any>(null)
+  const FORBRUKSENHETER = useForbruksEnheter();
+  //
+  const brukerEnheter = useBrukerEnheterStore((state) => state.brukerEnheter);
+  const setBrukerEnheter = useBrukerEnheterStore(
+    (state) => state.setBrukerEnheter
+  );
+  const setStroemForbruk = useStroemForbrukStore(
+    (state) => state.setStroemForbruk
+  );
+  const setTotaltForbruk = useStroemForbrukStore(
+    (state) => state.setTotaltForbruk
+  );
+  //
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeEdge, setResizeEdge] = useState<"left" | "right" | null>(null);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [previewRect, setPreviewRect] = useState<PreviewRectangle | null>(null);
+  const [selectedRect, setSelectedRect] = useState<Rectangle | null>(null);
+  const [isForbruksKonfigOpen, setIsForbruksKonfigOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [newRect, setNewRect] = useState<Rectangle | null>(null);
+  const { mittHus } = useMittHusStore();
+  const stageRef = useRef<any>(null);
   // Konstanter
-  const stageWidth = 885
-  const stageHeight = 360
-  const RESIZE_HANDLE_WIDTH = 10
-  const gridColumns = 24
-  const columnWidth = stageWidth / gridColumns
-  const rowHeight = 40
-  const rows = Math.floor(stageHeight / rowHeight)
+  const stageWidth = 885;
+  const stageHeight = 360;
+  const RESIZE_HANDLE_WIDTH = 10;
+  const gridColumns = 24;
+  const columnWidth = stageWidth / gridColumns;
+  const rowHeight = 40;
+  const rows = Math.floor(stageHeight / rowHeight);
 
   useEffect(() => {
-    setBrukerEnheter(DEFAULT_DAG)
-  }, [])
+    setBrukerEnheter(DEFAULT_DAG);
+  }, []);
 
   // Deaktiverer stage når dialog er åpen
   useEffect(() => {
     if (stageRef.current) {
-      const stage = stageRef.current.getStage()
-      stage.listening(!isForbruksKonfigOpen)
+      const stage = stageRef.current.getStage();
+      stage.listening(!isForbruksKonfigOpen);
       // stage.opacity(isForbruksKonfigOpen ? 0.25 : 1)
-      stage.batchDraw()
+      stage.batchDraw();
       // console.log(isForbruksKonfigOpen, stage.listening())
     }
-  }, [isForbruksKonfigOpen])
+  }, [isForbruksKonfigOpen]);
 
   const regnUtTotalForbruk = (brukerEnheter: Rectangle[]) => {
     const totalWattage = brukerEnheter.reduce(
       (sum: number, enhet: Rectangle) => sum + enhet.wattage,
       0
-    )
-    setTotaltForbruk(totalWattage)
-  }
+    );
+    setTotaltForbruk(totalWattage);
+  };
 
   const oppdaterBrukerEnheter = (
     selectedRect: Rectangle,
@@ -71,81 +80,81 @@ const HovedGrid = () => {
           ? { ...r, x: snapped.x, width: snapped.width, isDragging: true }
           : r
       )
-    )
-  }
+    );
+  };
 
   const isMouseOverResizeHandle = (
     e: any,
     rect: Rectangle
-  ): 'left' | 'right' | null => {
-    const stage = e.target.getStage()
-    const mouseX = stage.getPointerPosition().x
+  ): "left" | "right" | null => {
+    const stage = e.target.getStage();
+    const mouseX = stage.getPointerPosition().x;
     const leftHandle =
-      mouseX >= rect.x && mouseX <= rect.x + RESIZE_HANDLE_WIDTH
+      mouseX >= rect.x && mouseX <= rect.x + RESIZE_HANDLE_WIDTH;
     const rightHandle =
       mouseX >= rect.x + rect.width - RESIZE_HANDLE_WIDTH &&
-      mouseX <= rect.x + rect.width
+      mouseX <= rect.x + rect.width;
 
-    if (leftHandle) return 'left'
-    if (rightHandle) return 'right'
-    return null
-  }
+    if (leftHandle) return "left";
+    if (rightHandle) return "right";
+    return null;
+  };
 
   // Hvis vi treffer stage, start å tegne
   const handleMouseDown = (e: any) => {
     if (e.target === e.target.getStage()) {
-      setIsDrawing(true)
-      const pos = e.target.getStage().getPointerPosition()
-      const snapped = snapToGrid(pos.x, 0)
-      const yPos = Math.floor(pos.y / rowHeight) * rowHeight
+      setIsDrawing(true);
+      const pos = e.target.getStage().getPointerPosition();
+      const snapped = snapToGrid(pos.x, 0);
+      const yPos = Math.floor(pos.y / rowHeight) * rowHeight;
 
       setStartPos({
         x: snapped.x,
         y: yPos,
-      })
+      });
 
       setPreviewRect({
         x: snapped.x,
         y: yPos,
         width: 0,
         height: rowHeight,
-        fill: 'transparent',
-        stroke: '#b1afa9',
+        fill: "transparent",
+        stroke: "#b1afa9",
         strokeWidth: 2,
         dash: [5, 5],
-      })
+      });
     }
-  }
+  };
 
   // Mulig denne logikken kan flyttes til handleDragMove
   const handleRectMouseDown = (e: any, rect: Rectangle) => {
-    const resizeEdge = isMouseOverResizeHandle(e, rect)
+    const resizeEdge = isMouseOverResizeHandle(e, rect);
 
     if (resizeEdge) {
-      e.target.draggable(false)
-      setIsResizing(true)
-      setResizeEdge(resizeEdge)
-      setSelectedRect(rect)
-      const pos = e.target.getStage().getPointerPosition()
-      setStartPos({ x: pos.x, y: rect.y })
+      e.target.draggable(false);
+      setIsResizing(true);
+      setResizeEdge(resizeEdge);
+      setSelectedRect(rect);
+      const pos = e.target.getStage().getPointerPosition();
+      setStartPos({ x: pos.x, y: rect.y });
 
       setBrukerEnheter((prevRects) =>
         prevRects.map((r) =>
           r.id === rect.id ? { ...r, isDragging: true } : r
         )
-      )
+      );
 
-      e.cancelBubble = true
+      e.cancelBubble = true;
     } else {
-      e.target.draggable(true)
+      e.target.draggable(true);
     }
-  }
+  };
 
   const handleMouseMoveOnStage = (e: any) => {
-    const stage = e.target.getStage()
-    const pos = stage.getPointerPosition()
-    const rect = selectedRect ? selectedRect : null
-    const id = rect?.id
+    const stage = e.target.getStage();
+    const pos = stage.getPointerPosition();
+    const rect = selectedRect ? selectedRect : null;
+    const id = rect?.id;
     // console.log('handleMouseMoveOnStage', rect)
 
     if (isDrawing) {
@@ -155,79 +164,79 @@ const HovedGrid = () => {
       //   setIsForbruksKonfigOpen(false)
       // }
 
-      const width = Math.abs(pos.x - startPos.x)
-      const snapped = snapToGrid(Math.min(startPos.x, pos.x), width)
+      const width = Math.abs(pos.x - startPos.x);
+      const snapped = snapToGrid(Math.min(startPos.x, pos.x), width);
       setPreviewRect({
         x: snapped.x,
         y: startPos.y,
         width: snapped.width,
         height: rowHeight,
-        fill: 'transparent',
-        stroke: '#b1afa9',
+        fill: "transparent",
+        stroke: "#b1afa9",
         strokeWidth: 2,
         dash: [5, 5],
-      })
+      });
     } else if (isResizing && selectedRect) {
-      setIsResizing(true)
+      setIsResizing(true);
       // e.target.attrs.isDragging = true
 
-      let newWidth: number, newX: number
+      let newWidth: number, newX: number;
 
-      if (resizeEdge === 'right') {
-        setIsResizing(true)
-        newWidth = Math.max(columnWidth, pos.x - selectedRect.x)
-        const snapped = snapToGrid(selectedRect.x, newWidth)
+      if (resizeEdge === "right") {
+        setIsResizing(true);
+        newWidth = Math.max(columnWidth, pos.x - selectedRect.x);
+        const snapped = snapToGrid(selectedRect.x, newWidth);
 
-        oppdaterBrukerEnheter(selectedRect, snapped, brukerEnheter)
+        oppdaterBrukerEnheter(selectedRect, snapped);
 
-        selectedRect.x = snapped.x
-        selectedRect.width = snapped.width
-      } else if (resizeEdge === 'left') {
-        setIsResizing(true)
+        selectedRect.x = snapped.x;
+        selectedRect.width = snapped.width;
+      } else if (resizeEdge === "left") {
+        setIsResizing(true);
         newWidth = Math.max(
           columnWidth,
           selectedRect.x + selectedRect.width - pos.x
-        )
+        );
         newX = Math.min(
           pos.x,
           selectedRect.x + selectedRect.width - columnWidth
-        )
-        const snapped = snapToGrid(newX, newWidth)
+        );
+        const snapped = snapToGrid(newX, newWidth);
 
-        oppdaterBrukerEnheter(selectedRect, snapped, brukerEnheter)
+        oppdaterBrukerEnheter(selectedRect, snapped);
 
-        selectedRect.x = snapped.x
-        selectedRect.width = snapped.width
+        selectedRect.x = snapped.x;
+        selectedRect.width = snapped.width;
       }
     } else {
       const hoveredRect = brukerEnheter.find((rect) => {
         const resizeEdge = isMouseOverResizeHandle(
           { target: { getStage: () => stage } },
           rect
-        )
-        return resizeEdge !== null
-      })
+        );
+        return resizeEdge !== null;
+      });
 
-      document.body.style.cursor = hoveredRect ? 'ew-resize' : 'default'
+      document.body.style.cursor = hoveredRect ? "ew-resize" : "default";
     }
-  }
+  };
 
   // Lager lite default rect når bruker løfter musen
   const handleMouseUpOnStage = (e: any) => {
     if (isDrawing) {
-      const stage = e.target.getStage()
-      const endPos = stage.getPointerPosition()
-      const dragDistance = Math.abs(endPos.x - startPos.x)
+      const stage = e.target.getStage();
+      const endPos = stage.getPointerPosition();
+      const dragDistance = Math.abs(endPos.x - startPos.x);
 
       const snapped = snapToGrid(
         dragDistance <= 30 ? startPos.x : Math.min(startPos.x, endPos.x),
         dragDistance <= 30 ? columnWidth * 2 : dragDistance
-      )
+      );
 
       const rndNumber: number = Math.floor(
         Math.random() * FORBRUKSENHETER.length
-      )
-      const defaultEnhet = FORBRUKSENHETER[rndNumber]
+      );
+      const defaultEnhet = FORBRUKSENHETER[rndNumber];
 
       const newRectangle: Rectangle = {
         x: snapped.x,
@@ -247,103 +256,103 @@ const HovedGrid = () => {
         name: defaultEnhet.name,
         description: defaultEnhet.description,
         image: defaultEnhet.image,
-      }
+      };
 
-      setBrukerEnheter([...brukerEnheter, newRectangle])
-      setNewRect(newRectangle)
-      updateSelectedRect(newRectangle)
-      setDrawerOpen(true)
-      setIsForbruksKonfigOpen(true)
+      setBrukerEnheter([...brukerEnheter, newRectangle]);
+      setNewRect(newRectangle);
+      updateSelectedRect(newRectangle);
+      setDrawerOpen(true);
+      setIsForbruksKonfigOpen(true);
       // regnUtTotalForbruk(brukerEnheter)
-      beregnStroemForbruk()
+      beregnStroemForbruk();
     } else if (isResizing && selectedRect) {
       // Oppdater rektangelet med de endelige dimensjonene
       const updatedRect = {
         ...selectedRect,
         isDragging: false,
-      }
+      };
 
-      updateSelectedRect(updatedRect)
+      updateSelectedRect(updatedRect);
       setBrukerEnheter((prevRects) =>
         prevRects.map((rect) =>
           rect.id === selectedRect.id ? { ...rect, isDragging: false } : rect
         )
-      )
-      beregnStroemForbruk()
+      );
+      beregnStroemForbruk();
     }
 
-    setIsDrawing(false)
-    setIsResizing(false)
-    setResizeEdge(null)
-    setPreviewRect(null)
-  }
+    setIsDrawing(false);
+    setIsResizing(false);
+    setResizeEdge(null);
+    setPreviewRect(null);
+  };
 
   const handleDeleteClick = (rectId: string) => {
-    setBrukerEnheter(brukerEnheter.filter((rect) => rect.id !== rectId))
-    beregnStroemForbruk()
-  }
+    setBrukerEnheter(brukerEnheter.filter((rect) => rect.id !== rectId));
+    beregnStroemForbruk();
+  };
 
   const beregnStroemForbruk = () => {
-    const forbrukPerKolonne = new Array(gridColumns + 1).fill(0)
+    const forbrukPerKolonne = new Array(gridColumns + 1).fill(0);
 
     brukerEnheter.forEach((rect) => {
-      const startKolonne = Math.floor(rect.x / columnWidth)
-      const sluttKolonne = Math.ceil((rect.x + rect.width) / columnWidth)
+      const startKolonne = Math.floor(rect.x / columnWidth);
+      const sluttKolonne = Math.ceil((rect.x + rect.width) / columnWidth);
 
       for (let i = startKolonne; i < sluttKolonne; i++) {
         if (i >= 0 && i < gridColumns) {
-          forbrukPerKolonne[i] += rect.wattage
+          forbrukPerKolonne[i] += rect.wattage;
         }
       }
-    })
+    });
 
     setStroemForbruk({
-      id: 'stroemforbruk',
+      id: "stroemforbruk",
       data: forbrukPerKolonne.map((y, x) => ({ x, y })),
-    })
-  }
+    });
+  };
 
   const snapToGrid = (x: number, width: number) => {
-    const startColumn = Math.round(x / columnWidth)
-    const endColumn = Math.round((x + width) / columnWidth)
+    const startColumn = Math.round(x / columnWidth);
+    const endColumn = Math.round((x + width) / columnWidth);
     return {
       x: startColumn * columnWidth,
       width: (endColumn - startColumn) * columnWidth,
-    }
-  }
+    };
+  };
   const snapRectToPosition = (
     position: { x: number; y: number },
     width: number
   ) => {
-    const snapped = snapToGrid(position.x, width)
-    let x = snapped.x
-    let y = Math.round(position.y / rowHeight) * rowHeight
-    return { x, y }
-  }
+    const snapped = snapToGrid(position.x, width);
+    let x = snapped.x;
+    let y = Math.round(position.y / rowHeight) * rowHeight;
+    return { x, y };
+  };
   const onDragStart = (e: any) => {
-    const id = e.target.attrs.id
+    const id = e.target.attrs.id;
 
     setBrukerEnheter(
       brukerEnheter.map((rect) => {
         return {
           ...rect,
           isDragging: rect.id === id,
-        }
+        };
       })
-    )
-  }
+    );
+  };
   const onDragMove = (e: any) => {
-    const movingRect = e.target
+    const movingRect = e.target;
     const snapped = snapRectToPosition(
       movingRect.position(),
       movingRect.width()
-    )
+    );
 
     // Oppdater kun posisjonen, ikke hele arrays
     movingRect.position({
       x: snapped.x,
       y: snapped.y,
-    })
+    });
 
     // Unngå unødvendige oppdateringer under dragging
     setBrukerEnheter((prevRects) =>
@@ -352,11 +361,11 @@ const HovedGrid = () => {
           ? { ...r, x: snapped.x, y: snapped.y, isDragging: true }
           : r
       )
-    )
-  }
+    );
+  };
   const onDragEnd = (e: any) => {
-    const movedRect = e.target
-    const snapped = snapRectToPosition(movedRect.position(), movedRect.width())
+    const movedRect = e.target;
+    const snapped = snapRectToPosition(movedRect.position(), movedRect.width());
 
     setBrukerEnheter((prevRects) =>
       prevRects.map((r) =>
@@ -364,37 +373,37 @@ const HovedGrid = () => {
           ? { ...r, x: snapped.x, y: snapped.y, isDragging: false }
           : r
       )
-    )
+    );
 
     // Kjør beregninger kun når dragging er ferdig
-    beregnStroemForbruk()
+    beregnStroemForbruk();
     // regnUtTotalForbruk(brukerEnheter)
-  }
+  };
   const handleRectDblclick = (
     e: KonvaEventObject<MouseEvent>,
     rect: Rectangle
   ) => {
-    updateSelectedRect(rect)
-    setIsForbruksKonfigOpen(true)
-  }
+    updateSelectedRect(rect);
+    setIsForbruksKonfigOpen(true);
+  };
   const updateWattage = (wattage: number) => {
-    if (!selectedRect) return
+    if (!selectedRect) return;
 
     const updatedRect = {
       ...selectedRect,
       wattage: wattage,
-    }
+    };
 
-    updateSelectedRect(updatedRect)
-    beregnStroemForbruk()
-  }
+    updateSelectedRect(updatedRect);
+    beregnStroemForbruk();
+  };
 
   const updateSelectedRect = (updatedRect: Rectangle) => {
-    setSelectedRect(updatedRect)
+    setSelectedRect(updatedRect);
     setBrukerEnheter((prevRects) =>
       prevRects.map((rect) => (rect.id === updatedRect.id ? updatedRect : rect))
-    )
-  }
+    );
+  };
 
   return (
     <Wrapper>
@@ -412,7 +421,7 @@ const HovedGrid = () => {
             <Line
               key={`v${i}`}
               points={[i * columnWidth, 0, i * columnWidth, stageHeight]}
-              stroke='#ddd'
+              stroke="#ddd"
               strokeWidth={0.5}
             />
           ))}
@@ -420,7 +429,7 @@ const HovedGrid = () => {
             <Line
               key={`h${i}`}
               points={[0, i * rowHeight, stageWidth, i * rowHeight]}
-              stroke='#ddd'
+              stroke="#ddd"
               strokeWidth={0.5}
             />
           ))}
@@ -443,8 +452,8 @@ const HovedGrid = () => {
                   }
                   draggable
                   opacity={rect.isDragging ? 0.5 : 1}
-                  fill={rect.isDragging ? 'transparent' : COLORS.clr_mintgreen}
-                  stroke={rect.isDragging ? '#92908b' : COLORS.clr_lightorange}
+                  fill={rect.isDragging ? "transparent" : COLORS.clr_mintgreen}
+                  stroke={rect.isDragging ? "#92908b" : COLORS.clr_lightorange}
                   strokeWidth={rect.isDragging ? 2 : 5}
                   dash={rect.isDragging ? [5, 5] : []}
                 />
@@ -456,8 +465,8 @@ const HovedGrid = () => {
                   opacity={rect.isDragging ? 0 : 1}
                 >
                   <Text
-                    text='×'
-                    fill='#007B50'
+                    text="×"
+                    fill="#007B50"
                     fontSize={14}
                     x={3}
                     y={-1}
@@ -470,7 +479,7 @@ const HovedGrid = () => {
                   />
                 </Group>
               </Group>
-            )
+            );
           })}
           {/* Preview rectangle */}
           {(isResizing || isDrawing || previewRect) && (
@@ -492,8 +501,8 @@ const HovedGrid = () => {
         newRect={newRect}
       />
     </Wrapper>
-  )
-}
+  );
+};
 
 const Wrapper = styled.div`
   grid-area: grid;
@@ -502,6 +511,6 @@ const Wrapper = styled.div`
   border-radius: 0 0 40px 0;
   max-height: 360px;
   /* overflow: hidden; */
-`
+`;
 
-export default HovedGrid
+export default HovedGrid;

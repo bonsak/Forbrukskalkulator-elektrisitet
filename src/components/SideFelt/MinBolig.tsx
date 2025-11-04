@@ -15,15 +15,15 @@ const MinBolig = () => {
 
   const { aktivSone, setAktivSone, hentPriser } = useDagensPriserStore()
 
-  useEffect(() => {
+  // useEffect(() => {
     // const oppdaterPriser = async () => {
     //   await hentPriser(aktivSone)
     //   // console.log('Priser oppdatert for sone:', aktivSone)
     // }
-    setMittHus({ ...mittHus, sone: aktivSone })
+    // setMittHus({ ...mittHus, sone: aktivSone })
     // hentPriser(aktivSone)
     // oppdaterPriser()
-  }, [aktivSone])
+  // }, [aktivSone])
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -44,11 +44,18 @@ const MinBolig = () => {
     setMittHus(oppdatertHus)
   }
 
+  const handleSoneChange = (sone: string) => {
+    if (sone === 'NO1' || sone === 'NO2' || sone === 'NO3' || sone === 'NO4' || sone === 'NO5') {
+      setMittHus({ ...mittHus, sone })
+      hentPriser(sone)
+    }
+  }
+
   return (
     <StyledForm onSubmit={handleSubmit}>
       <Select.Root
-        value={aktivSone}
-        onValueChange={setAktivSone}
+        value={mittHus.sone}
+        onValueChange={handleSoneChange}
       >
         <StyledSelectTrigger>
           <Select.Value placeholder='Velg strømsone' />

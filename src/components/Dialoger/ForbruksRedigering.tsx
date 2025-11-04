@@ -106,7 +106,8 @@ const ForbruksRedigering = ({
             </DialogClose>
             <form>
               <SliderRoot
-                onValueChange={handleValueChange}
+                // onValueChange={handleValueChange}
+                onValueChange={(values) => handleValueChange(values)}
                 // className='SliderRoot'
                 value={[sliderValue]}
                 min={selectedRect?.minWatt}
