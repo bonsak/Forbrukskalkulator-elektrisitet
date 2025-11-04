@@ -50,6 +50,11 @@ const HovedGrid = () => {
     setBrukerEnheter(DEFAULT_DAG);
   }, []);
 
+  // Beregn strømforbruk når brukerEnheter endres
+  useEffect(() => {
+    beregnStroemForbruk();
+  }, [brukerEnheter]);
+
   // Deaktiverer stage når dialog er åpen
   useEffect(() => {
     if (stageRef.current) {
