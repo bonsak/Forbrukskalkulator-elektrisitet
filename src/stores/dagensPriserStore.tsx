@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { STROMSONER } from '../types/types'
 // import { Stromsone } from '../types/types'
-import { fetchStromPriser } from '../components/api/hvakosterstroemmen'
+import { fetchStromPriser, fetchHistoriskSnittPris } from '../components/api/hvakosterstroemmen'
 
 type PrisData = {
   x: number // time (0-23)
@@ -25,6 +25,8 @@ interface DagensPriserState {
   setAktivSone: (sone: Stromsone) => void
   gjennomsnittsPris: number
   sistOppdatert: string | null
+  historiskSnittPris: number | null
+  hentHistoriskSnitt: (sone: Stromsone) => Promise<void>
 }
 
 export const useDagensPriserStore = create<DagensPriserState>()(
@@ -55,5 +57,14 @@ export const useDagensPriserStore = create<DagensPriserState>()(
       })
     },
     gjennomsnittsPris: 0,
+    historiskSnittPris: null,
+    hentHistoriskSnitt: async (sone: Stromsone) => {
+      try {
+        const snitt = await fetchHistoriskSnittPris(sone)
+        set({ historiskSnittPris: snitt })
+      } catch {
+        // fallback: behold null slik at TittelFelt faller tilbake til dagspris
+      }
+    },
   }))
 )

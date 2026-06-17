@@ -14,9 +14,10 @@ type PrisData = {
 }
 
 const DagensPris = () => {
-  const { priser, hentPriser, aktivSone } = useDagensPriserStore()
+  const { priser, hentPriser, aktivSone, hentHistoriskSnitt } = useDagensPriserStore()
   useEffect(() => {
     hentPriser(aktivSone)
+    hentHistoriskSnitt(aktivSone)
   }, [aktivSone])
 
   // console.log(priser)

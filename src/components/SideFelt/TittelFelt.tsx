@@ -8,13 +8,14 @@ import { beregnTotalKWh, beregnEksaktDagsPris } from "@utils/gridEngine";
 const TittelFelt = () => {
   const { mittHus } = useMittHusStore();
   const { stroemForbruk } = useStroemForbrukStore();
-  const { gjennomsnittsPris, priser } = useDagensPriserStore();
+  const { gjennomsnittsPris, priser, historiskSnittPris } = useDagensPriserStore();
 
   const dagligKWh = beregnTotalKWh(stroemForbruk);
   const eksaktDagsPris = beregnEksaktDagsPris(stroemForbruk, priser.data);
   const ukePris = eksaktDagsPris * 7;
   const månedPris = eksaktDagsPris * 30;
-  const årPris = eksaktDagsPris * 365;
+  const årPrisPrKWh = historiskSnittPris ?? gjennomsnittsPris;
+  const årPris = dagligKWh * årPrisPrKWh * 365;
 
   return (
     <KontrollWrapper>
@@ -34,7 +35,10 @@ const TittelFelt = () => {
           </li>
           <ListItemFirst>Det blir ca {ukePris.toFixed(2)} kr pr uke</ListItemFirst>
           <li>Det blir ca {månedPris.toFixed(2)} kr pr måned</li>
-          <li>Det blir ca {årPris.toFixed(0)} kr pr år</li>
+          <li>
+            Det blir ca {årPris.toFixed(0)} kr pr år{" "}
+            <small>({historiskSnittPris ? "snitt siste 12 mnd" : "basert på dagspris"})</small>
+          </li>
         </ul>
       </InnerWrapper>
     </KontrollWrapper>

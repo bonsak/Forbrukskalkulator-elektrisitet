@@ -13,7 +13,7 @@ const MinBolig = () => {
   const { mittHus, setMittHus } = useMittHusStore()
   const { totaltForbruk } = useStroemForbrukStore()
 
-  const { aktivSone, setAktivSone, hentPriser } = useDagensPriserStore()
+  const { aktivSone, setAktivSone, hentPriser, hentHistoriskSnitt } = useDagensPriserStore()
 
   // useEffect(() => {
     // const oppdaterPriser = async () => {
@@ -48,6 +48,7 @@ const MinBolig = () => {
     if (sone === 'NO1' || sone === 'NO2' || sone === 'NO3' || sone === 'NO4' || sone === 'NO5') {
       setMittHus({ ...mittHus, sone })
       hentPriser(sone)
+      hentHistoriskSnitt(sone)
     }
   }
 
