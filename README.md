@@ -17,7 +17,7 @@ Appen hjelper deg å forstå og planlegge strømforbruket ditt time for time. Du
 
 Strømprisene hentes fra hvakosterstrommen.no og oppdateres live.
 
-Publisert [her:](loadbalance.surge.sh)
+Publisert [her:](https://loadbalance.surge.sh)
 
 ## Kom i gang
 
