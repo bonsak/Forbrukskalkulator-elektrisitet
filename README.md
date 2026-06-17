@@ -1,4 +1,4 @@
-# rc-interactive-load-balance
+# Interaktiv strømkalkulator
 
 > **Prototype**
 
