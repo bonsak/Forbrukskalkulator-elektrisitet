@@ -25,7 +25,7 @@ interface DagensPriserState {
   setAktivSone: (sone: Stromsone) => void
   gjennomsnittsPris: number
   sistOppdatert: string | null
-  historiskSnittPris: number | null
+  historiskSnittPris: number[] | null
   hentHistoriskSnitt: (sone: Stromsone) => Promise<void>
 }
 
@@ -57,7 +57,7 @@ export const useDagensPriserStore = create<DagensPriserState>()(
       })
     },
     gjennomsnittsPris: 0,
-    historiskSnittPris: null,
+    historiskSnittPris: null as number[] | null,
     hentHistoriskSnitt: async (sone: Stromsone) => {
       try {
         const snitt = await fetchHistoriskSnittPris(sone)

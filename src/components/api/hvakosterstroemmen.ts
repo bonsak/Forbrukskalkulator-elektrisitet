@@ -31,7 +31,7 @@ export const fetchStromPriser = async (sone: Stromsone) => {
   }
 }
 
-export const fetchHistoriskSnittPris = async (sone: Stromsone): Promise<number> => {
+export const fetchHistoriskSnittPris = async (sone: Stromsone): Promise<number[]> => {
   const idag = new Date()
   const fetchMåned = (månederSiden: number): Promise<number[]> => {
     const dato = new Date(idag.getFullYear(), idag.getMonth() - månederSiden, 15)
@@ -45,11 +45,11 @@ export const fetchHistoriskSnittPris = async (sone: Stromsone): Promise<number> 
     Array.from({ length: 12 }, (_, i) => fetchMåned(i + 1))
   )
 
-  const allePriser = resultater
+  const månedsnitt = resultater
     .filter((r): r is PromiseFulfilledResult<number[]> => r.status === 'fulfilled')
-    .flatMap((r) => r.value)
+    .map((r) => r.value.reduce((sum, p) => sum + p, 0) / r.value.length)
 
-  if (allePriser.length === 0) throw new Error('Ingen historiske priser tilgjengelig')
+  if (månedsnitt.length === 0) throw new Error('Ingen historiske priser tilgjengelig')
 
-  return allePriser.reduce((sum, p) => sum + p, 0) / allePriser.length
+  return månedsnitt
 }

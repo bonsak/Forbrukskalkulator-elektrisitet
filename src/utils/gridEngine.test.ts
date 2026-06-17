@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { beregnTotalKWh, beregnEksaktDagsPris } from './gridEngine'
+import { beregnTotalKWh, beregnEksaktDagsPris, beregnSesongvektetÅrsPris } from './gridEngine'
 import type { StroemForbrukData } from '@/types/types'
 
 const makeForbruk = (wattsPerHour: number[]): StroemForbrukData => ({
@@ -49,5 +49,26 @@ describe('beregnEksaktDagsPris', () => {
   it('treats missing price entries as 0', () => {
     const forbruk = makeForbruk([1000, ...new Array(23).fill(0)])
     expect(beregnEksaktDagsPris(forbruk, [])).toBe(0)
+  })
+})
+
+describe('beregnSesongvektetÅrsPris', () => {
+  it('returns 0 when gjennomsnittsPris is 0 (div-by-zero guard)', () => {
+    expect(beregnSesongvektetÅrsPris(10, [1, 2, 3], 0)).toBe(0)
+  })
+
+  it('when all monthly averages equal gjennomsnittsPris, result equals eksaktDagsPris × 12 × 30', () => {
+    const månedsnitt = new Array(12).fill(1.5)
+    expect(beregnSesongvektetÅrsPris(10, månedsnitt, 1.5)).toBeCloseTo(10 * 12 * 30)
+  })
+
+  it('scales proportionally: a month twice the average contributes twice as much', () => {
+    // 1 month at 2× average, rest 0 → årsEstimat = 10 × (2/1) × 30
+    expect(beregnSesongvektetÅrsPris(10, [2], 1)).toBeCloseTo(10 * 2 * 30)
+  })
+
+  it('sums contributions from all months', () => {
+    // 2 months: one at 1×, one at 3× average → 10×30×1 + 10×30×3 = 1200
+    expect(beregnSesongvektetÅrsPris(10, [1, 3], 1)).toBeCloseTo(1200)
   })
 })

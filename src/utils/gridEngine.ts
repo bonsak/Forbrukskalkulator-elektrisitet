@@ -60,6 +60,18 @@ export const beregnEksaktDagsPris = (
     return sum + (watt * timePris) / 1000;
   }, 0);
 
+export const beregnSesongvektetÅrsPris = (
+  eksaktDagsPris: number,
+  månedsnitt: number[],
+  gjennomsnittsPris: number
+): number => {
+  if (gjennomsnittsPris === 0) return 0
+  return månedsnitt.reduce(
+    (sum, månedSnittPris) => sum + eksaktDagsPris * (månedSnittPris / gjennomsnittsPris) * 30,
+    0
+  )
+}
+
 export const isMouseOverResizeHandle = (
   mouseX: number,
   rect: Rectangle

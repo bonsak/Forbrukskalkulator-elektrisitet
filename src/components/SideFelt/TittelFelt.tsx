@@ -3,7 +3,7 @@ import { COLORS, SIZES } from "@utils/constants";
 import { useStroemForbrukStore } from "@stores/stroemForbrukStore";
 import { useMittHusStore } from "@stores/mittHusStore";
 import { useDagensPriserStore } from "@stores/dagensPriserStore";
-import { beregnTotalKWh, beregnEksaktDagsPris } from "@utils/gridEngine";
+import { beregnTotalKWh, beregnEksaktDagsPris, beregnSesongvektetÅrsPris } from "@utils/gridEngine";
 
 const TittelFelt = () => {
   const { mittHus } = useMittHusStore();
@@ -14,8 +14,9 @@ const TittelFelt = () => {
   const eksaktDagsPris = beregnEksaktDagsPris(stroemForbruk, priser.data);
   const ukePris = eksaktDagsPris * 7;
   const månedPris = eksaktDagsPris * 30;
-  const årPrisPrKWh = historiskSnittPris ?? gjennomsnittsPris;
-  const årPris = dagligKWh * årPrisPrKWh * 365;
+  const årPris = historiskSnittPris
+    ? beregnSesongvektetÅrsPris(eksaktDagsPris, historiskSnittPris, gjennomsnittsPris)
+    : dagligKWh * gjennomsnittsPris * 365;
 
   return (
     <KontrollWrapper>
