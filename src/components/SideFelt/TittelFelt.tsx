@@ -3,19 +3,28 @@ import { COLORS, SIZES } from "@utils/constants";
 import { useStroemForbrukStore } from "@stores/stroemForbrukStore";
 import { useMittHusStore } from "@stores/mittHusStore";
 import { useDagensPriserStore } from "@stores/dagensPriserStore";
-import { beregnTotalKWh, beregnEksaktDagsPris, beregnSesongvektetÅrsPris } from "@utils/gridEngine";
+import {
+  beregnTotalKWh,
+  beregnEksaktDagsPris,
+  beregnSesongvektetÅrsPris,
+} from "@utils/gridEngine";
 
 const TittelFelt = () => {
   const { mittHus } = useMittHusStore();
   const { stroemForbruk } = useStroemForbrukStore();
-  const { gjennomsnittsPris, priser, historiskSnittPris } = useDagensPriserStore();
+  const { gjennomsnittsPris, priser, historiskSnittPris } =
+    useDagensPriserStore();
 
   const dagligKWh = beregnTotalKWh(stroemForbruk);
   const eksaktDagsPris = beregnEksaktDagsPris(stroemForbruk, priser.data);
   const ukePris = eksaktDagsPris * 7;
   const månedPris = eksaktDagsPris * 30;
   const årPris = historiskSnittPris
-    ? beregnSesongvektetÅrsPris(eksaktDagsPris, historiskSnittPris, gjennomsnittsPris)
+    ? beregnSesongvektetÅrsPris(
+        eksaktDagsPris,
+        historiskSnittPris,
+        gjennomsnittsPris,
+      )
     : dagligKWh * gjennomsnittsPris * 365;
 
   return (
@@ -31,19 +40,24 @@ const TittelFelt = () => {
               kWt
             </strong>
           </li>
-          <li>
-            Det gir en pris på ca {eksaktDagsPris.toFixed(2)} kroner
-          </li>
-          <ListItemFirst>Det blir ca {ukePris.toFixed(2)} kr pr uke</ListItemFirst>
+          <li>Det gir en pris på ca {eksaktDagsPris.toFixed(2)} kroner</li>
+          <ListItemFirst>
+            Det blir ca {ukePris.toFixed(2)} kr pr uke
+          </ListItemFirst>
           <li>Det blir ca {månedPris.toFixed(2)} kr pr måned</li>
           <li>
             Det blir ca {årPris.toFixed(0)} kr pr år{" "}
-            <small>({historiskSnittPris ? "snitt siste 12 mnd" : "basert på dagspris"})</small>
+            <small>
+              (
+              {historiskSnittPris ? "snitt siste 12 mnd" : "basert på dagspris"}
+              )
+            </small>
           </li>
         </ul>
       </InnerWrapper>
       <PrisLegende>
-        <small>Priser hentet fra hvakosterstrommen.no. Årsestimat basert på historiske månedspriser (siste 12 mnd).</small>
+        Priser hentet fra hvakosterstrommen.no. Årsestimat basert på historiske
+        månedspriser (siste 12 mnd).
       </PrisLegende>
     </KontrollWrapper>
   );
@@ -56,7 +70,7 @@ const KontrollWrapper = styled.div`
   grid-area: kontroll;
   background: ${COLORS.clr_lightorange};
   border-radius: 0 40px 0 40px;
-  padding: 0 2rem;
+  padding: 2rem;
 `;
 const InnerWrapper = styled.div`
   display: flex;
@@ -68,11 +82,9 @@ const ListItemFirst = styled.li`
   margin-top: 1.2rem;
 `;
 const PrisLegende = styled.div`
-  text-align: right;
-  /* padding-right: 2rem; */
-  line-height: ${SIZES.medium_spacer}px;
-  /* background: ${COLORS.clr_mediumdarkred}; */
-  min-height: ${SIZES.medium_spacer}px;
+  text-align: left;
+  font-size: 0.85rem;
+  font-style: italic;
 `;
 const KotrollTittel = styled.h2`
   margin: 1.2rem 0;

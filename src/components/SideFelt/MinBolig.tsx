@@ -1,65 +1,69 @@
-import * as Form from '@radix-ui/react-form'
-import * as Select from '@radix-ui/react-select'
-import styled from 'styled-components'
-import { COLORS } from '@utils/constants'
-import { useDagensPriserStore } from '@stores/dagensPriserStore'
-import { ChevronDownIcon } from '@radix-ui/react-icons'
-import { useEffect } from 'react'
-import { useMittHusStore } from '@stores/mittHusStore'
-import { useStroemForbrukStore } from '@stores/stroemForbrukStore'
-import { STROMSONER } from '../../types/types'
+import * as Form from "@radix-ui/react-form";
+import * as Select from "@radix-ui/react-select";
+import styled from "styled-components";
+import { COLORS } from "@utils/constants";
+import { useDagensPriserStore } from "@stores/dagensPriserStore";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { useEffect } from "react";
+import { useMittHusStore } from "@stores/mittHusStore";
+import { useStroemForbrukStore } from "@stores/stroemForbrukStore";
+import { STROMSONER } from "../../types/types";
 
 const MinBolig = () => {
-  const { mittHus, setMittHus } = useMittHusStore()
-  const { totaltForbruk } = useStroemForbrukStore()
+  const { mittHus, setMittHus } = useMittHusStore();
+  const { totaltForbruk } = useStroemForbrukStore();
 
-  const { aktivSone, setAktivSone, hentPriser, hentHistoriskSnitt } = useDagensPriserStore()
+  const { aktivSone, setAktivSone, hentPriser, hentHistoriskSnitt } =
+    useDagensPriserStore();
 
   // useEffect(() => {
-    // const oppdaterPriser = async () => {
-    //   await hentPriser(aktivSone)
-    //   // console.log('Priser oppdatert for sone:', aktivSone)
-    // }
-    // setMittHus({ ...mittHus, sone: aktivSone })
-    // hentPriser(aktivSone)
-    // oppdaterPriser()
+  // const oppdaterPriser = async () => {
+  //   await hentPriser(aktivSone)
+  //   // console.log('Priser oppdatert for sone:', aktivSone)
+  // }
+  // setMittHus({ ...mittHus, sone: aktivSone })
+  // hentPriser(aktivSone)
+  // oppdaterPriser()
   // }, [aktivSone])
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
 
     const oppdatertHus: MittHus = {
-      navn: formData.get('navn') as string,
-      antallRom: Number(formData.get('antallRom')),
-      antallVoksne: Number(formData.get('antallVoksne')),
-      antallBarn: Number(formData.get('antallBarn')),
-      antallKvadrat: Number(formData.get('antallKvadrat')),
-      antallVarmtvannstanker: Number(formData.get('antallVarmtvannstanker')),
-      effektVarmtvannstanker: Number(formData.get('effektVarmtvannstanker')),
-      effektElbillader: Number(formData.get('effektElbillader')),
-      sone: formData.get('sone') as (typeof STROMSONER)[number]['token'],
-    }
+      navn: formData.get("navn") as string,
+      antallRom: Number(formData.get("antallRom")),
+      antallVoksne: Number(formData.get("antallVoksne")),
+      antallBarn: Number(formData.get("antallBarn")),
+      antallKvadrat: Number(formData.get("antallKvadrat")),
+      antallVarmtvannstanker: Number(formData.get("antallVarmtvannstanker")),
+      effektVarmtvannstanker: Number(formData.get("effektVarmtvannstanker")),
+      effektElbillader: Number(formData.get("effektElbillader")),
+      sone: formData.get("sone") as (typeof STROMSONER)[number]["token"],
+    };
 
-    setMittHus(oppdatertHus)
-  }
+    setMittHus(oppdatertHus);
+  };
 
   const handleSoneChange = (sone: string) => {
-    if (sone === 'NO1' || sone === 'NO2' || sone === 'NO3' || sone === 'NO4' || sone === 'NO5') {
-      setMittHus({ ...mittHus, sone })
-      hentPriser(sone)
-      hentHistoriskSnitt(sone)
+    if (
+      sone === "NO1" ||
+      sone === "NO2" ||
+      sone === "NO3" ||
+      sone === "NO4" ||
+      sone === "NO5"
+    ) {
+      setMittHus({ ...mittHus, sone });
+      hentPriser(sone);
+      hentHistoriskSnitt(sone);
     }
-  }
+  };
 
   return (
     <StyledForm onSubmit={handleSubmit}>
-      <Select.Root
-        value={mittHus.sone}
-        onValueChange={handleSoneChange}
-      >
+      <Select.Root value={mittHus.sone} onValueChange={handleSoneChange}>
         <StyledSelectTrigger>
-          <Select.Value placeholder='Velg strømsone' />
+          <Select.Value placeholder="Velg strømsone" />
           <Select.Icon>
             <ChevronDownIcon />
           </Select.Icon>
@@ -69,10 +73,7 @@ const MinBolig = () => {
           <StyledSelectContent>
             <StyledSelectViewport>
               {STROMSONER.map((sone) => (
-                <StyledSelectItem
-                  key={sone.token}
-                  value={sone.token}
-                >
+                <StyledSelectItem key={sone.token} value={sone.token}>
                   <Select.ItemText>{sone.navn}</Select.ItemText>
                 </StyledSelectItem>
               ))}
@@ -80,75 +81,71 @@ const MinBolig = () => {
           </StyledSelectContent>
         </Select.Portal>
       </Select.Root>
-      <StyledField name='navn'>
+      <StyledField name="navn">
         <StyledLabel>Navn</StyledLabel>
-        <StyledInput
-          type='text'
-          defaultValue={mittHus.navn}
-          required
-        />
+        <StyledInput type="text" defaultValue={mittHus.navn} required />
       </StyledField>
-      <StyledField name='antallRom'>
+      <StyledField name="antallRom">
         <StyledLabel>Rom</StyledLabel>
         <StyledInput
-          type='number'
+          type="number"
           defaultValue={mittHus.antallRom}
           required
-          min='1'
+          min="1"
         />
       </StyledField>
-      <StyledField name='antallVoksne'>
+      <StyledField name="antallVoksne">
         <StyledLabel>Voksne</StyledLabel>
         <StyledInput
-          type='number'
+          type="number"
           defaultValue={mittHus.antallVoksne}
           required
-          min='0'
+          min="0"
         />
       </StyledField>
-      <StyledField name='antallBarn'>
+      <StyledField name="antallBarn">
         <StyledLabel>Barn</StyledLabel>
         <StyledInput
-          type='number'
+          type="number"
           defaultValue={mittHus.antallBarn}
           required
-          min='0'
+          min="0"
         />
       </StyledField>
-      <StyledField name='antallKvadrat'>
+      <StyledField name="antallKvadrat">
         <StyledLabel>Størrelse (m²)</StyledLabel>
         <StyledInput
-          type='number'
+          type="number"
           defaultValue={mittHus.antallKvadrat}
           required
-          min='1'
+          min="1"
         />
       </StyledField>
-      <StyledField name='antallVarmtvannstanker'>
+      <StyledField name="antallVarmtvannstanker">
         <StyledLabel>Beredere</StyledLabel>
         <StyledInput
-          type='number'
+          type="number"
           defaultValue={mittHus.antallVarmtvannstanker}
           required
-          min='0'
+          min="0"
         />
       </StyledField>
-      <StyledField name='effektElbillader'>
+      <StyledField name="effektElbillader">
         <StyledLabel>Billader (kW)</StyledLabel>
         <StyledInput
-          type='number'
+          type="number"
           defaultValue={mittHus.effektElbillader}
           required
-          step='0.1'
-          min='0'
+          step="0.1"
+          min="0"
         />
       </StyledField>
-      <StyledButton type='submit'>Oppdater boliginfo</StyledButton>
+      <StyledButton type="submit">Oppdater boliginfo</StyledButton>
     </StyledForm>
-  )
-}
+  );
+};
 
-export default MinBolig
+export default MinBolig;
 
 const StyledSelectTrigger = styled(Select.Trigger)`
   display: flex;
@@ -164,18 +161,18 @@ const StyledSelectTrigger = styled(Select.Trigger)`
   &:hover {
     background: ${COLORS.clr_mintlight};
   }
-`
+`;
 
 const StyledSelectContent = styled(Select.Content)`
   background: white;
   border-radius: 4px;
   border: 1px solid ${COLORS.clr_mintgreen};
   overflow: hidden;
-`
+`;
 
 const StyledSelectViewport = styled(Select.Viewport)`
   padding: 0.5rem;
-`
+`;
 
 const StyledSelectItem = styled(Select.Item)`
   font-size: 0.9rem;
@@ -190,27 +187,28 @@ const StyledSelectItem = styled(Select.Item)`
   &[data-highlighted] {
     background: ${COLORS.clr_mintlight};
   }
-`
+`;
 
 const StyledForm = styled(Form.Root)`
   grid-area: minbolig;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   padding: 2rem;
-  gap: 0.5rem;
+  // gap: 0.35rem;
   background-color: ${COLORS.clr_mintlight};
   border-radius: 40px 0 40px 40px;
   height: 360px;
   width: 400px;
-`
+`;
 
 const StyledField = styled(Form.Field)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
   /* margin-bottom: 1rem; */
-`
+`;
 
 const StyledLabel = styled(Form.Label)`
   /* display: block; */
@@ -219,7 +217,7 @@ const StyledLabel = styled(Form.Label)`
   font-weight: 500;
   color: ${COLORS.clr_darkmintgreen};
   /* margin-bottom: 0.5rem; */
-`
+`;
 
 const StyledInput = styled(Form.Control)`
   max-width: 150px;
@@ -231,7 +229,7 @@ const StyledInput = styled(Form.Control)`
   &:focus {
     outline: 2px solid ${COLORS.clr_mintgreen};
   }
-`
+`;
 
 const StyledButton = styled.button`
   background: ${COLORS.clr_mintgreen};
@@ -246,16 +244,16 @@ const StyledButton = styled.button`
     background: ${COLORS.clr_darkmintgreen};
     opacity: 0.5;
   }
-`
+`;
 
 interface MittHus {
-  navn: string
-  antallRom: number
-  antallVoksne: number
-  antallBarn: number
-  antallKvadrat: number
-  antallVarmtvannstanker: number
-  effektVarmtvannstanker: number
-  effektElbillader: number
-  sone: 'NO1' | 'NO2' | 'NO3' | 'NO4' | 'NO5'
+  navn: string;
+  antallRom: number;
+  antallVoksne: number;
+  antallBarn: number;
+  antallKvadrat: number;
+  antallVarmtvannstanker: number;
+  effektVarmtvannstanker: number;
+  effektElbillader: number;
+  sone: "NO1" | "NO2" | "NO3" | "NO4" | "NO5";
 }
