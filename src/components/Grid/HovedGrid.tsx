@@ -7,7 +7,6 @@ import ForbruksKonfig from "@components/Dialoger/ForbruksRedigering";
 import { Rectangle, PreviewRectangle } from "@/types/types";
 import { useForbruksEnheter } from "@/utils/Forbruksenheter";
 import { KonvaEventObject } from "konva/lib/Node";
-import { useBrukerEnheterStore } from "@/stores/brukerEnheterStore";
 import { useStroemForbrukStore } from "@/stores/stroemForbrukStore";
 import { useMittHusStore } from "@/stores/mittHusStore";
 // import { useDagensPriserStore } from '@/stores/dagensPriserStore'
@@ -15,8 +14,8 @@ import { useMittHusStore } from "@/stores/mittHusStore";
 const HovedGrid = () => {
   const FORBRUKSENHETER = useForbruksEnheter();
   //
-  const brukerEnheter = useBrukerEnheterStore((state) => state.brukerEnheter);
-  const setBrukerEnheter = useBrukerEnheterStore(
+  const brukerEnheter = useStroemForbrukStore((state) => state.brukerEnheter);
+  const setBrukerEnheter = useStroemForbrukStore(
     (state) => state.setBrukerEnheter
   );
   const setStroemForbruk = useStroemForbrukStore(

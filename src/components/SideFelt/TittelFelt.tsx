@@ -3,7 +3,6 @@ import { COLORS, SIZES } from '@utils/constants'
 import { useStroemForbrukStore } from '@stores/stroemForbrukStore'
 import { useMittHusStore } from '@stores/mittHusStore'
 import { useDagensPriserStore } from '@stores/dagensPriserStore'
-import { useBrukerEnheterStore } from '@stores/brukerEnheterStore'
 import { useEffect } from 'react'
 
 const TittelFelt = () => {
