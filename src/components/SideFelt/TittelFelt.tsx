@@ -41,6 +41,9 @@ const TittelFelt = () => {
           </li>
         </ul>
       </InnerWrapper>
+      <PrisLegende>
+        <small>Priser hentet fra hvakosterstrommen.no. Årsestimat basert på historiske månedspriser (siste 12 mnd).</small>
+      </PrisLegende>
     </KontrollWrapper>
   );
 };
