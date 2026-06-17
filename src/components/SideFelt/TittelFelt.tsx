@@ -12,6 +12,9 @@ const TittelFelt = () => {
 
   const dagligKWh = beregnTotalKWh(stroemForbruk);
   const eksaktDagsPris = beregnEksaktDagsPris(stroemForbruk, priser.data);
+  const ukePris = eksaktDagsPris * 7;
+  const månedPris = eksaktDagsPris * 30;
+  const årPris = eksaktDagsPris * 365;
 
   return (
     <KontrollWrapper>
@@ -29,9 +32,9 @@ const TittelFelt = () => {
           <li>
             Det gir en pris på ca {eksaktDagsPris.toFixed(2)} kroner
           </li>
-          <ListItemFirst>Det blir ca .. pr uke</ListItemFirst>
-          <li>Det blir ca .. pr måned</li>
-          <li>Det blir ca .. pr år</li>
+          <ListItemFirst>Det blir ca {ukePris.toFixed(2)} kr pr uke</ListItemFirst>
+          <li>Det blir ca {månedPris.toFixed(2)} kr pr måned</li>
+          <li>Det blir ca {årPris.toFixed(0)} kr pr år</li>
         </ul>
       </InnerWrapper>
     </KontrollWrapper>
