@@ -8,7 +8,7 @@ Interaktiv visualisering av strømforbruk og lastfordeling i boligen gjennom dø
 
 ## Hva gjør appen?
 
-Appen hjelper deg å forstå og planlegge strømforbruket ditt time for time. Du legger inn informasjon om boligen din — navn, antall rom, beboere, størrelse, varmtvannsberedere og elbillader — og får tilbake en oversikt over:
+Appen hjelper deg å forstå og planlegge strømforbruket ditt time for time. Du legger inn informasjon om boligen din — navn, antall rom, beboere, størrelse, varmtvannsberedere og elbillader (ikke implementert enda) — og får tilbake en oversikt over:
 
 - **Estimert daglig forbruk** i kWh og kroner basert på dagens spotpris
 - **Estimert ukentlig, månedlig og årlig kostnad**, der årsestimatet er sesongvektet mot historiske månedspriser
