@@ -8,6 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "pub": "surge dist --domain loadbalance.surge.sh"
   },
   "dependencies": {
@@ -51,6 +53,7 @@
     "globals": "^15.9.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.8",
-    "vite-plugin-svgr": "^4.3.0"
+    "vite-plugin-svgr": "^4.3.0",
+    "vitest": "^4.1.9"
   }
 }

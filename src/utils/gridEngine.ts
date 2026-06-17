@@ -48,6 +48,18 @@ export const beregnStroemForbruk = (brukerEnheter: Rectangle[]): StroemForbrukDa
 export const totalForbruk = (brukerEnheter: Rectangle[]): number =>
   brukerEnheter.reduce((sum, enhet) => sum + enhet.wattage, 0);
 
+export const beregnTotalKWh = (stroemForbruk: StroemForbrukData): number =>
+  stroemForbruk.data.reduce((sum, { y: watt }) => sum + watt / 1000, 0);
+
+export const beregnEksaktDagsPris = (
+  stroemForbruk: StroemForbrukData,
+  priser: Array<{ x: number; y: number }>
+): number =>
+  stroemForbruk.data.reduce((sum, { x, y: watt }) => {
+    const timePris = priser.find((p) => p.x === x)?.y ?? 0;
+    return sum + (watt * timePris) / 1000;
+  }, 0);
+
 export const isMouseOverResizeHandle = (
   mouseX: number,
   rect: Rectangle

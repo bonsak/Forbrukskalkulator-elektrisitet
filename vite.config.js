@@ -5,6 +5,9 @@ import path from 'path'
 import svgr from 'vite-plugin-svgr'
 
 export default defineConfig({
+  test: {
+    environment: 'node',
+  },
   base: '',
   resolve: {
     alias: {
